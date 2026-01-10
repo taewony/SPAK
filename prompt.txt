@@ -1,0 +1,2 @@
+@README.md 참조해서 @agent.py 를 개선할 plan을 작성해줘. plan.md 작성. @recursive-llm/README.md 도 같이 참조해줘.
+  최대한 recursive-llm code를 재활용해줘.

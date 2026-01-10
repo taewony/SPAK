@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux: 이기종 멀티코어 컴퓨팅 및 메모리 관리</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 20px;
+            background-color: #eef2f7;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            color: #2980b9;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        h2 {
+            color: #16a085;
+            border-left: 5px solid #1abc9c;
+            padding-left: 15px;
+            margin-top: 35px;
+        }
+        h3 {
+            color: #d35400;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        .highlight {
+            background-color: #fcf3cf;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 5px solid #0c5460;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Linux 이기종 컴퓨팅과 메모리 관리 시스템</h1>
+
+        <section>
+            <h2>1. 멀티코어 이기종 컴퓨팅 (Heterogeneous Computing)</h2>
+            <p>현대의 시스템은 단순한 CPU 중심이 아니라 <strong>CPU(중앙 처리 장치)</strong>와 <strong>GPU(그래픽 처리 장치)</strong>가 협력하는 이기종 환경입니다. Linux 커널은 이러한 서로 다른 아키텍처를 효율적으로 관리하기 위해 다음과 같은 역할을 수행합니다.</p>
+            <ul>
+                <li><strong>리소스 스케줄링:</strong> CPU 작업은 일반 커널 스케줄러(CFS)가 담당하고, GPU 작업은 별도의 장치 드라이버(NVIDIA, AMD 등)를 통해 관리됩니다.</li>
+                <li><strong>병렬 처리:</strong> 멀티코어 환경에서 수많은 스레드가 동시에 실행될 수 있도록 락(Lock) 메커니즘과 동기화 도구를 제공합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>2. 멀티스레딩 (Multithreading) 환경의 Linux</h2>
+            <p>Linux에서 스레드는 <strong>LWP(Light Weight Process)</strong>로 취급됩니다. <code>clone()</code> 시스템 호출을 통해 생성되며, 부모 프로세스와 메모리 공간을 공유합니다.</p>
+            <h3>핵심 동작:</h3>
+            <ul>
+                <li><strong>Context Switching:</strong> 멀티코어에서 여러 스레드를 교체하며 실행할 때, 레지스터 상태와 스택 포인터를 저장하고 복원합니다.</li>
+                <li><strong>Affinity (친밀도):</strong> 특정 스레드를 특정 코어에 고정시켜 캐시 효율성을 높이는 기능을 제공합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. 가상 메모리 시스템 (Virtual Memory System)</h2>
+            <p>Linux는 물리적 RAM 크기에 구애받지 않고 프로세스마다 독립적인 주소 공간을 제공하는 <strong>가상 메모리</strong>를 사용합니다.</p>
+            <div class="info-box">
+                <strong>가상 메모리의 이점:</strong>
+                각 프로세스는 마치 자신이 전체 메모리를 독점하는 것처럼 인식하며, 메모리 보호(Protection)와 효율적인 메모리 공유가 가능해집니다.
+            </div>
+            <ul>
+                <li><strong>VAS (Virtual Address Space):</strong> 커널 영역과 사용자 영역으로 나뉘며, 실제 물리 메모리 주소로 매핑됩니다.</li>
+                <li><strong>MMU (Memory Management Unit):</strong> 하드웨어 장치로, 가상 주소를 물리 주소로 실시간 변환합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. 페이징 메모리 관리 (Paged Memory Management)</h2>
+            <p>메모리를 고정된 크기인 <strong>페이지(Page, 일반적으로 4KB)</strong> 단위로 나누어 관리하는 기법입니다.</p>
+            <h3>세부 메커니즘:</h3>
+            <ul>
+                <li><strong>Page Table:</strong> 가상 페이지와 물리 페이지 프레임 간의 매핑 정보를 담고 있는 테이블입니다. Linux는 4단계(또는 5단계) 페이지 테이블 구조를 사용하여 방대한 주소 공간을 관리합니다.</li>
+                <li><strong>TLB (Translation Lookaside Buffer):</strong> 최근에 사용된 매핑 정보를 저장하는 고속 캐시로, 주소 변환 속도를 획기적으로 높입니다.</li>
+                <li><strong>Page Fault:</strong> 요청한 페이지가 실제 메모리에 없을 때 발생하는 인터럽트입니다. 커널은 이를 감지하여 디스크(Swap)에서 데이터를 읽어오거나 새로운 메모리를 할당합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. CPU & GPU 통합 메모리 (Unified Memory)</h2>
+            <p>전통적인 방식에서는 CPU와 GPU가 각각 독립된 메모리를 가지고 데이터를 복사해야 했습니다. 하지만 최신 Linux 환경과 GPU 아키텍처는 <strong>통합 메모리(Unified Memory)</strong>를 지원합니다.</p>
+            <div class="info-box">
+                <strong>UVM (Unified Virtual Memory):</strong> CPU와 GPU가 단일 가상 주소 공간을 공유합니다. <code>cudaMallocManaged()</code>와 같은 호출을 통해 사용할 수 있습니다.
+            </div>
+            <h3>동작 원리:</h3>
+            <ul>
+                <li><strong>On-demand Migration:</strong> 데이터가 실제로 필요한 장치(CPU 또는 GPU)로 자동 이동합니다.</li>
+                <li><strong>Shared Virtual Address (SVA):</strong> CPU의 포인터를 GPU에서도 그대로 사용할 수 있어 프로그래밍 복잡도가 낮아집니다.</li>
+                <li><strong>HMM (Heterogeneous Memory Management):</strong> Linux 커널의 핵심 기능으로, GPU가 시스템 메모리를 직접 페이징하고 관리할 수 있도록 지원합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>요약</h2>
+            <p>Linux는 <strong>가상 메모리</strong>와 <strong>페이징</strong>을 통해 안정적인 실행 환경을 제공하며, <strong>이기종 컴퓨팅</strong> 시대에 맞춰 CPU와 GPU 간의 장벽을 허무는 <strong>통합 메모리</strong> 기술을 적극적으로 수용하고 있습니다. 이를 통해 고성능 AI 연산 및 병렬 데이터 처리가 효율적으로 수행됩니다.</p>
+        </section>
+    </div>
+</body>
+</html>
