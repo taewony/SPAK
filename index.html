@@ -1,109 +1,256 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>브라우저 동작 원리</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Engineering Hub</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
-            color: #0056b3;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        section {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        section:last-child {
-            border-bottom: none;
-        }
-        p {
-            margin-bottom: 10px;
-        }
-        ul {
-            list-style-type: decimal;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
+      :root {
+        --bg-color: #0d1117;
+        --text-color: #c9d1d9;
+        --accent-color: #238636;
+        --card-bg: #161b22;
+        --border-color: #30363d;
+        --code-font: "Consolas", "Monaco", monospace;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+          Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0;
+      }
+      .badge {
+        background: var(--accent-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 20px;
+        transition: transform 0.2s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: #8b949e;
+      }
+      .card h3 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+      .card p {
+        font-size: 0.9rem;
+        color: #8b949e;
+      }
+      .status-bar {
+        background: var(--card-bg);
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+        font-family: var(--code-font);
+        font-size: 0.9rem;
+        display: flex;
+        gap: 20px;
+      }
+      .status-item span {
+        color: #58a6ff;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      .tag {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        margin-right: 5px;
+        border: 1px solid var(--border-color);
+      }
+      .tag.completed {
+        color: #7ee787;
+        border-color: #238636;
+      }
+      .tag.inprogress {
+        color: #d2a8ff;
+        border-color: #a371f7;
+      }
+      .tag.planned {
+        color: #8b949e;
+        border-color: #30363d;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>브라우저 동작 원리: URL 입력부터 페이지 표시까지</h1>
-        <p>웹 브라우저는 사용자가 웹 주소(URL)를 입력하면 해당 페이지를 가져와 화면에 표시하는 복잡한 과정을 거칩니다. 이 과정은 여러 단계로 나뉘며, 각 단계는 웹 페이지를 빠르고 정확하게 렌더링하는 데 중요한 역할을 합니다.</p>
+      <header>
+        <div>
+          <h1>🤖 Agent Engineering Hub</h1>
+          <p style="margin: 5px 0 0 0; font-size: 1.2rem; color: #8b949e">
+            AI-Driven System Building Playbook
+          </p>
+        </div>
+        <div class="badge">v0.1.0 Alpha</div>
+      </header>
 
-        <section>
-            <h2>1. URL 파싱 (URL Parsing)</h2>
-            <p>사용자가 브라우저 주소창에 URL을 입력하고 엔터를 누르면, 브라우저는 먼저 이 URL을 여러 부분으로 파싱합니다. 예를 들어, <code>https://www.example.com/path/to/page.html</code> 같은 URL은 프로토콜(https), 호스트(www.example.com), 포트(기본값 443), 경로(/path/to/page.html) 등으로 분리됩니다.</p>
-        </section>
+      <!-- System Status Visualization (Placeholder for future dynamic data) -->
+      <div class="status-bar">
+        <div class="status-item">System: <span>Windows (win32)</span></div>
+        <div class="status-item">GPU: <span>RTX Series (Detected)</span></div>
+        <div class="status-item">
+          Engine: <span>Ollama (Llama 3.x/Gemma)</span>
+        </div>
+        <div class="status-item">Last Active: <span>2026-01-12</span></div>
+      </div>
 
-        <section>
-            <h2>2. DNS 조회 (DNS Lookup)</h2>
-            <p>파싱된 호스트명(예: <code>www.example.com</code>)을 이용하여 해당 웹 서버의 IP 주소를 찾습니다. 브라우저는 DNS(Domain Name System) 서버에 질의하여 호스트명에 해당하는 IP 주소를 요청합니다. 이 과정은 캐시(브라우저, OS, 라우터, ISP)를 통해 최적화될 수 있습니다.</p>
-        </section>
+      <h2>📖 Playbooks & Learning Path</h2>
+      <div class="grid">
+        <!-- Phase 1: Infrastructure -->
+        <a href="playbook/01_infrastructure/01_gpu_and_ollama.md" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag completed">Completed</span>
+            <span class="tag">Infra</span>
+          </div>
+          <h3>1. GPU & Inference Mechanics</h3>
+          <p>
+            Ollama 설정 및 nvidia-smi를 활용한 Prefill/Decode 과정 관측 및 GPU
+            메모리 관리 기초.
+          </p>
+        </a>
 
-        <section>
-            <h2>3. TCP 연결 (TCP Connection)</h2>
-            <p>IP 주소를 알아내면, 브라우저는 해당 IP 주소와 포트(HTTP는 80, HTTPS는 443)를 사용하여 웹 서버와의 TCP 연결을 설정합니다. 이는 3-way handshake 과정을 통해 이루어집니다. HTTPS의 경우, TCP 연결 후 TLS/SSL 핸드셰이크를 통해 보안 채널을 설정합니다.</p>
-        </section>
+        <!-- Phase 2: Basic Agent -->
+        <a
+          href="playbook/02_agent_prototypes/01_map_reduce_agent.md"
+          class="card"
+        >
+          <div style="margin-bottom: 10px">
+            <span class="tag completed">Completed</span>
+            <span class="tag">Pattern</span>
+          </div>
+          <h3>2. Map-Reduce Summarizer</h3>
+          <p>
+            긴 문서를 처리하기 위한 Map-Reduce 패턴 구현. Worker/Manager
+            페르소나 분리 설계.
+          </p>
+        </a>
 
-        <section>
-            <h2>4. HTTP 요청 및 응답 (HTTP Request & Response)</h2>
-            <p>TCP 연결이 성공적으로 수립되면, 브라우저는 웹 서버에 HTTP 요청을 보냅니다. 이 요청에는 GET 또는 POST와 같은 메서드, 요청할 리소스의 경로, HTTP 헤더(사용자 에이전트, 캐시 제어 등) 등이 포함됩니다. 서버는 요청을 처리하고 HTTP 응답을 브라우저로 보냅니다. 응답에는 상태 코드(예: 200 OK, 404 Not Found), 응답 헤더, 그리고 요청한 웹 페이지의 내용(HTML, CSS, JavaScript, 이미지 등)이 포함됩니다.</p>
-        </section>
+        <!-- Phase 3: Recursive Agent -->
+        <a href="playbook/02_agent_prototypes/02_recursive_dom.md" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag inprogress">In Progress</span>
+            <span class="tag">Architecture</span>
+          </div>
+          <h3>3. Recursive DOM Agent</h3>
+          <p>
+            DOM Tree 구조를 활용한 Context 관리 및 재귀적 문제 해결 에이전트
+            설계 (RDA).
+          </p>
+        </a>
 
-        <section>
-            <h2>5. HTML 파싱 및 DOM 트리 구축 (HTML Parsing & DOM Tree Construction)</h2>
-            <p>브라우저는 서버로부터 받은 HTML 데이터를 파싱하여 DOM(Document Object Model) 트리를 구축합니다. DOM 트리는 HTML 문서의 논리적인 구조를 나타내는 객체 모델입니다. HTML 파서는 HTML 태그를 토큰화하고, 이 토큰들을 노드 객체로 변환하여 트리를 형성합니다.</p>
-        </section>
+        <!-- Phase 4: Future -->
+        <a href="playbook/03_future_designs/01_visual_replay.md" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag planned">Planned</span>
+            <span class="tag">Tooling</span>
+          </div>
+          <h3>4. Visual Replay System</h3>
+          <p>
+            에이전트의 사고 과정(Chain of Thought)과 도구 사용 로그를
+            타임라인으로 시각화하는 도구 개발.
+          </p>
+        </a>
+      </div>
 
-        <section>
-            <h2>6. CSS 파싱 및 CSSOM 트리 구축 (CSS Parsing & CSSOM Tree Construction)</h2>
-            <p>HTML 파싱 중 <code>&lt;link&gt;</code> 태그나 <code>&lt;style&gt;</code> 태그를 만나면, 브라우저는 CSS 데이터를 파싱하여 CSSOM(CSS Object Model) 트리를 구축합니다. CSSOM 트리는 웹 페이지의 모든 스타일 정보를 포함하는 객체 모델입니다. 이 트리는 DOM 트리의 각 노드에 어떤 스타일이 적용되어야 하는지를 정의합니다.</p>
-        </section>
+      <h2 style="margin-top: 50px">📚 Engineering Appendix</h2>
+      <div class="grid">
+        <a href="playbook/99_appendix/llm_inference.html" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag completed">Theory</span>
+            <span class="tag">AI System</span>
+          </div>
+          <h3>LLM Inference Mechanics</h3>
+          <p>
+            Prefill(Compute-bound)과 Decode(Memory-bound) 단계의 상세 분석 및
+            최적화 포인트.
+          </p>
+        </a>
 
-        <section>
-            <h2>7. 렌더 트리 구축 (Render Tree Construction)</h2>
-            <p>DOM 트리와 CSSOM 트리가 모두 구축되면, 브라우저는 이 두 트리를 결합하여 렌더 트리(Render Tree)를 생성합니다. 렌더 트리는 페이지에 표시될 모든 시각적 요소(노드)를 포함하며, 각 노드의 계산된 스타일 정보도 함께 가집니다. <code>display: none;</code> 속성을 가진 요소처럼 화면에 보이지 않는 요소는 렌더 트리에 포함되지 않습니다.</p>
-        </section>
+        <a href="playbook/99_appendix/cheat_sheets_linux.html" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag completed">Reference</span>
+            <span class="tag">OS/Kernel</span>
+          </div>
+          <h3>Linux Kernel & Memory</h3>
+          <p>
+            이기종 컴퓨팅 환경에서의 메모리 관리, 가상 메모리, 그리고 CPU-GPU
+            통합 메모리 모델.
+          </p>
+        </a>
 
-        <section>
-            <h2>8. 레이아웃 (Layout / Reflow)</h2>
-            <p>렌더 트리가 구축되면, 브라우저는 각 렌더 트리의 노드에 대해 정확한 위치와 크기를 계산합니다. 이 과정을 레이아웃 또는 리플로우(Reflow)라고 합니다. 이 단계에서 요소들이 화면의 어느 위치에 어떤 크기로 배치될지 결정됩니다. 뷰포트 내의 상대적인 위치와 크기가 계산됩니다.</p>
-        </section>
+        <a href="playbook/99_appendix/gpu_programming.html" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag completed">Reference</span>
+            <span class="tag">CUDA/HPC</span>
+          </div>
+          <h3>GPU Programming (cuTile)</h3>
+          <p>
+            GPU 아키텍처의 이해, 메모리 계층 구조, 그리고 Tiling을 통한 최적화
+            기법(cuTile).
+          </p>
+        </a>
 
-        <section>
-            <h2>9. 페인팅 (Painting)</h2>
-            <p>레이아웃 단계에서 계산된 위치와 크기를 바탕으로, 브라우저는 렌더 트리의 각 노드를 실제 픽셀로 변환하여 화면에 그립니다. 이 과정에서 텍스트, 색상, 이미지, 테두리, 그림자 등 모든 시각적 요소가 그려집니다. 이 작업은 여러 레이어에서 이루어질 수 있습니다.</p>
-        </section>
+        <a href="playbook/99_appendix/how_browser_works.html" class="card">
+          <div style="margin-bottom: 10px">
+            <span class="tag completed">Reference</span>
+            <span class="tag">Web Engine</span>
+          </div>
+          <h3>Browser Internals</h3>
+          <p>
+            URL 입력부터 DOM 트리 구축, 레이아웃, 페인팅까지 브라우저의 내부
+            렌더링 파이프라인.
+          </p>
+        </a>
+      </div>
 
-        <section>
-            <h2>10. 합성 (Compositing)</h2>
-            <p>마지막으로, 브라우저는 페인팅 단계에서 생성된 여러 레이어들을 하나로 합쳐서 최종 이미지를 만듭니다. 이 최종 이미지가 사용자에게 브라우저 화면에 표시됩니다. 이 과정을 통해 페이지의 스크롤, 애니메이션 등의 동적인 요소들이 효율적으로 처리될 수 있습니다.</p>
-        </section>
-
-        <p>이러한 복잡한 단계를 거쳐 사용자는 웹 페이지를 빠르고 부드럽게 경험할 수 있습니다. 각 단계의 최적화는 웹 성능에 직접적인 영향을 미칩니다.</p>
+      <footer
+        style="
+          margin-top: 50px;
+          text-align: center;
+          font-size: 0.8rem;
+          color: #8b949e;
+        "
+      >
+        <p>Generated by Gemini CLI Agent | Local Path: D:\code\dom_agent</p>
+      </footer>
     </div>
-</body>
+  </body>
 </html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Inference: Prefill & Decode</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 35px;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+        .concept-box {
+            background-color: #f0f7fb;
+            border: 1px solid #d6e9c6;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .tag-compute {
+            display: inline-block;
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .tag-memory {
+            display: inline-block;
+            background: #fbe9e7;
+            color: #d84315;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LLM Inference Mechanics:<br>Prefill vs Decode</h1>
+        
+        <p>Large Language Model (LLM)의 추론 과정은 크게 <strong>Prefill</strong> 단계와 <strong>Decode</strong> 단계로 나뉩니다. 이 두 단계는 하드웨어 자원을 사용하는 특성이 완전히 다르기 때문에, 시스템 엔지니어링 관점에서 각각 다른 최적화 전략이 필요합니다.</p>
+
+        <section>
+            <h2>1. Prefill Phase (The Processing Stage)</h2>
+            <div class="concept-box">
+                <strong>정의:</strong> 사용자가 입력한 프롬프트(Prompt) 전체를 한 번에 처리하여, 초기 <strong>KV Cache(Key-Value Cache)</strong>를 생성하는 단계입니다. "Time to First Token (TTFT)" 성능을 결정합니다.
+            </div>
+            
+            <h3>🛠️ Engineering Characteristics</h3>
+            <ul>
+                <li><strong>Compute-Bound <span class="tag-compute">연산 중심</span>:</strong> 입력된 모든 토큰을 병렬로 처리(Matrix Multiplication)할 수 있습니다. 따라서 GPU의 연산 코어(CUDA Core/Tensor Core) 활용도가 매우 높습니다.</li>
+                <li><strong>Latency Sensitivity:</strong> 사용자가 답변을 받기까지의 대기 시간과 직결됩니다.</li>
+            </ul>
+
+            <h3>💡 Optimization Points</h3>
+            <ul>
+                <li><strong>Prompt Caching:</strong> 반복되는 시스템 프롬프트나 문서를 미리 계산하여 KV Cache에 저장해두면 재연산을 피할 수 있습니다.</li>
+                <li><strong>Batching:</strong> 병렬 처리 효율을 높이기 위해 여러 요청을 묶어서 처리하는 것이 유리합니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>2. Decode Phase (The Generation Stage)</h2>
+            <div class="concept-box">
+                <strong>정의:</strong> 첫 번째 토큰이 생성된 이후, 모델이 한 번에 하나씩 다음 토큰을 생성(Auto-regressive generation)하는 단계입니다. "Tokens Per Second (TPS)" 성능을 결정합니다.
+            </div>
+
+            <h3>🛠️ Engineering Characteristics</h3>
+            <ul>
+                <li><strong>Memory-Bound <span class="tag-memory">메모리 중심</span>:</strong> 각 토큰을 생성할 때마다 거대한 모델 가중치(Weights) 전체와 누적된 KV Cache를 메모리에서 불러와야 합니다. 연산량에 비해 데이터 이동량이 압도적으로 많습니다.</li>
+                <li><strong>Low Compute Utilization:</strong> GPU 코어는 데이터를 기다리느라(IDLE) 노는 시간이 많아집니다.</li>
+            </ul>
+
+            <h3>💡 Optimization Points</h3>
+            <ul>
+                <li><strong>KV Cache Optimization:</strong> PagedAttention(vLLM)과 같은 기술로 메모리 파편화를 줄여야 합니다.</li>
+                <li><strong>Quantization (양자화):</strong> 모델 가중치를 FP16에서 INT8, INT4로 줄여 메모리 대역폭 요구량을 낮춥니다.</li>
+                <li><strong>Speculative Decoding:</strong> 작은 모델이 미리 여러 토큰을 추측하고, 큰 모델이 검증하는 방식으로 메모리 접근 횟수를 줄입니다.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. Summary & Comparison</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Prefill Phase</th>
+                        <th>Decode Phase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>주 작업</strong></td>
+                        <td>프롬프트 이해 및 초기 상태 생성</td>
+                        <td>한 글자씩 답변 생성</td>
+                    </tr>
+                    <tr>
+                        <td><strong>병목 지점 (Bottleneck)</strong></td>
+                        <td><span class="tag-compute">Compute (FLOPS)</span></td>
+                        <td><span class="tag-memory">Memory Bandwidth (GB/s)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>병렬성</strong></td>
+                        <td>높음 (모든 입력 토큰 동시 처리)</td>
+                        <td>낮음 (순차적 의존성)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>주요 지표</strong></td>
+                        <td>Time to First Token (TTFT)</td>
+                        <td>Tokens Per Second (TPS)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <p style="margin-top: 40px; color: #666; font-size: 0.9em; text-align: center;">
+            Understanding these two phases is crucial for building efficient AI systems, especially when sizing GPUs and designing serving architectures.
+        </p>
+    </div>
+</body>
+</html>

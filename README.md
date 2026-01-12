@@ -55,7 +55,24 @@ graph TD
     Tools \--\>|Search| Docs\[MD/HTML Files\]  
     Tools \--\>|Write| FileSystem\[Project Root\]
 
-## **🚀 Getting Started**
+
+## 🚀 시작하기
+
+### 1. 요구 사항 설치
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Ollama 모델 준비
+본 프로젝트는 기본적으로 `gemma3:4b` 모델을 사용합니다.
+```bash
+ollama pull gemma3:4b
+```
+
+### 3. 에이전트 실행
+```bash
+python agent.py --file your_document.md
+```
 
 ### **1\. Prerequisites**
 

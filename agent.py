@@ -1,107 +1,146 @@
-import os
+import ollama
+import json
 import sys
-import time
-import subprocess
-from io import StringIO
-from contextlib import redirect_stdout
+import os
+from rich.console import Console
+from rich.prompt import Prompt
+from dom_env import DocumentEnv
 
-try:
-    import google.generativeai as genai
-except ImportError:
-    !pip install -q -U google-generativeai
-    import google.generativeai as genai
+console = Console()
 
-from google.colab import userdata
+# 1. 사용할 도구(Tools) 정의
+dom_tools = [
+    {
+        'type': 'function',
+        'function': {
+            'name': 'get_structure',
+            'description': '문서의 전체 목차 구조(ID, 태그)를 확인합니다. 탐색 전에 반드시 먼저 호출하여 지도를 확보해야 합니다.',
+            'parameters': {
+                'type': 'object', 
+                'properties': {
+                    'root_selector': {
+                        'type': 'string', 
+                        'description': '특정 부분만 보고 싶을 때 사용 (선택 사항). 생략하면 전체를 봅니다.'
+                    }
+                }
+            }
+        }
+    },
+    {
+        'type': 'function',
+        'function': {
+            'name': 'read_node',
+            'description': 'CSS Selector를 사용하여 특정 섹션의 구체적인 텍스트 내용을 읽습니다.',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'selector': {
+                        'type': 'string', 
+                        'description': '읽을 대상의 CSS Selector (예: #intro, section > title)'
+                    }
+                },
+                'required': ['selector']
+            }
+        }
+    },
+    {
+        'type': 'function',
+        'function': {
+            'name': 'map_reduce',
+            'description': '여러 섹션이나 항목(List of items)을 한 번에 처리해야 할 때 사용합니다. (Large Query 처리용) Selector로 여러 요소를 선택하면, 각 요소마다 하위 에이전트가 실행되어 결과를 모아줍니다.',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'selector': {
+                        'type': 'string',
+                        'description': '반복할 대상들의 CSS Selector (예: section, step, li)'
+                    },
+                    'sub_query': {
+                        'type': 'string',
+                        'description': '각 대상에게 수행할 개별 지시사항 (예: 이 항목을 요약해줘, 여기서 날짜를 추출해줘)'
+                    }
+                },
+                'required': ['selector', 'sub_query']
+            }
+        }
+    }
+]
 
-# ==============================================================================
-# 1. Environment & Tool Abstraction (환경과 도구)
-# ==============================================================================
-class Environment:
-    """Colab 실행 환경을 캡슐화"""
-    def __init__(self):
-        self.context = {} # 실행 컨텍스트 (변수 저장소)
+def run_agent(model_name="gemma3:4b", file_path=None):
+    # 컨텍스트 로드
+    if file_path and os.path.exists(file_path):
+        console.print(f"[bold green]📂 Loading context from: {file_path}[/bold green]")
+        env = DocumentEnv.from_file(file_path)
+    else:
+        console.print("[yellow]⚠️ No valid file provided. Using sample context.[/yellow]")
+        sample_xml = """
+        <doc id="manual">
+            <header id="top"><title>Recursive DOM Agent Manual</title></header>
+            <section id="chap1"><title>Chapter 1: Concept</title><p>Treat context as a database.</p></section>
+            <section id="chap2"><title>Chapter 2: Implementation</title><step>Install Ollama</step></section>
+        </doc>
+        """
+        env = DocumentEnv(sample_xml)
+    
+    messages = [{'role': 'system', 'content': '당신은 문서를 탐색하여 사용자의 질문에 답하는 에이전트입니다. 문서를 보려면 반드시 도구를 사용해야 합니다.'}]
 
-    def get_file_structure(self):
-        try:
-            return subprocess.getoutput("find . -maxdepth 2 -not -path '*/.*'")
-        except:
-            return "Unknown"
+    console.print(f"[bold green]🤖 Recursive DOM Agent Started ({model_name})[/bold green]")
+    console.print("[dim]Type 'exit' to quit.[/dim]\n")
 
-    def execute_python(self, code):
-        """Python 코드를 실행하고 결과를 반환"""
-        buffer = StringIO()
-        try:
-            with redirect_stdout(buffer):
-                exec_globals = globals().copy()
-                exec_globals.update(self.context)
-                exec(code, exec_globals, self.context)
-            result = buffer.getvalue()
-            return f"[SUCCESS]\n{result if result.strip() else '(No Output)'}"
-        except Exception as e:
-            return f"[ERROR]\n{e}"
+    while True:
+        user_input = Prompt.ask("[bold cyan]User[/bold cyan]")
+        if user_input.lower() in ['exit', 'quit']:
+            break
 
-# ==============================================================================
-# 2. Agent Class (독립적인 작업자)
-# ==============================================================================
-class Agent:
-    def __init__(self, name, model_name="gemini-1.5-flash"):
-        self.name = name
-        self.env = Environment()
-        self.model = self._setup_model(model_name)
-        self.chat = self.model.start_chat(history=[])
-        
-    def _setup_model(self, model_name):
-        # (기존의 모델 자동 탐색 로직을 여기에 포함)
-        # 간소화를 위해 직접 지정, 실제론 위에서 짠 자동 탐색 로직 사용 권장
-        return genai.GenerativeModel(
-            model_name=model_name,
-            system_instruction=f"""
-            당신은 '{self.name}'입니다. 
-            주어진 목표를 달성하기 위해 Python 코드를 작성하고 실행하세요.
-            """
+        messages.append({'role': 'user', 'content': user_input})
+
+        # LLM 호출 (도구 포함)
+        response = ollama.chat(
+            model=model_name,
+            messages=messages,
+            tools=dom_tools
         )
+        
+        msg = response['message']
+        messages.append(msg) # 대화 내역 저장
 
-    def run(self, goal, max_turns=5):
-        print(f"\n🤖 **Agent [{self.name}] Started Goal:** {goal}")
-        
-        current_msg = f"목표: {goal}\n현재 파일 구조:\n{self.env.get_file_structure()}"
-        
-        for turn in range(max_turns):
-            print(f"   ↳ Turn {turn+1} thinking...", end="")
+        # 도구 호출이 발생했는지 확인
+        if msg.get('tool_calls'):
+            console.print(f"[yellow]⚡ Model decided to use tools: {len(msg['tool_calls'])} calls[/yellow]")
             
-            # API 호출 (재시도 로직 포함 필요)
-            try:
-                resp = self.chat.send_message(current_msg)
-                content = resp.text
-                print(" Done.")
-            except Exception as e:
-                print(f" Error: {e}")
-                break
-
-            if "```python" in content:
-                code = content.split("```python")[1].split("```")[0].strip()
-                result = self.env.execute_python(code)
-                print(f"     [Exec] Result length: {len(result)}")
-                current_msg = f"실행 결과:\n{result}\n다음 단계는?"
+            for tool in msg['tool_calls']:
+                fn_name = tool['function']['name']
+                args = tool['function']['arguments']
                 
-                if "DONE" in content:
-                    print(f"✅ **Agent [{self.name}] Finished!**")
-                    return "DONE"
-            else:
-                current_msg = "Python 코드로 행동하세요."
-                if "DONE" in content:
-                    return "DONE"
+                console.print(f"  [dim]Executing {fn_name}({args})...[/dim]")
+                
+                # 도구 실행
+                result_content = ""
+                if fn_name == 'get_structure':
+                    result_content = env.get_structure(args.get('root_selector'))
+                elif fn_name == 'read_node':
+                    result_content = env.read_node(args['selector'])
+                elif fn_name == 'map_reduce':
+                    result_content = env.map_reduce(args['selector'], args['sub_query'])
+                
+                # 결과 출력
+                console.print(f"  [dim]Result length: {len(result_content)} chars[/dim]")
+                
+                # 결과를 LLM에게 반환 (Role: tool)
+                messages.append({
+                    'role': 'tool',
+                    'content': str(result_content),
+                })
+            
+            # 도구 결과 포함하여 다시 LLM 호출 (최종 답변 생성)
+            final_response = ollama.chat(model=model_name, messages=messages)
+            console.print(f"\n[bold green]Agent:[/bold green] {final_response['message']['content']}\n")
+            messages.append(final_response['message'])
+            
+        else:
+            # 도구 없이 바로 답변한 경우
+            console.print(f"\n[bold green]Agent:[/bold green] {msg['content']}\n")
 
-# ==============================================================================
-# 3. Main Execution
-# ==============================================================================
-# API 키 설정 (이전과 동일하게 처리)
-try:
-    api_key = userdata.get('GEMINI_API_KEY')
-except:
-    api_key = input("API Key: ")
-genai.configure(api_key=api_key)
-
-# 메인 실행
-root_agent = Agent("RootBuilder")
-root_agent.run("현재 폴더에 'hello_world.py'를 만들고 'print(hello)'를 작성해.")
+if __name__ == "__main__":
+    target_file = sys.argv[1] if len(sys.argv) > 1 else None
+    run_agent(file_path=target_file)
