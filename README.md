@@ -1,176 +1,216 @@
-# **Interactive Recursive Build Agent (IRBA) 🐚**
+# Meta Build-Agent Kernel (MBAK)
+## to specify and build the Build-Agent itself and build other domain agent
+**"A Formal Spec-Driven, Recursively Self-Improving Agent Kernel"**
 
-**"Context-Aware Recursive Shell for Local Web Building"**
+This project implements a **Programmable and Verifiable Agent Kernel**. Unlike traditional agent frameworks that focus on "orchestration" (chaining prompts), this system focuses on **"Correctness & Synthesis"**. It treats Agent Logic as an artifact that must be **compiled from a formal specification (AISpec)**, **verified against test vectors**, and **executed within an effect-isolated runtime**.
 
-IRBA는 로컬 LLM(Ollama)과 Python REPL을 결합하여, **대화형 쉘(Shell)** 환경에서 복잡한 소프트웨어 구축 작업을 수행하는 에이전트 시스템입니다.
+## 🏗 Core Definition
 
-**In-Context Learning**과 **Recursive Task Decomposition(재귀적 작업 분할)** 철학을 바탕으로, 사용자의 목표(Goal)를 하위 작업으로 쪼개고(Divide), 각 작업을 수행하는 하위 에이전트(Sub-Agent)를 생성(Spawn)하여 최종 결과물을 만들어냅니다(Conquer).
+> **"It is like Terraform for AI Agents, but instead of cloud infrastructure, it manages Software Logic."**
 
-주요 응용 분야는 \*\*"발표 자료(Markdown)를 반응형 웹 페이지(HTML/JS)로 변환하는 빌드 시스템"\*\*입니다.
+The system operates on three fundamental pillars:
 
-## **✨ Key Features**
+1.  **Compiler, Not Interpreter:** It "compiles" a **Formal Spec (`SPEC.md`)** into an **Executable Agent (`src/*.py`)** using an LLM as the code generator.
+2.  **Effect-Isolated Runtime:** It separates **Policy** (Decision) from **Runtime** (Execution) using **Algebraic Effects**. Agents yield intents; the Kernel handles them.
+3.  **Recursive Fractal Design:** The system is capable of building itself. A "Build Agent" can define a sub-spec, spawn a "Sub-Build Agent" to implement it, verify it, and merge it back.
 
-### **1\. 🧠 Local Intelligence (Ollama Driven)**
+---
 
-* 클라우드 API 의존 없이 \*\*로컬 GPU(RTX 5070 등)\*\*를 활용합니다.  
-* llama3.2:3b, qwen2.5:3b 등 경량화된 고성능 모델을 스위칭하며 사용 가능합니다.
+## 📚 Terminology & Concepts
 
-### **2\. 🐚 Interactive REPL Shell**
+### 1. The "Inside vs. Outside" Architecture
 
-* 리눅스 쉘과 유사한 대화형 인터페이스를 제공합니다.  
-* /add, /ls, /search 등의 명령어로 \*\*Context(작업 기억)\*\*를 동적으로 관리합니다.  
-* LLM이 작성한 코드를 즉시 실행하고 결과를 피드백 받습니다.
+This system is designed to bridge the gap between High-Level Intent and Low-Level Execution.
 
-### **3\. 🌲 Recursive "Divide & Conquer"**
+| Realm | **Outside the System** | **Inside the System** |
+| :--- | :--- | :--- |
+| **Agent** | **The Architect** | **The Contractor** |
+| **Intelligence** | Frontier Models (GPT-4o, Claude 3.5) + Humans | Local Models (Llama 3, Gemma 2, Qwen 2.5) |
+| **Role** | Define **Specs** and **Constraints**. | Implement Logic, Fix Bugs, Pass Tests. |
+| **Artifact** | `SPEC.*.md`, `tests.*.yaml` | `src/*.py`, `build/*.html`, `trace.json` |
 
-* 에이전트가 문제를 해결하기 어렵다고 판단하면, 스스로 \*\*하위 에이전트(Sub-Agent)\*\*를 호출합니다.  
-* 예: "웹사이트를 만들어" \-\> \[Agent A: HTML 구조 설계\] \+ \[Agent B: CSS 스타일링\] \+ \[Agent C: JS 로직\]
+### 2. Semantic IR (AISpec)
 
-### **4\. 🔍 Local Document Search (RAG Lite)**
+The **Intermediate Representation (IR)** of our system. It is a Domain Specific Language (DSL) that defines *what* an agent should do, without defining *how*.
 
-* 프로젝트 내의 **Markdown** 및 **HTML** 문서를 의미 기반(Semantic) 또는 키워드 기반으로 검색합니다.  
-* 방대한 문서에서 필요한 부분만 Context에 로드하여 LLM의 Window 한계를 극복합니다.
+*   **Format:** `SPEC.system.component.md` (Lark-based DSL)
+*   **Content:** Interfaces, State Definitions, Invariants, Capabilities.
+*   **Example:**
+    ```aispec
+    system WebBuilder {
+        component Header {
+            state { title: String, color: Hex }
+            invariant: "Contrast ratio > 4.5";
+        }
+    }
+    ```
 
-## **🛠 Architecture**
+### 3. Verification Vectors
 
-시스템은 **CARS (Context-Aware Recursive Shell)** 아키텍처를 따릅니다.
+Language-agnostic definitions of expected behavior. These are the "Unit Tests" for the Spec.
 
-graph TD  
-    User\[User Command\] \--\> Shell\[IRBA Shell (REPL)\]  
-    Shell \--\> Context\[Context Manager (Memory)\]  
-    Shell \--\> Tools\[Tool Box\]  
-      
-    subgraph "Agent Runtime"  
-        Brain\[Local LLM (Ollama)\]  
-        Exec\[Python Executor\]  
-    end  
-      
-    Shell \<--\> Brain  
-    Brain \--\>|Generate Code| Exec  
-    Exec \--\>|Result| Brain  
-      
-    Brain \--\>|Delegate Task| SubAgent\[Child Agent\]  
-    SubAgent \--\>|Return Result| Brain  
-      
-    Tools \--\>|Search| Docs\[MD/HTML Files\]  
-    Tools \--\>|Write| FileSystem\[Project Root\]
+*   **Format:** `tests.system.component.yaml`
+*   **Content:** Input State -> Expected Output State / Effect.
+*   **Example:**
+    ```yaml
+    input: { title: "Hello" }
+    expected: { html: "<h1>Hello</h1>" }
+    ```
 
+### 4. Algebraic Effects
 
-## 🚀 시작하기
+Side effects are treated as data values. Agents do not `open()` files or `request()` URLs directly. They yield an **Effect Object**.
 
-### 1. 요구 사항 설치
+*   `Effect`: An intent (e.g., `WriteFile`, `Browser.Screenshot`).
+*   `Handler`: The kernel component that executes the intent (e.g., `FileSystemHandler`, `PlaywrightHandler`).
+*   **Benefit:** 100% Deterministic Replayability.
+
+---
+
+## 🛠 Usage & Workflow
+
+The system runs a **REPL-driven Build Loop**:
+
 ```bash
-pip install -r requirements.txt
+# Start the Kernel Shell
+$ python spec_repl.py
+
+# 1. Load a Specification (The Blueprint)
+(kernel) > load specs/SPEC.web_agent.md
+[Kernel] Loaded System: WebBuilder
+
+# 2. Verify Structural Integrity
+(kernel) > verify structure
+[Check] Component 'Header' ... MISSING implementation.
+
+# 3. Auto-Implement (The Build)
+(kernel) > implement
+[Builder] Generating code for 'Header' using Local LLM... Done.
+
+# 4. Verify Behavior (The Test)
+(kernel) > verify behavior
+[Pytest] test_header_rendering ... FAIL (Contrast ratio too low)
+
+# 5. Recursive Repair
+(kernel) > repair
+[Builder] Reading error log... Adjusting CSS color... Done.
+(kernel) > verify behavior
+[Pytest] test_header_rendering ... PASS
 ```
 
-### 2. Ollama 모델 준비
-본 프로젝트는 기본적으로 `gemma3:4b` 모델을 사용합니다.
-```bash
-ollama pull gemma3:4b
+---
+
+## 🌍 Generic Application Domains
+
+While built for Software Engineering, this kernel is a **Universal Factory** for any domain that requires "Spec -> Artifact -> Verification".
+
+| Domain | Spec (AISpec) | Artifact | Verification |
+| :--- | :--- | :--- | :--- |
+| **Web Dev** | UI Component / User Flow | HTML / React / Vue | Playwright / Lighthouse |
+| **Data Eng** | Schema / Pipeline Logic | SQL / Airflow DAGs | Data Quality Tests |
+| **DevOps** | Infrastructure State | Terraform / K8s Manifests | Policy-as-Code (OPA) |
+| **Reverse Eng** | Decompiled Source | High-Level AISpec | Structural Similarity |
+
+### LLM-Based Reverse Engineering
+The system can run in reverse: **Code -> Spec**.
+1.  **Input:** Legacy Source Code.
+2.  **Process:** The Kernel uses an LLM to extract the "Implied Spec" (State, Invariants).
+3.  **Output:** `SPEC.legacy.md`.
+4.  **Value:** This Spec can then be used to re-implement the system in a modern stack (e.g., COBOL -> Spec -> Python).
+
+---
+
+## 📂 Project Structure
+
+```text
+/
+├── compiler.py        # AISpec Parser (Lark)
+├── verifier.py        # Static & Dynamic Verification Engine
+├── builder.py         # LLM Code Generator & Repairer
+├── runtime.py         # Effect-Isolated Execution Kernel
+├── spec_repl.py       # Interactive Shell (The UI)
+├── specs/             # The Source of Truth (AISpecs)
+│   ├── SPEC.root.md
+│   └── ...
+├── tests/             # The Guardrails (YAML Vectors)
+│   ├── tests.root.yaml
+│   └── ...
+└── src/               # The Generated Implementation
+    └── ...
 ```
 
-### 3. 에이전트 실행
-```bash
-python agent.py --file your_document.md
-```
+---
 
-### **1\. Prerequisites**
+## 🚀 Getting Started
 
-* **Python 3.10+**  
-* **Ollama** 설치 및 서비스 실행 중일 것  
-* **NVIDIA GPU** (권장, CUDA 설정 완료 시)
+1.  **Install Dependencies:** `pip install -r requirements.txt` (requires `lark`, `pytest`, `pyyaml`)
+2.  **Run the Shell:** `python spec_repl.py`
+3.  **Define your first Spec:** Create `specs/SPEC.hello.md`.
+4.  **Build it:** Run `load specs/SPEC.hello.md` then `implement`.
 
-### **2\. Installation**
+---
 
-\# 1\. Clone the repository  
-git clone \[https://github.com/your-username/interactive-recursive-build-agent.git\](https://github.com/your-username/interactive-recursive-build-agent.git)  
-cd interactive-recursive-build-agent
+## Appendix: Generalizing to Other Domains
 
-\# 2\. Create Virtual Environment  
-python \-m venv venv  
-source venv/bin/activate  \# Windows: venv\\Scripts\\activate
+Because the system is "Spec In -> Artifact Out", it can apply to almost anything:
 
-\# 3\. Install Dependencies  
-pip install \-r requirements.txt
+| Domain | Spec (AISpec) | Artifact | Verification |
+| :--- | :--- | :--- | :--- |
+| **Web Dev** | UI Component / User Flow | HTML / React / Vue | Playwright / Storybook / Lighthouse |
+| **Data Eng** | Schema / Pipeline Logic | SQL / Airflow DAGs | Data Quality Tests (GreatExpectations) |
+| **DevOps** | Infrastructure State | Terraform / K8s Manifests | `terraform plan` / Policy-as-Code (OPA) |
+| **Research** | Experiment Protocol | Python / Jupyter Notebook | Statistical Significance Check |
 
-### **3\. Model Setup (Ollama)**
+### Conclusion: The Build-Agent is generic.
 
-이 프로젝트는 아래 모델들에 최적화되어 있습니다. 터미널에서 미리 다운로드해주세요.
+By defining the system as **"Programmable and Verifiable"**, you can use it as a **"Universal Agent Factory"**.
+*   The **"Blueprints"** (AISpec) change based on the product (Web, Backend, Data).
+*   The **"Quality Control"** (Verification) changes based on the product.
+*   But the **"Factory Floor"** (The Agent Kernel: Parse -> Build -> Verify -> Refine) remains exactly the same.
 
-\# General Instruction & Reasoning  
-ollama pull llama3.2:3b
+---
 
-\# Coding Specialist  
-ollama pull qwen2.5:3b
+## Appendix: Why "Kernel"?
 
-## **💻 Usage**
+"Kernel"이라는 용어는 이 시스템을 단순한 **'도구(Tool)'**나 **'프레임워크(Framework)'**가 아닌, **'자원 관리 및 실행 제어의 핵심 엔진'**으로 정의하기 때문에 사용합니다.
 
-### **Start the Shell**
+컴퓨터 과학에서 **커널(Kernel)**이라고 부르기 위해서는 다음과 같은 **핵심 역할(Criteria)**을 수행해야 합니다. 우리 시스템이 이 조건들을 어떻게 만족하는지 설명해 드립니다.
 
-프로젝트 루트에서 에이전트를 실행합니다.
+### **1. 자원 관리 및 추상화 (Resource Abstraction)**
 
-python main.py
+*   **OS Kernel의 역할:** CPU, 메모리, I/O 장치(하드웨어)를 추상화하여 프로세스에 제공합니다.
+*   **MBAK Kernel의 역할:** **LLM(지능 자원)**과 **도구(File, Network)**를 추상화하여 에이전트(프로세스)에 제공합니다.
+    *   에이전트는 직접 `open()`을 호출하지 못합니다. 커널에게 `FileSystemEffect`를 요청해야 합니다.
+    *   에이전트는 어떤 LLM이 도는지 모릅니다. 커널이 `LLM.generate` 요청을 받아 적절한 모델(Llama 3, GPT-4)에 배분합니다.
 
-### **Shell Commands**
+### **2. 격리 및 보호 (Isolation & Protection)**
 
-| Command | Description |
-| :---- | :---- |
-| /model \<name\> | 사용할 Ollama 모델 변경 (예: /model qwen2.5:3b) |
-| /add \<path\> | 파일/폴더를 Context(기억)에 추가 (Glob 지원) |
-| /search \<query\> | 로컬 MD/HTML 문서 검색 후 Context에 추가 |
-| /ls | 현재 Context에 로드된 파일 목록 확인 |
-| /clear | Context 초기화 |
-| /run \<goal\> | **\[메인 기능\]** 목표를 설정하고 Recursive Build 시작 |
-| /exit | 종료 |
+*   **OS Kernel의 역할:** 프로세스 간 메모리를 격리하고, 잘못된 프로그램이 시스템 전체를 망가뜨리지 않도록(Protection Ring) 보호합니다.
+*   **MBAK Kernel의 역할:** **에이전트의 논리(Policy)와 실행(Runtime)을 격리**합니다.
+    *   에이전트가 "파일 시스템 전체 삭제"라는 코드를 생성해도, 커널(Runtime)이 그 Effect를 거부하거나 Mocking하면 실행되지 않습니다.
+    *   **Sandboxing:** 에이전트가 생성한 코드는 커널이 관리하는 격리된 환경(REPL Sandbox) 내에서만 돕니다.
 
-## **🏗 Scenario: Presentation Web Builder**
+### **3. 스케줄링 및 제어 (Scheduling & Control)**
 
-**목표:** docs/presentation.md 파일을 읽어서, 슬라이드쇼가 가능한 index.html 웹 페이지 만들기.
+*   **OS Kernel의 역할:** 여러 프로세스에 CPU 시간을 분배하고 실행 순서를 제어합니다.
+*   **MBAK Kernel의 역할:** **재귀적 작업(Task)의 순서를 제어**합니다.
+    *   에이전트가 하위 에이전트를 `recurse()`로 호출할 때, 커널은 스택을 관리하고, 깊이(Depth) 제한을 걸고, 무한 루프를 방지합니다.
+    *   Verification 실패 시 재시도(Retry) 횟수를 제어합니다.
 
-**Step 1: 쉘 실행 및 Context 로드**
+### **4. 시스템 호출 인터페이스 (Syscall Interface)**
 
-(irba) root@build:\~$ /add docs/presentation.md  
-\[System\] Added 'docs/presentation.md' to context.
+*   **OS Kernel의 역할:** `read()`, `write()`, `fork()` 같은 표준화된 인터페이스(Syscall)를 제공합니다.
+*   **MBAK Kernel의 역할:** **Algebraic Effects**가 바로 Syscall입니다.
+    *   `perform(WriteFile)`
+    *   `perform(GenerateCode)`
+    *   `perform(Verify)`
+    *   이들은 에이전트가 커널에 요청하는 표준화된 시스템 호출입니다.
 
-**Step 2: 참조할 디자인/템플릿 검색 (Optional)**
+### **결론: 왜 "Framework"가 아니고 "Kernel"인가?**
 
-(irba) root@build:\~$ /search "slide template html"  
-\[Search\] Found 'templates/simple\_slide.html'. Added to context.
+*   **Framework**는 개발자가 코드를 채워 넣는 **'틀'**입니다. (예: LangChain - 개발자가 Chain을 짬)
+*   **Kernel**은 실행을 통제하고 자원을 관리하는 **'엔진'**입니다. (예: MBAK - 에이전트가 Spec을 던지면 커널이 안전하게 돌림)
 
-**Step 3: 빌드 명령 실행 (Recursive Process)**
+우리는 에이전트가 마음대로 행동하지 못하도록 **엄격하게 통제하고(Runtime), 자원을 추상화(Effects)하고, 안전을 보장(Verification)**하기 때문에 **"Build-Agent Kernel"**이라는 용어가 정확합니다.
 
-(irba) root@build:\~$ /run "presentation.md 내용을 바탕으로 Reveal.js 스타일의 웹 프레젠테이션 index.html을 만들어줘."
-
-🤖 \[Root Agent\]: 목표 분석 중...   
-   \-\> 작업이 복잡하여 하위 에이전트에게 위임합니다.  
-     
-   🐣 \[Sub-Agent 1 (Parser)\]: Markdown 파싱 및 섹션 분리 담당  
-      ... (Python 코드 실행: md 파일 읽기 및 JSON 구조화) ...  
-      ✅ 완료.
-
-   🐣 \[Sub-Agent 2 (Coder)\]: HTML/CSS 생성 담당  
-      ... (Python 코드 실행: 구조화된 데이터를 HTML 템플릿에 주입) ...  
-      ✅ 완료. 'index.html' 생성됨.
-
-🤖 \[Root Agent\]: 모든 하위 작업 완료. 결과물을 검증합니다.  
-✅ 최종 작업 완료. 브라우저에서 index.html을 확인하세요.
-
-## **🧩 Project Structure**
-
-.  
-├── main.py              \# Entry point (Shell Loop)  
-├── core/  
-│   ├── agent.py         \# Recursive Agent Class  
-│   ├── llm.py           \# Ollama Interface  
-│   ├── context.py       \# File & Memory Manager  
-│   └── executor.py      \# Python Code Sandbox  
-├── tools/  
-│   ├── search.py        \# Semantic Search (ChromaDB/BM25)  
-│   └── file\_ops.py      \# File System Operations  
-└── requirements.txt     \# Dependencies
-
-## **🛣 Roadmap**
-
-* \[ \] **State Persistence:** 에이전트의 작업 상태를 .irba 파일로 저장/복구 기능.  
-* \[ \] **Web Search Tool:** 로컬 문서뿐만 아니라 웹 검색(DuckDuckGo) 기능 연동.  
-* \[ \] **Sandbox Security:** Docker 기반의 코드 실행 환경 격리.
+**즉, 우리는 "에이전트를 위한 운영체제(OS)의 핵심부"를 만든 것입니다.**
