@@ -338,7 +338,7 @@ class SpecREPL(cmd.Cmd):
     def do_run(self, arg):
         """Run the component interactively. Usage: run Component [--mock] [args...]"""
         from . import semantic_kernel
-        from .handlers import LiteLLMHandler, SafeREPLHandler, FileSystemHandler, MockLLMHandler, MathHandler, UserInteractionHandler
+        from .handlers import LiteLLMHandler, SafeREPLHandler, FileSystemHandler, MockLLMHandler, MathHandler, UserInteractionHandler, ReasoningHandler
         from .runtime import Runtime
 
         if not self.current_spec:
@@ -380,6 +380,7 @@ class SpecREPL(cmd.Cmd):
             runtime.register_handler(FileSystemHandler())
             runtime.register_handler(MathHandler())
             runtime.register_handler(UserInteractionHandler())
+            runtime.register_handler(ReasoningHandler())
             
             # Set global runtime context so perform() works
             semantic_kernel._active_runtime = runtime

@@ -1,6 +1,6 @@
 from typing import List, Dict
 from kernel.semantic_kernel import perform
-from kernel.effects import Generate, LLMRequest, Reply, Listen, UserOutput, UserInput
+from kernel.effects import Generate, LLMRequest, Reply, Listen, UserOutput, UserInput, ReasoningTrace, TraceLog
 
 class Coach:
     def __init__(self):
@@ -19,6 +19,11 @@ class Coach:
         """Starts the interactive multi-turn coaching session."""
         
         # 1. Generate Dynamic Greeting based on Goal
+        perform(ReasoningTrace(TraceLog(
+            thought=f"I need to greet the user and establish context for goal: {self.state['goal']}",
+            plan={"action": "start_session", "sub_task": "greeting"}
+        )))
+        
         prompt = f"""
         You are an expert coach. The user's goal is: "{self.state['goal']}".
         Generate a warm, motivating greeting and ask an opening question to gauge their current state.
@@ -42,6 +47,11 @@ class Coach:
                 break
 
             self.state["history"].append(f"User: {user_input}")
+            
+            perform(ReasoningTrace(TraceLog(
+                thought=f"User said '{user_input}'. I need to guide them towards '{self.state['goal']}'.",
+                plan={"action": "start_session", "sub_task": "loop_response"}
+            )))
             
             # Construct Prompt with History
             history_text = "\n".join(self.state["history"][-10:]) # Keep context
@@ -77,6 +87,11 @@ class Coach:
         if not self.state["history"]:
             return "No session history available for analysis."
             
+        perform(ReasoningTrace(TraceLog(
+            thought="Analyzing session history to identify gaps between current state and goal.",
+            plan={"action": "provide_feedback"}
+        )))
+            
         history_text = "\n".join(self.state["history"])
         prompt = f"""
         Analyze the coaching session history below regarding the goal: "{self.state['goal']}".
@@ -98,6 +113,11 @@ class Coach:
         if current_level is None and target_level is None:
             if not self.state["history"]:
                 return "No session history to base the plan on. Please start a session first."
+            
+            perform(ReasoningTrace(TraceLog(
+                thought="Generating a concrete training plan based on the session insights.",
+                plan={"action": "generate_training_plan"}
+            )))
             
             history_text = "\n".join(self.state["history"])
             prompt = f"""
