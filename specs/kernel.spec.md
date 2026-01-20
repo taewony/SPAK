@@ -1,33 +1,34 @@
 meta {
     name = "SPAK_Kernel"
-    version = "0.5.0"
-    description = "The Spec-driven Programmable Agent Kernel with Reasoning Trace and Consistency Verification"
+    version = "0.6.0"
+    description = "The Spec-driven Programmable Agent Kernel with Autonomous Orchestration and Round-Trip Verification"
 }
 
 // --- Operational Contract ---
 contract AgentScope {
     supported_intents = [
-        "Agent Synthesis: Compiling Specs into executable Agents.",
-        "Verification: Ensuring Agents match their Specs.",
-        "Audit: Tracking and verifying agent reasoning consistency."
+        "Agent Synthesis: Compiling Specs into verifiable Python artifacts.",
+        "Autonomous Orchestration: Driving agents via Thought-Action-Observation loops.",
+        "Advanced Verification: Validating latent reasoning against symbolic PlanIR."
     ]
 
     success_criteria = [
-        "Compilation Success: Spec parses without errors.",
-        "Verification Pass: Implementation satisfies Spec and Tests.",
-        "Consistency Pass: Agent execution trace matches PlanIR."
+        "Semantic Fidelity: Agent actions match the intended PlanIR.",
+        "Effect Isolation: All side effects are mediated and logged.",
+        "Traceability: 100% of LLM interactions are captured in the TraceIR."
     ]
 
     autonomy {
         mode = "autonomous"
-        loop_interval = "5s"
+        loop_interval = "2s"
         max_steps = 100
     }
 }
 
 kernel SPAK_Kernel {
 
-    // 1. Definition of Side Effects (Algebraic Effects)
+    // --- 1. Algebraic Effects (The Syscall Interface) ---
+    
     effect LLM {
         operation generate(prompt: String) -> String;
     }
@@ -43,57 +44,52 @@ kernel SPAK_Kernel {
     }
 
     effect ReasoningTrace {
-        operation log(thought: String, plan: Map<String, String>, raw_response: String) -> Unit;
+        operation log(thought: String, plan: Map<String, Any>, raw_response: String) -> Unit;
     }
 
-    // 2. Core Components
+    // --- 2. Core Kernel Components ---
+
     component Compiler {
-        description: "Parses AgentSpec DSL into Semantic IR (AST)";
+        description: "Parses AgentSpec DSL into Semantic IR (AST).";
         function compile_file(path: String) -> String;
     }
 
+    component Orchestrator {
+        description: "The autonomous execution engine. Implements the Thought-Action-Observation loop.";
+        function run_loop(agent: Agent, goal: String) -> Result<String>;
+    }
+
     component Verifier {
-        description: "Enforces structural, behavioral, and semantic correctness";
+        description: "Enforces structural, behavioral, and semantic consistency.";
         function verify_structure(spec: String, src_dir: String) -> List<String>;
         function verify_behavior(test_path: String) -> List<String>;
         function verify_consistency(trace: List<String>, plan: String) -> Result<Float>;
     }
 
     component Builder {
-        description: "Interface to Large Language Models for Code Synthesis and Repair";
+        description: "Interface to LLMs for Code Synthesis, Test Generation, and Self-Repair.";
 
-        // This function uses LLM Effect
-        function implement_component(spec: String, context: String) -> String {
-            perform LLM.generate(context + spec)
-        }
-
-        function generate_tests(spec: String) -> String {
-            perform LLM.generate("Create tests for " + spec)
-        }
-
-        function fix_implementation(code: String, error_log: String) -> String {
-            perform LLM.generate("Fix this code: " + code + " Error: " + error_log)
-        }
+        function implement_component(spec: String, context: String) -> String;
+        function generate_tests(spec: String) -> String;
+        function fix_implementation(code: String, error_log: String) -> String;
     }
 
     component Runtime {
-        description: "Execution environment for built agents";
-        function run_component(name: String) -> String;
+        description: "The isolated environment where effects are resolved and state is managed.";
+        function handle_effect(effect: Effect) -> Any;
     }
     
-    // 3. Self-Evolution Workflow
+    // --- 3. Self-Evolution Workflows ---
+
     workflow SelfImprovement(goal: String) {
         step Analyze {
-            perform LLM.generate("Analyze current kernel performance against: " + goal)
+            perform LLM.generate("Analyze kernel performance against: " + goal)
         }
-        
         step Synthesize {
-            perform LLM.generate("Propose new kernel code")
+            perform LLM.generate("Propose optimized kernel implementation")
         }
-        
-        step Verify {
-            // New verification step in the loop
-            perform Verifier.verify_structure("specs/kernel.spec.md", "kernel")
+        step VerifyConsistency {
+            perform Verifier.verify_consistency(current_trace, "plans/kernel_upgrade.plan.yaml")
         }
     }
 }

@@ -238,3 +238,65 @@ To support the Research Analyst, the SPAK Kernel requires critical upgrades to r
 
   If you want to inject a system prompt into an Agent's execution, you would modify the Agent's implementation (e.g.,
   src/responder.py) to include a {"role": "system", "content": "..."} message in the LLMRequest.
+  
+  ---
+  ✦ You are absolutely correct. This exposes a subtle but critical distinction in Agency vs. Automation.
+
+  The Current Limitation
+  In the CoachingAgent example, the User (you) called the methods in Python:
+
+   app.start_session()       # User decided order
+   app.provide_feedback()    # User decided order
+   app.generate_training_plan() # User decided order
+  Because the Control Flow was external (User-driven), the ReasoningTrace we logged inside those methods only proves
+  that the Agent knew what it was doing locally, not that it planned the global workflow.
+
+  The consistency check passed because the trace happened to match the plan, but the Agency (the decision of what to do
+  next) resided in You, not the Agent.
+
+  ---
+
+  How to prove True Agency (Self-Directed Ordering)
+
+  To prove the Agent is reasoning about the order, we must move the control flow inside the Agent. This is exactly what
+  Level 3 (Workflows) and Level 5 (Recursive) are for.
+
+  The Solution: The `AutonomousLoop` (Again)
+
+  Remember the ResearchAgent demo (run_research.py)?
+  There, we did NOT call methods manually.
+  We just said: loop.run("Write a paper").
+
+  The Agent itself decided:
+   1. "I need to gather info." -> Called gather_info
+   2. "Now I need to analyze." -> Called analyze
+   3. "Now outline." -> Called create_outline
+
+  In that case, the Consistency Test proves the Agent's Agency.
+
+  How to upgrade `CoachingAgent` to use True Agency?
+
+  We need to wrap the Coach in an Autonomous Loop that drives the session, rather than you driving it via REPL method
+  calls.
+
+  **Proposal: `AutoCoach` Mode**
+
+  Instead of you calling methods, you would run:
+   app.run_autonomous_coaching("Master Python")
+
+  And the Agent would decide:
+   1. "I should start a session to understand the user." -> Calls start_session
+   2. (After session ends) "The user seems confused. I should analyze the gap." -> Calls provide_feedback
+   3. "Now I should give them a plan." -> Calls generate_training_plan
+
+  Would you like me to implement this `AutoCoach` mode to demonstrate *True* Round-Trip Consistency where the Agent owns
+  the ordering?
+  
+     1. New Component: `Orchestrator`: Formally defines the Autonomous Loop capability (the "Thought-Action-Observation"
+      engine) which is separate from the raw Runtime.
+   2. Refined `Verifier`: Explicitly includes the Consistency Verification (PlanIR vs. TraceIR) as a primary function.
+   3. Enhanced `Effect` Definitions:
+       * `ReasoningTrace`: Updated to include the raw_response from the local LLM, matching our implementation.
+       * `FileSystem`: Standardized to include list_files.
+   4. Workflow Update: The SelfImprovement workflow now includes a VerifyConsistency step, closing the loop on
+      autonomous self-audit.

@@ -68,13 +68,13 @@ class ConsistencyVerifier:
                     
                     if not missing_keywords:
                         found = True
-                        matches += 1
+                        matches += 1.0
                         report["details"].append(f"✅ Step '{plan_step.phase}': Matched action '{actual_action}' and thoughts.")
                     else:
                         # We found the action, but thoughts were insufficient.
                         # We consider this a 'Structural Match' but 'Semantic Fail'.
-                        # For scoring, maybe 0.5? For now, 0 matches but we advance.
-                        found = True # We found the step execution
+                        found = True 
+                        matches += 0.5 # Partial credit for finding the action
                         report["details"].append(f"⚠️ Step '{plan_step.phase}': Action matched, but missing keywords: {missing_keywords}")
                     
                     break # Stop looking for this step, move to next plan step
