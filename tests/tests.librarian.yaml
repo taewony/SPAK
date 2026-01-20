@@ -1,0 +1,9 @@
+system: ResearchAnalyst
+component: Librarian
+tests:
+  - name: test_gather_materials_basic
+    function: gather_materials
+    input:
+      source_path: "docs"
+      topic_keywords: "agent"
+    expected: "AgentSpec" # Expecting 'AgentSpec' string to be present in one of the docs

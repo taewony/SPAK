@@ -4,7 +4,7 @@ from typing import List, Dict, Optional, Any
 
 # --- Grammar Definition ---
 AISPEC_GRAMMAR = r"""
-start: meta_def? system_def
+start: meta_def? contract_def? system_def
 
 meta_def: "meta" "{" meta_field* "}"
 
@@ -12,6 +12,20 @@ meta_field: NAME "=" STRING
 
 system_def: "system" NAME "{" component_def* "}"
           | "kernel" NAME "{" component_def* "}"
+
+contract_def: "contract" NAME "{" contract_member* "}"
+
+contract_member:
+    | NAME "=" list_literal                -> contract_list_field
+    | "autonomy" "{" config_field* "}"     -> autonomy_block
+
+autonomy_block: "autonomy" "{" config_field* "}"
+
+config_field: NAME "=" value
+
+list_literal: "[" (STRING ("," STRING)*)? "]"
+
+value: STRING | NUMBER | "true" | "false" | list_literal
 
 component_def: 
     | "component" NAME "{" member_def* "}" -> component_block
@@ -25,8 +39,8 @@ member_def:
     | "state" NAME "{" field_list "}"      -> state_def
     | "function" NAME "(" param_list ")" "->" type_ref ";"? -> function_def
     | "function" NAME "(" param_list ")" "->" type_ref func_body -> function_def_body
-    | "invariant" ":" logic_expr ";"?       -> invariant
-    | "constraint" ":" logic_expr ";"?      -> constraint
+    | "invariant" ":" STRING ";"?           -> invariant_string
+    | "constraint" ":" STRING ";"?          -> constraint_string
     | "workflow" NAME "(" param_list ")" "{" workflow_step* "}" -> workflow_def
 
 effect_op: "operation" NAME "(" param_list ")" "->" type_ref ";"
@@ -52,6 +66,7 @@ logic_expr: /[^\}]+/
 
 NAME: /[a-zA-Z_]\w*/
 STRING: /"[^"]*"/
+NUMBER: /\d+(\.\d+)?/
 
 %import common.WS
 %import common.CPP_COMMENT 
@@ -81,7 +96,7 @@ class FunctionSpec:
     name: str
     params: List[Field]
     return_type: TypeRef
-    body: Optional[str] = None # Added for function body support (effects/logic)
+    body: Optional[str] = None
 
 @dataclass
 class StateSpec:
@@ -107,7 +122,17 @@ class ComponentSpec:
     functions: List[FunctionSpec] = field(default_factory=list)
     invariants: List[str] = field(default_factory=list)
     constraints: List[str] = field(default_factory=list)
-    workflows: List[WorkflowSpec] = field(default_factory=list) # Add support for nested workflows
+    workflows: List[WorkflowSpec] = field(default_factory=list)
+
+@dataclass
+class AutonomySpec:
+    config: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class ContractSpec:
+    name: str
+    lists: Dict[str, List[str]] = field(default_factory=dict)
+    autonomy: Optional[AutonomySpec] = None
 
 @dataclass
 class SystemSpec:
@@ -117,14 +142,22 @@ class SystemSpec:
     effects: List[EffectSpec] = field(default_factory=list)
     workflows: List[WorkflowSpec] = field(default_factory=list)
     imports: List[str] = field(default_factory=list)
+    contract: Optional[ContractSpec] = None
 
 # --- Transformer ---
 
 class AISpecTransformer(Transformer):
     def start(self, items):
-        system = items[-1]
-        if len(items) > 1 and isinstance(items[0], dict):
-            system.metadata = items[0]
+        # items can be [meta, system, contract] or [system, contract] or [meta, system] etc.
+        system = next((i for i in items if isinstance(i, SystemSpec)), None)
+        meta = next((i for i in items if isinstance(i, dict)), None)
+        contract = next((i for i in items if isinstance(i, ContractSpec)), None)
+        
+        if system:
+            if meta:
+                system.metadata = meta
+            if contract:
+                system.contract = contract
         return system
 
     def meta_def(self, items):
@@ -140,6 +173,42 @@ class AISpecTransformer(Transformer):
         workflows = [i for i in items[1:] if isinstance(i, WorkflowSpec)]
         imports = [i for i in items[1:] if isinstance(i, str)]
         return SystemSpec(name=name, components=components, effects=effects, workflows=workflows, imports=imports)
+
+    def contract_def(self, items):
+        name = items[0].value
+        spec = ContractSpec(name=name)
+        for item in items[1:]:
+            if isinstance(item, tuple) and item[0] == 'list':
+                spec.lists[item[1]] = item[2]
+            elif isinstance(item, AutonomySpec):
+                spec.autonomy = item
+        return spec
+
+    def contract_list_field(self, items):
+        name = items[0].value
+        # items[1] is the list_literal result
+        return ('list', name, items[1])
+
+    def autonomy_block(self, items):
+        config = {k: v for k, v in items}
+        return AutonomySpec(config=config)
+
+    def config_field(self, items):
+        return (items[0].value, items[1])
+
+    def list_literal(self, items):
+        # items contains STRING tokens
+        return [t.value.strip('"') for t in items]
+
+    def value(self, items):
+        val = items[0]
+        if hasattr(val, 'type') and val.type == 'STRING':
+            return val.value.strip('"')
+        if hasattr(val, 'type') and val.type == 'NUMBER':
+            return float(val.value)
+        if isinstance(val, list):
+            return val
+        return val.value # true/false
 
     def component_block(self, items):
         name = items[0].value
@@ -198,6 +267,7 @@ class AISpecTransformer(Transformer):
         return FunctionSpec(name=name, params=params, return_type=ret_type, body=body)
 
     def func_body(self, items):
+        # logic_expr returns token
         return items[0].value.strip()
 
     def effect_op(self, items):
@@ -210,11 +280,11 @@ class AISpecTransformer(Transformer):
     def workflow_step(self, items):
         return f"Step {items[0].value}: {items[1].value.strip()}"
 
-    def invariant(self, items):
-        return ('invariant', items[0].value.strip())
+    def invariant_string(self, items):
+        return ('invariant', items[0].value.strip('"'))
 
-    def constraint(self, items):
-        return ('constraint', items[0].value.strip())
+    def constraint_string(self, items):
+        return ('constraint', items[0].value.strip('"'))
 
     def field_list(self, items):
         return items

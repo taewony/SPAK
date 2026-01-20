@@ -1,0 +1,16 @@
+system: ResearchAnalyst
+component: Writer
+tests:
+  - name: test_draft_content
+    function: draft_content
+    input:
+      outline: "1. Introduction"
+      format_style: "Markdown"
+    expected: "Introduction"
+
+  - name: test_finalize_artifact
+    function: finalize_artifact
+    input:
+      draft: "# Final Paper"
+      file_path: "output_test.md"
+    expected: "File written to output_test.md"

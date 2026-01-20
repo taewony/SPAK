@@ -18,9 +18,51 @@ class SpecREPL(cmd.Cmd):
         self.builder = Builder()
         self.current_specs = {}  # {name: spec}
         self.current_spec = None # active spec
+        self.last_trace = []     # Store the execution trace from last run
 
     def emptyline(self):
         pass
+
+    def do_trace(self, arg):
+        """Display the execution trace (system calls/effects) of the last run."""
+        if not self.last_trace:
+            print("No trace available. Run an agent first.")
+            return
+        
+        from rich.console import Console
+        from rich.table import Table
+        from rich.syntax import Syntax
+        import json
+
+        console = Console()
+        table = Table(title="Execution Trace (System Effects)")
+        table.add_column("Step", justify="right", style="cyan", no_wrap=True)
+        table.add_column("Effect", style="magenta")
+        table.add_column("Payload", style="green")
+        table.add_column("Result", style="blue")
+
+        for i, entry in enumerate(self.last_trace):
+            name = entry['name']
+            payload = entry['payload']
+            result = entry.get('result', 'N/A')
+            
+            # Special highlighting for ReasoningTrace
+            if name == "ReasoningTrace":
+                thought = getattr(payload, 'thought', 'N/A')
+                plan = getattr(payload, 'plan', {})
+                raw = getattr(payload, 'raw_response', '')
+                payload_str = f"[bold yellow]Thought:[/bold yellow] {thought}\n[bold cyan]Plan:[/bold cyan] {plan}"
+                if raw:
+                    payload_str += f"\n[dim]Raw LLM:[/dim] {raw[:100]}..."
+            else:
+                payload_str = str(payload)
+            
+            # Format result string safely
+            result_str = str(result)[:200] + "..." if len(str(result)) > 200 else str(result)
+            
+            table.add_row(str(i+1), name, payload_str, result_str)
+        
+        console.print(table)
 
     def do_load(self, arg):
         """Load spec file(s). Usage: load specs/SPEC.root.md OR load specs"""
@@ -36,7 +78,7 @@ class SpecREPL(cmd.Cmd):
             count = 0
             for root, _, files in os.walk(arg):
                 for file in files:
-                    if file.endswith(".md") and file.startswith("SPEC"):
+                    if file.endswith(".spec.md"):
                         path = os.path.join(root, file)
                         self._load_single_file(path)
                         count += 1
@@ -294,9 +336,9 @@ class SpecREPL(cmd.Cmd):
             print(f"[RESPONSE]:\n{item['response'][:200]}... (truncated)\n")
 
     def do_run(self, arg):
-        """Run the component interactively. Usage: run Component [args...]"""
+        """Run the component interactively. Usage: run Component [--mock] [args...]"""
         from . import semantic_kernel
-        from .handlers import LiteLLMHandler, SafeREPLHandler, FileSystemHandler
+        from .handlers import LiteLLMHandler, SafeREPLHandler, FileSystemHandler, MockLLMHandler, MathHandler, UserInteractionHandler
         from .runtime import Runtime
 
         if not self.current_spec:
@@ -309,6 +351,11 @@ class SpecREPL(cmd.Cmd):
         else:
             comp_name = args[0]
         
+        use_mock = "--mock" in args
+        if use_mock:
+            args.remove("--mock")
+        
+        # Args after component name (and removing --mock)
         constructor_args = args[1:]
 
         src_dir = "src"
@@ -318,14 +365,21 @@ class SpecREPL(cmd.Cmd):
             print(f"Implementation not found at {module_path}. Please build it first.")
             return
 
-        print(f"🚀 Initializing {comp_name} Runtime...")
+        print(f"🚀 Initializing {comp_name} Runtime{' (MOCK MODE)' if use_mock else ''}...")
         
         try:
+            import inspect
             # Setup Kernel Runtime with default handlers
             runtime = Runtime()
-            runtime.register_handler(LiteLLMHandler(default_model=self.builder.model_name))
+            if use_mock:
+                runtime.register_handler(MockLLMHandler())
+            else:
+                runtime.register_handler(LiteLLMHandler(default_model=self.builder.model_name))
+            
             runtime.register_handler(SafeREPLHandler())
             runtime.register_handler(FileSystemHandler())
+            runtime.register_handler(MathHandler())
+            runtime.register_handler(UserInteractionHandler())
             
             # Set global runtime context so perform() works
             semantic_kernel._active_runtime = runtime
@@ -348,15 +402,48 @@ class SpecREPL(cmd.Cmd):
                 raise te
             
             print(f"✅ {comp_name} instantiated as 'app'.")
-            print(f"💡 Type python commands using 'app'. (e.g., app.chat('hello'))")
+            
+            # Inspect available methods with signatures
+            methods = []
+            for name, member in inspect.getmembers(instance, predicate=inspect.ismethod):
+                if not name.startswith('_'):
+                    sig = inspect.signature(member)
+                    methods.append(f"{name}{sig}")
+            
+            if methods:
+                print(f"💡 Available methods:")
+                for m in methods:
+                    print(f"   - app.{m}")
+                
+                # Intelligent example
+                if any('calculate' in m for m in methods):
+                    print(f"💡 Example: app.calculate(10, 5, 'add')")
+                elif any('reply' in m for m in methods):
+                    print(f"💡 Example: app.reply('Hello')")
+                elif any('chat' in m for m in methods):
+                    print(f"💡 Example: app.chat('Hello')")
+            else:
+                print(f"💡 Type python commands using 'app'.")
+
             print(f"💡 Type 'exit()' to return to kernel.")
             
+            # Custom exit to return to kernel instead of killing process
+            def back_to_kernel():
+                print("Returning to SPAK Kernel...")
+                return
+
             vars = globals().copy()
             vars.update(locals())
             vars['app'] = instance
+            vars['runtime'] = runtime
+            vars['exit'] = back_to_kernel
+            vars['quit'] = back_to_kernel
             
             # Start interaction
-            code.interact(local=vars)
+            code.interact(local=vars, exitmsg="")
+            
+            # Save trace for do_trace command
+            self.last_trace = runtime.trace
             
             # Cleanup
             semantic_kernel._active_runtime = None
@@ -387,6 +474,49 @@ class SpecREPL(cmd.Cmd):
                     print(f"      - {f.name}({params}) -> {f.return_type.name}")
                     if f.body:
                         print(f"        Body: {f.body}")
+
+    def do_consistency(self, arg):
+        """Verify the last run's trace against a PlanIR. Usage: consistency plans/my.plan.yaml"""
+        if not self.last_trace:
+            print("No trace available. Run an agent first (e.g., 'run ResearchAgent').")
+            return
+        
+        if not arg or not os.path.exists(arg):
+            print(f"Plan file not found: {arg}")
+            return
+
+        import yaml
+        from .consistency import PlanIR, StepExpectation, ConsistencyVerifier
+
+        try:
+            with open(arg, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+            
+            steps = []
+            for s in data.get('steps', []):
+                steps.append(StepExpectation(
+                    phase=s['phase'],
+                    must_use_action=s['must_use_action'],
+                    required_thought_keywords=s['required_thought_keywords']
+                ))
+            
+            plan = PlanIR(name=data.get('name', 'Unnamed Plan'), steps=steps)
+            
+            verifier = ConsistencyVerifier()
+            result = verifier.verify(self.last_trace, plan)
+            
+            print(f"\n📊 [Consistency Result] Score: {result['score'] * 100:.1f}%")
+            if result['passed']:
+                print("✅ PASSED: Execution Semantic Intent matches Plan.")
+            else:
+                print("❌ FAILED: Semantic Drift detected.")
+            
+            print("\nDetails:")
+            for log in result['details']:
+                print(log)
+
+        except Exception as e:
+            print(f"Error executing consistency check: {e}")
 
     def do_exit(self, arg):
         """Exit the shell."""

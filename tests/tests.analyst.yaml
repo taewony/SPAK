@@ -1,0 +1,16 @@
+system: ResearchAnalyst
+component: Analyst
+tests:
+  - name: test_extract_insights
+    function: extract_insights
+    input:
+      documents: ["Doc 1: The sky is blue.", "Doc 2: Grass is green."]
+    expected: "blue" # Expecting 'blue' to be mentioned in insights
+  
+  - name: test_map_to_storyline
+    function: map_to_storyline
+    input:
+      insights: "Sky is blue."
+      user_intent: "Write a poem"
+      storyline_template: "Verse 1: [Color]"
+    expected: "Verse"

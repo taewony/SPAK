@@ -16,10 +16,21 @@ system CalculatorSystem {
 
         invariant: "Division by zero is not allowed";
 
-        function add(a: Float, b: Float) -> Float;
-        function subtract(a: Float, b: Float) -> Float;
-        function multiply(a: Float, b: Float) -> Float;
-        function divide(a: Float, b: Float) -> Result<Float, String>;
+        function add(a: Float, b: Float) -> Float {
+            return a + b
+        }
+
+        function subtract(a: Float, b: Float) -> Float {
+            return a - b
+        }
+
+        function multiply(a: Float, b: Float) -> Float {
+            return a * b
+        }
+
+        function divide(a: Float, b: Float) -> Float {
+            return a / b
+        }
         
         function clear() -> Unit;
         function get_history() -> List<String>;

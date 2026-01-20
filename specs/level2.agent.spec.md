@@ -1,7 +1,21 @@
 meta {
     name = "CalculatorAgent"
     version = "1.0"
+    domain = "Computational Tool Use"
+    purpose = "To perform precise mathematical calculations using external tools."
     description = "Level 2: Agent capable of using Math Tools via Effects"
+}
+
+// --- Operational Contract ---
+contract AgentScope {
+    supported_intents = [
+        "Math Operations: performing arithmetic (add, sub, mul, div)."
+    ]
+
+    success_criteria = [
+        "Accuracy: Results must be mathematically correct.",
+        "Tool Usage: Must correctly invoke the Math effect."
+    ]
 }
 
 system CalculatorAgent {

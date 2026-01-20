@@ -51,10 +51,14 @@ class Runtime:
             raise e
 
     def _resolve_effect(self, effect: Effect) -> Any:
-        self.trace.append({"type": "effect", "name": type(effect).__name__, "payload": effect.payload})
+        trace_entry = {"type": "effect", "name": type(effect).__name__, "payload": effect.payload, "result": None}
+        self.trace.append(trace_entry)
+        
         for handler in reversed(self.handlers):
             try:
-                return handler.handle(effect)
+                result = handler.handle(effect)
+                trace_entry["result"] = result # Update trace with result
+                return result
             except NotImplementedError:
                 continue
         raise RuntimeError(f"Unhandled Effect: {effect}")

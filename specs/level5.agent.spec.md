@@ -1,7 +1,28 @@
 meta {
     name = "MetaSolver"
     version = "1.0"
+    domain = "Recursive Problem Solving"
+    purpose = "To solve arbitrarily complex problems by dynamically spawning sub-agents."
     description = "Level 5: Recursive Agent (The Holy Grail)"
+}
+
+// --- Operational Contract ---
+contract AgentScope {
+    supported_intents = [
+        "Complex Reasoning: Breaking down hard problems.",
+        "Dynamic Delegation: Spawning sub-agents as needed."
+    ]
+
+    success_criteria = [
+        "Recursion: Successfully calling sub-agents.",
+        "Synthesis: Aggregating sub-results into a final answer."
+    ]
+
+    autonomy {
+        mode = "autonomous"
+        loop_interval = "2s"
+        max_steps = 200
+    }
 }
 
 system MetaSolver {

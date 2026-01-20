@@ -19,10 +19,12 @@ system ChatBotSystem {
             persona: String
         }
 
-        // Initialize with a persona
-        function __init__(persona: String) -> Unit;
+        # Initialize with a persona
+        function set_persona(persona: String) -> String {
+            return "Persona set to " + persona
+        }
 
-        // The core loop: Add user msg -> Call LLM -> Add response -> Return
+        # The core loop: Add user msg -> Call LLM -> Add response -> Return
         function chat(user_message: String) -> String {
             perform LLM.generate(user_message)
         }

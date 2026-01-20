@@ -35,6 +35,14 @@ class ReadFile(Effect[str]):
     payload: FileRead
 
 @dataclass
+class FileList:
+    dir_path: str
+
+@dataclass
+class ListFiles(Effect[List[str]]):
+    payload: FileList
+
+@dataclass
 class FileWrite:
     path: str
     content: str
@@ -93,3 +101,15 @@ class SubTask:
 class Recurse(Effect[str]):
     """Effect to spawn a recursive sub-agent."""
     payload: SubTask
+
+# --- Verification Effects ---
+@dataclass
+class TraceLog:
+    thought: str
+    plan: Dict[str, Any]
+    raw_response: Optional[str] = None
+
+@dataclass
+class ReasoningTrace(Effect[None]):
+    """Effect to log the internal reasoning/planning step of the agent."""
+    payload: TraceLog
