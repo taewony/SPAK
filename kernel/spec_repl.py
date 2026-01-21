@@ -501,6 +501,17 @@ class SpecREPL(cmd.Cmd):
             vars['exit'] = back_to_kernel
             vars['quit'] = back_to_kernel
             
+            # Autostart Logic
+            if self.config.get("autostart", False):
+                if hasattr(instance, "start") and callable(instance.start):
+                    print(f"▶️ Auto-starting {comp_name}...")
+                    try:
+                        # Call start()
+                        result = instance.start()
+                        print(f"Result: {result}")
+                    except Exception as e:
+                        print(f"Error during autostart: {e}")
+            
             # Start interaction
             code.interact(local=vars, exitmsg="")
             

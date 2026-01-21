@@ -97,19 +97,62 @@ $ python spak.py
 ✅ Synthesized src/coach.py
 ```
 
-### 3. Advanced Verification (Round-Trip Consistency)
-This unique feature verifies if the Agent's *latent reasoning* matched the *symbolic plan*.
+### 3. Advanced Verification: The Round-Trip Consistency Test (RTCT)
+This unique feature provides the **Methodological Validation** claimed in the SPAK whitepaper. It verifies if the Agent's *latent reasoning* (unseen thoughts) structurally maps to its *symbolic execution* (actual actions).
+
+*   **Structural Grounding:** Proves the Agent followed a deterministic procedure rather than just "guessing" a correct-looking response.
+*   **Semantic Drift Detection:** Identifies when the Agent's internal intent deviates from the formal Specification (`PlanIR`).
+*   **Intent Recovery Rate:** Quantifies how much of the original plan was successfully recovered from the execution trace.
 
 ```bash
-# After running an agent...
+# After running an agent (e.g., CoachingAgent)...
 (kernel) > trace
-[Trace Table Displayed]
+# Inspect the 'mind' of the agent (Thoughts vs. Plans)
 
-# Verify consistency against a PlanIR
-(kernel) > consistency plans/research.plan.yaml
+# Verify consistency against a PlanIR (The formal 'Law' of the workflow)
+(kernel) > consistency plans/coaching.plan.yaml
+⚖️ [Consistency] Verifying trace against PlanIR: 'Coaching Session Workflow'
 📊 Score: 100.0%
 ✅ PASSED: Execution Semantic Intent matches Plan.
 ```
+
+ 1. The Core Scientific Claim: "Structural Grounding"
+  The Paper argues: It is not enough for an Agent to produce a correct text response (the "Output"). To be
+  scientifically valid and reliable, the Agent's latent reasoning (its private thoughts) must structurally map to its
+  explicit actions (system calls).
+
+  The Check validates:
+   * Latent Space: The "Thought" logs (ReasoningTrace.thought).
+   * Symbolic Space: The "Action" logs (ReasoningTrace.plan and actual tool calls).
+
+  If the consistency command returns PASSED, you have evidence that the LLM didn't just "guess" the right answer; it
+  followed the correct procedure to get there.
+
+  2. "Methodological Validation" vs. "Output Evaluation"
+  Most LLM benchmarks just check: Did the user get the right answer?
+  Your Consistency Check asks: Did the Agent follow the Plan?
+
+   * PlanIR (`coaching.plan.yaml`): This is the "Law" or the "Specification". It represents the ideal algorithmic flow
+     (e.g., "First establish context, then loop, then analyze").
+   * Trace (`runtime.trace`): This is the "Reality". It captures what the probabilistic model actually did.
+
+  The "Consistency Check" calculates the semantic distance between the Law and Reality.
+
+  3. How it works exactly (The Mechanics)
+
+  When you ran consistency plans/coaching.plan.yaml, the kernel performed these 3 steps:
+
+   1. Intent Extraction: It looked at the YAML to see what should happen.
+       * Expectation: "In the 'Session Start' phase, the agent MUST use action init AND it MUST think about
+         'establishing a baseline'."
+   2. Trace Alignment: It scanned the actual logs from your Coach run.
+       * Reality: It found a log entry where plan={'action': 'init'} and thought="...establish a baseline...".
+   3. Verification:
+       * Because Action matched (Structural Consistency)...
+       * AND Keywords matched (Semantic Consistency)...
+       * Result: The step is Verified.
+	   
+> **Claim:** This check elevates LLMs from "Black Boxes" to "Systematic Components" by proving that latent reasoning is operationally consistent with explicit symbolic procedures.
 
 ---
 

@@ -1,12 +1,12 @@
 name: Coaching Session Workflow
 steps:
   - phase: Session Start
-    must_use_action: start
-    required_thought_keywords: [opening, goal]
+    must_use_action: init
+    required_thought_keywords: [establish, baseline]
 
   - phase: Interaction Loop
-    must_use_action: start
-    required_thought_keywords: [guide]
+    must_use_action: [continue, revise]
+    required_thought_keywords: []
 
   - phase: Gap Analysis
     must_use_action: end

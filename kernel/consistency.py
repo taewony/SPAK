@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from dataclasses import dataclass
 from .effects import ReasoningTrace
 
@@ -8,7 +8,7 @@ class StepExpectation:
     Defines what we expect to happen at a specific stage of execution.
     """
     phase: str                  # Name of the phase (e.g., "Research")
-    must_use_action: str        # The tool/method that must be called
+    must_use_action: Union[str, List[str]] # The tool/method(s) that must be called
     required_thought_keywords: List[str] # Keywords that must appear in reasoning
 
 @dataclass
@@ -58,7 +58,14 @@ class ConsistencyVerifier:
                 # trace_item.plan is a Dict, usually {'action': 'name'}
                 actual_action = trace_item.plan.get('action')
                 
-                if actual_action == plan_step.must_use_action:
+                # Normalize expected actions to a set
+                expected_actions = plan_step.must_use_action
+                if isinstance(expected_actions, str):
+                    expected_actions = {expected_actions}
+                else:
+                    expected_actions = set(expected_actions)
+                
+                if actual_action in expected_actions:
                     # Check Thought Semantic Match (Keywords)
                     thought_text = trace_item.thought.lower()
                     missing_keywords = [
