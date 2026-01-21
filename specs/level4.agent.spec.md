@@ -1,61 +1,92 @@
 meta {
     name = "ProjectTeam"
-    version = "1.0"
+    version = "2.0.0"
     domain = "Multi-Agent Collaboration"
-    purpose = "To coordinate a team of agents to execute complex projects."
-    description = "Level 4: Multi-Agent System with Manager and Worker"
+    purpose = "To coordinate a team of agents via Message Bus to execute complex projects."
+    description = "Level 4: Choreography Pattern (Manager <-> Worker)"
 }
 
-// --- Operational Contract ---
 contract AgentScope {
     supported_intents = [
-        "Task Delegation: Assigning work to workers.",
-        "Project Management: Tracking status and goals."
+        "Task Delegation",
+        "Project Management"
     ]
-
     success_criteria = [
-        "Coordination: Messages are correctly routed.",
-        "Task Completion: Workers successfully report back results."
+        "Message Delivery: All tasks reach correct workers.",
+        "Loop Closure: Workers report completion back to Manager."
     ]
-
-    autonomy {
-        mode = "autonomous"
-        loop_interval = "10s"
-        max_steps = 100
-    }
 }
 
 system ProjectTeam {
+
+    // --- Domain-IR ---
+    struct Task {
+        id: String
+        description: String
+        assignee: String
+        status: String
+    }
+
+    struct ProjectStatus {
+        goal: String
+        active_tasks: Number
+        completed_tasks: Number
+    }
+
+    // --- Effects ---
     effect MessageBus {
+        // Asynchronous communication
         operation send(recipient: String, content: String) -> String;
         operation broadcast(content: String) -> String;
     }
 
+    effect CognitiveEngine {
+        operation plan(goal: String) -> List[Task];
+    }
+
+    // --- Components ---
+
     component Manager {
-        description: "Decomposes tasks and delegates them to workers.";
+        description: "The Coordinator. Decomposes goals into tasks and tracks status.";
 
         state ProjectState {
-            task_queue: List[String]
-            status: String
+            tasks: List[Task]
+            team: Map[String, String] // Name -> Role
         }
 
-        workflow ExecuteProject(goal: String) {
-            step PlanTask {
-                # In a real implementation, this would involve LLM thinking
-                perform MessageBus.broadcast("New Project Goal: " + goal)
-            }
-
-            step Delegate {
-                perform MessageBus.send("Worker", "Please execute task: Research")
-            }
-        }
+        function add_team_member(name: String, role: String) -> String;
+        
+        function create_project_plan(goal: String) -> List[Task];
+        
+        function assign_task(task: Task) -> String;
+        
+        // Handling incoming messages (e.g., "Finished Task X")
+        function handle_message(sender: String, content: String) -> String;
     }
 
     component Worker {
-        description: "Executes tasks assigned by the Manager.";
+        description: "The Executor. Performs tasks and reports back.";
 
-        function do_work(task: String) -> String {
-            return "Completed task: " + task
+        function do_work(task_desc: String) -> String;
+    }
+
+    // --- Workflows ---
+
+    workflow ExecuteProject(goal: String) {
+        step Plan {
+            // Manager thinks and creates a plan
+            tasks = perform Manager.create_project_plan(goal)
+        }
+
+        step Delegate {
+            // Loop through tasks and assign
+            // (Simplified representation)
+            perform Manager.assign_task(tasks[0]) 
+        }
+
+        step WaitAndMonitor {
+            // In a real async system, this would be an event loop
+            // Here we imply the Manager waits for callbacks
         }
     }
 }

@@ -436,3 +436,36 @@ To support the Research Analyst, the SPAK Kernel requires critical upgrades to r
   Example Mental Model:
   > "I have 20 claims (Ingredients). The user wants an 'Academic Paper' (Recipe). I will blueprint an outline with
   Introduction, Methods, Results, and Discussion, placing each claim into the correct section."
+  
+  ✦ I have successfully upgraded the Level 4 (ProjectTeam) agent to Phase 2 standards.
+
+  Summary of Changes
+
+   1. Specification (`specs/level4.agent.spec.md`):
+       * Upgraded to Version 2.0.0.
+       * Added struct Task and struct ProjectStatus.
+       * Added ProjectState to the Manager component.
+       * Defined the ExecuteProject workflow with explicit Planning and Delegation steps.
+
+   2. Implementation (`src/manager.py`):
+       * Implemented Task and ProjectState dataclasses.
+       * Implemented create_project_plan: Uses ReasoningTrace to think, then calls LLM to decompose a goal into a JSON
+         list of typed Task objects assigned to specific team members.
+       * Implemented assign_task: Sends messages via the MessageBus effect.
+
+   3. Implementation (`src/worker.py`):
+       * Updated do_work to actually "execute" the task using an LLM call (Generate), making it a real worker rather
+         than a mock.
+       * Sends a completion report back to the Manager via MessageBus.
+
+  You can now test this agent (though the full async loop isn't in the CLI yet, you can script it like chef.py):
+
+   # Example Script Concept
+   manager = Manager()
+   manager.add_team_member("Alice", "Researcher")
+   tasks = manager.create_project_plan("Research Agent Architecture")
+   for t in tasks:
+       manager.assign_task(t)
+       # Simulate Worker
+       worker = Worker()
+       worker.do_work(t.description)
