@@ -26,7 +26,9 @@ class SpecREPL(cmd.Cmd):
             "language": "English",
             "goal": "becomming a CEO of AI-Powered Content Creation one-person company",
             "persona": "financial consultant",
-            "autostart": True
+            "autostart": True,
+            "source": "docs",
+            "target": "papers"
         }
         # Apply model config to builder
         self.builder.model_name = self.config["model"]
@@ -393,27 +395,40 @@ class SpecREPL(cmd.Cmd):
             print(f"[RESPONSE]:\n{item['response'][:200]}... (truncated)\n")
 
     def do_run(self, arg):
-        """Run the component interactively. Usage: run Component [--mock] [args...]"""
+        """Run a component. Usage: run [SystemName] [ComponentName] [--mock] [args...]"""
         from . import semantic_kernel
         from .handlers import LiteLLMHandler, SafeREPLHandler, FileSystemHandler, MockLLMHandler, MathHandler, UserInteractionHandler, ReasoningHandler
         from .runtime import Runtime
 
+        args = arg.split()
+
+        # 1. Check if the first argument is a loaded System (Context Switch)
+        if args and args[0] in self.current_specs:
+            sys_name = args[0]
+            self.current_spec = self.current_specs[sys_name]
+            print(f"✅ Active System set to: '{sys_name}'")
+            args.pop(0) # Consume the System Name
+        
         if not self.current_spec:
-            print("No active spec.")
+            print("No active spec. Use 'load <path>' first.")
             return
 
-        args = arg.split()
-        if not args:
-            comp_name = self.current_spec.components[0].name
-        else:
-            comp_name = args[0]
+        # 2. Determine Component Name
+        # If no args left (or only flags?), default to first component
+        # We need to separate flags from positional args potentially, but simple logic:
+        # If args[0] starts with --, it's a flag, so default component.
+        # Else, args[0] is component name.
         
         use_mock = "--mock" in args
         if use_mock:
             args.remove("--mock")
         
-        # Args after component name (and removing --mock)
-        constructor_args = args[1:]
+        if not args:
+            comp_name = self.current_spec.components[0].name
+            constructor_args = []
+        else:
+            comp_name = args[0]
+            constructor_args = args[1:]
         
         # Auto-inject goal for Coach if not provided
         if comp_name == "Coach" and not constructor_args:
@@ -596,6 +611,40 @@ class SpecREPL(cmd.Cmd):
 
         except Exception as e:
             print(f"Error executing consistency check: {e}")
+
+    def do_chef(self, arg):
+        """Execute the Knowledge Chef workflow. Usage: chef [mock]"""
+        try:
+            from src.chef import run_chef
+        except ImportError:
+            print("❌ Could not import 'chef.py'. Ensure it exists in the 'src/' directory.")
+            return
+
+        is_mock = arg.strip().lower() == "mock"
+
+        print(f"👨‍🍳 Starting Chef Workflow with config:")
+        print(f"   Model: {self.config.get('model') if not is_mock else 'MOCK'}")
+        print(f"   Source: {self.config.get('source')}")
+        print(f"   Target: {self.config.get('target')}")
+
+        target = self.config.get('target', 'output')
+        if target.endswith('.md'):
+            output_path = target
+        else:
+            if not os.path.exists(target):
+                os.makedirs(target, exist_ok=True)
+            output_path = os.path.join(target, "SPAK_Paper.md")
+
+        try:
+            run_chef(
+                model_name=self.config.get('model'),
+                source_dir=self.config.get('source'),
+                template_path="docs/paper_outline.md",
+                output_path=output_path,
+                use_mock=is_mock
+            )
+        except Exception as e:
+            print(f"❌ Chef execution failed: {e}")
 
     def do_exit(self, arg):
         """Exit the shell."""

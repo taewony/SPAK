@@ -5,7 +5,7 @@ import litellm
 import importlib.util
 from typing import Dict, Any, Optional
 from .semantic_kernel import Handler, Effect, perform
-from .effects import Generate, ExecuteCode, ReadFile, WriteFile, ListFiles, Recurse, LLMRequest, Math, Listen, Reply, SendMessage, SubTask, ReasoningTrace, TraceLog
+from .effects import Generate, ExecuteCode, ReadFile, WriteFile, ListFiles, Recurse, LLMRequest, Math, Listen, Reply, SendMessage, SubTask, ReasoningTrace, TraceLog, GrepFiles
 
 # Safe Execution Imports (from recursive-llm wisdom)
 from RestrictedPython import compile_restricted_exec, safe_globals, limited_builtins, utility_builtins
@@ -13,18 +13,32 @@ from RestrictedPython.Guards import guarded_iter_unpack_sequence, safer_getattr
 from RestrictedPython.PrintCollector import PrintCollector
 
 class LiteLLMHandler(Handler):
-    def __init__(self, default_model: str = "qwen2.5:3b"):
+    def __init__(self, default_model: str = "ollama/qwen3:8b"):
         self.default_model = default_model
 
     def handle(self, effect: Effect) -> Any:
         if isinstance(effect, Generate):
             req: LLMRequest = effect.payload
-            response = litellm.completion(
-                model=req.model or self.default_model,
-                messages=req.messages,
-                stop=req.stop
-            )
-            return response.choices[0].message.content
+            
+            # Simple Retry Logic
+            max_retries = 3
+            import time
+            
+            for attempt in range(max_retries):
+                try:
+                    response = litellm.completion(
+                        model=req.model or self.default_model,
+                        messages=req.messages,
+                        stop=req.stop
+                    )
+                    return response.choices[0].message.content
+                except Exception as e:
+                    print(f"⚠️ [LiteLLM] Error (Attempt {attempt+1}/{max_retries}): {e}")
+                    if attempt < max_retries - 1:
+                        time.sleep(2) # Wait 2 seconds before retry
+                    else:
+                        raise e # Re-raise on final failure
+                        
         raise NotImplementedError
 
 class SafeREPLHandler(Handler):
@@ -98,6 +112,37 @@ class FileSystemHandler(Handler):
             with open(effect.payload.path, 'w', encoding='utf-8') as f:
                 f.write(effect.payload.content)
             return None
+        elif isinstance(effect, GrepFiles):
+            import subprocess
+            req = effect.payload
+            
+            # Pattern and path
+            pattern = req.pattern
+            dir_path = req.dir_path or "."
+            file_pattern = req.file_pattern or "*"
+            
+            if os.name == 'nt':
+                # Windows findstr
+                # findstr /s /m /i "pattern" dir\*.txt
+                cmd = f'findstr /s /m /i "{pattern}" "{os.path.join(dir_path, file_pattern)}"'
+                try:
+                    # Use shell=True for flexible path/wildcard handling on Windows
+                    result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
+                    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+                except Exception as e:
+                    return [f"Error (findstr): {str(e)}"]
+            else:
+                # Unix grep
+                cmd = ["grep", "-r", "-l", pattern, dir_path]
+                if req.file_pattern:
+                    cmd.append(f"--include={req.file_pattern}")
+                
+                try:
+                    result = subprocess.run(cmd, capture_output=True, text=True)
+                    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+                except Exception as e:
+                     return [f"Error (grep): {str(e)}"]
+
         raise NotImplementedError
 
 class MathHandler(Handler):
@@ -143,7 +188,7 @@ class RecursiveAgentHandler(Handler):
     Handles the 'Recurse' effect by spawning a new isolated Runtime.
     Dynamically maps natural language queries to agent functions using LLM.
     """
-    def __init__(self, model_name: str = "qwen2.5:3b"):
+    def __init__(self, model_name: str = "ollama/qwen3:8b"):
         self.model_name = model_name
 
     def handle(self, effect: Effect) -> Any:

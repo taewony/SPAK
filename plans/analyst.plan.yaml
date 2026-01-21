@@ -1,0 +1,33 @@
+name: AuthorPaper Workflow (Knowledge Chef)
+description: "The verified cognitive process for synthesizing structured papers from raw documents."
+
+steps:
+  - phase: Smart Collection
+    must_use_action: Librarian.gather_materials
+    required_thought_keywords: [gather, search, grep, filter]
+    description: "Using Hybrid Tooling to locate relevant files."
+
+  - phase: Insight Extraction
+    must_use_action: Analyst.extract_insights
+    required_thought_keywords: [analyze, extract, claims, insight]
+    description: "Converting raw text into structured claim-evidence maps."
+
+  - phase: Structural Blueprinting
+    must_use_action: Analyst.create_structured_outline
+    required_thought_keywords: [outline, structure, map, blueprint]
+    description: "Organizing insights into a coherent narrative template."
+
+  - phase: Drafting
+    must_use_action: Writer.draft_content
+    required_thought_keywords: [draft, write, content]
+    description: "Generating the prose content based on the outline."
+
+  - phase: Quality Control
+    must_use_action: Reviewer.evaluate
+    required_thought_keywords: [review, evaluate, quality, score]
+    description: "Self-correction loop to ensure quality criteria are met."
+
+  - phase: Finalization
+    must_use_action: Writer.finalize_artifact
+    required_thought_keywords: [finalize, save, artifact, publish]
+    description: "Writing the approved artifact to the file system."

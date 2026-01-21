@@ -339,3 +339,100 @@ To support the Research Analyst, the SPAK Kernel requires critical upgrades to r
        * Added a start() method to allow interactive running via the kernel's run command (and autostart).
 
   You can now run (kernel) > run PersonaChatBot to test the new persona-based agent.
+  
+✦ The "Knowledge Chef" Architecture (Phase 2) has been successfully implemented.
+
+  Summary of Changes
+
+   1. Roadmap Update (`plan.md`):
+       * Formalized Phase 2 goals: Hybrid Tooling, Structured Domain-IR, and Self-Correction Loops.
+
+   2. Kernel Enhancements:
+       * Compiler (`kernel/compiler.py`): Added support for struct definitions in the AISpec grammar.
+       * Effects (`kernel/effects.py`): Introduced GrepFiles and GrepRequest for efficient filesystem searching.
+       * Handlers (`kernel/handlers.py`): Implemented FileSystemHandler support for GrepFiles, using findstr (Windows)
+         and grep (Linux/macOS).
+
+   3. Agent Components Upgrade:
+       * Librarian (`src/librarian.py`): Now utilizes Hybrid Tooling. It performs a fast-path filter using the OS-level
+         grep_files effect before ingesting content, significantly reducing context load.
+       * Analyst (`src/analyst.py`): Now utilizes Structured Domain-IR. It defines struct Insight and enforces strictly
+         typed JSON output from the LLM, ensuring higher reliability than unstructured text.
+
+   4. Specification 2.0 (`specs/analyst.agent.spec.md`):
+       * Refined the ResearchAnalyst spec to Version 2.0.0.
+       * Defined Insight and EvaluationResult structs.
+       * Added the Reviewer component for quality control loops.
+
+  Next Steps (Phase 2 Continuation)
+   * Builder: Update kernel/builder.py to auto-synthesize code that uses these new constructs (struct, loop) from the
+     Spec. Currently, I manually updated src/analyst.py, but the Builder needs to learn this pattern.
+   * Reviewer Implementation: Implement the Reviewer component logic in src/reviewer.py.
+
+  You can now use spak.py to load the ResearchAnalyst and test the new capabilities.
+  
+  ✦ I have completed the implementation of the Reviewer component logic in src/reviewer.py.
+
+  Details
+   * File Created: src/reviewer.py
+   * Data Structure: Defined EvaluationResult dataclass with status, feedback, and score.
+   * Logic: The Reviewer.evaluate method constructs a prompt containing the draft and criteria, requests a JSON response
+     from the LLM via the Kernel, and safely parses the output into the structured result.
+   * Verification: Verified functionality with a local test script using a mock LLM handler to ensure correct JSON
+     parsing and object instantiation.
+
+  You can now use this component within the ResearchAnalyst system.
+  
+  ✦ I have enhanced the "Knowledge Chef" architecture to explicitly handle Structural Blueprinting.
+
+  Summary of Changes
+
+   1. Specification (`specs/analyst.agent.spec.md`):
+       * Renamed map_to_storyline to the more explicit create_structured_outline.
+       * Updated the AuthorPaper workflow to accept a structure_type argument (e.g., "IMRaD", "Executive Summary", "Blog
+         Post").
+
+   2. Implementation (`src/analyst.py`):
+       * Refactored the Analyst class to support create_structured_outline.
+       * The prompt now acts as a "Structural Architect," mapping raw Insights into the specific sections of the
+         requested structure_type.
+
+   3. Plan (`plans/analyst.plan.yaml`):
+       * Renamed the "Storyline Mapping" phase to "Structural Blueprinting".
+       * Updated verification rules to ensure the agent explicitly thinks about "blueprinting" and uses the new
+         function.
+
+  You can now run the agent with a specific structure intent (once the Workflow execution engine is fully hooked up to
+  the CLI args, currently you'd call the component function directly or use run ResearchAnalyst Analyst and manually
+  invoke it).
+
+  Example Mental Model:
+  > "I have 20 claims (Ingredients). The user wants an 'Academic Paper' (Recipe). I will blueprint an outline with
+  Introduction, Methods, Results, and Discussion, placing each claim into the correct section."
+  
+  ✦ I have enhanced the "Knowledge Chef" architecture to explicitly handle Structural Blueprinting.
+
+  Summary of Changes
+
+   1. Specification (`specs/analyst.agent.spec.md`):
+       * Renamed map_to_storyline to the more explicit create_structured_outline.
+       * Updated the AuthorPaper workflow to accept a structure_type argument (e.g., "IMRaD", "Executive Summary", "Blog
+         Post").
+
+   2. Implementation (`src/analyst.py`):
+       * Refactored the Analyst class to support create_structured_outline.
+       * The prompt now acts as a "Structural Architect," mapping raw Insights into the specific sections of the
+         requested structure_type.
+
+   3. Plan (`plans/analyst.plan.yaml`):
+       * Renamed the "Storyline Mapping" phase to "Structural Blueprinting".
+       * Updated verification rules to ensure the agent explicitly thinks about "blueprinting" and uses the new
+         function.
+
+  You can now run the agent with a specific structure intent (once the Workflow execution engine is fully hooked up to
+  the CLI args, currently you'd call the component function directly or use run ResearchAnalyst Analyst and manually
+  invoke it).
+
+  Example Mental Model:
+  > "I have 20 claims (Ingredients). The user wants an 'Academic Paper' (Recipe). I will blueprint an outline with
+  Introduction, Methods, Results, and Discussion, placing each claim into the correct section."

@@ -51,6 +51,18 @@ class FileWrite:
 class WriteFile(Effect[None]):
     payload: FileWrite
 
+@dataclass
+class GrepRequest:
+    pattern: str
+    dir_path: str
+    recursive: bool = True
+    file_pattern: Optional[str] = None # e.g. "*.md" or "*.{md,txt}"
+
+@dataclass
+class GrepFiles(Effect[List[str]]):
+    """Effect to search for a pattern in files using OS tools (grep/findstr)."""
+    payload: GrepRequest
+
 # --- Math Effects (Level 2) ---
 @dataclass
 class MathOperation:

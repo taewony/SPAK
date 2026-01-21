@@ -32,6 +32,7 @@ component_def:
     | "component" NAME                     -> component_decl
     | "effect" NAME "{" effect_op* "}"     -> effect_block
     | "workflow" NAME "(" param_list ")" "{" workflow_step* "}" -> workflow_def
+    | "struct" NAME "{" field_list "}"     -> struct_def
     | "import" NAME                        -> import_stmt
 
 member_def:
@@ -115,6 +116,11 @@ class WorkflowSpec:
     steps: List[str] = field(default_factory=list)
 
 @dataclass
+class StructSpec:
+    name: str
+    fields: List[Field]
+
+@dataclass
 class ComponentSpec:
     name: str
     description: str = ""
@@ -139,6 +145,7 @@ class SystemSpec:
     name: str
     metadata: Dict[str, str] = field(default_factory=dict)
     components: List[ComponentSpec] = field(default_factory=list)
+    structs: List[StructSpec] = field(default_factory=list)
     effects: List[EffectSpec] = field(default_factory=list)
     workflows: List[WorkflowSpec] = field(default_factory=list)
     imports: List[str] = field(default_factory=list)
@@ -169,10 +176,11 @@ class AISpecTransformer(Transformer):
     def system_def(self, items):
         name = items[0].value
         components = [i for i in items[1:] if isinstance(i, ComponentSpec)]
+        structs = [i for i in items[1:] if isinstance(i, StructSpec)]
         effects = [i for i in items[1:] if isinstance(i, EffectSpec)]
         workflows = [i for i in items[1:] if isinstance(i, WorkflowSpec)]
         imports = [i for i in items[1:] if isinstance(i, str)]
-        return SystemSpec(name=name, components=components, effects=effects, workflows=workflows, imports=imports)
+        return SystemSpec(name=name, components=components, structs=structs, effects=effects, workflows=workflows, imports=imports)
 
     def contract_def(self, items):
         name = items[0].value
@@ -230,6 +238,11 @@ class AISpecTransformer(Transformer):
     
     def component_decl(self, items):
         return ComponentSpec(name=items[0].value)
+    
+    def struct_def(self, items):
+        name = items[0].value
+        fields = items[1]
+        return StructSpec(name=name, fields=fields)
 
     def effect_block(self, items):
         name = items[0].value

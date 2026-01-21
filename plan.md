@@ -89,11 +89,13 @@ Specific to the agent's domain.
 *   **Key Insight:** "LLM is a syscall provider; Cognition is a symbolic control problem."
 
 ### Phase 2: Domain Specification & Composition (Current Focus)
-*   **Focus:** Level 4 (Multi-Agent) and `ResearchAnalyst`.
-*   **Goal:** Define the **Domain-IR** for complex agents.
-    *   **TODO:** Explicitly list `domain_operations` in Agent Specs.
-    *   **TODO:** Update `Builder` to auto-synthesize Python orchestration code from Spec `workflow {}` blocks.
-    *   **TODO:** Verify `MessageBus` effectiveness in decoupling components (`Librarian` vs `Analyst`).
+*   **Focus:** Level 4 (Multi-Agent) and `ResearchAnalyst` (The "Knowledge Chef").
+*   **Goal:** Define the **Domain-IR** for complex agents and implement the "Knowledge Chef" architecture (`ResearchAnalyst_Pro`).
+    *   **Arch:** Adopt "Knowledge Chef" metaphor: `Librarian` (Buyer), `Analyst` (Cook), `Writer` (Plater), `Reviewer` (Taster).
+    *   **Tooling (Librarian):** Implement **Hybrid Tooling**. Use `grep` (PowerShell/ripgrep) for fast deterministic filtering and `semantic_search` (Vector/Embedding) for probabilistic gathering to optimize context for smaller models (e.g., Qwen 8B).
+    *   **Domain-IR (Analyst):** Move from String-typed data to **Structured Domain-IR**. Define `struct Insight` and `struct EvaluationResult` to ensure strong typing between components.
+    *   **Control Flow:** Implement **Self-Correction Loops** in `workflow` (e.g., `Reviewer` rejects draft -> `Writer` refines).
+    *   **Builder:** Update `Builder` to support `struct` definitions and `loop` constructs in Spec files.
 
 ### Phase 3: Recursive & Fractal Intelligence (Next)
 *   **Focus:** Level 5 (Recursive Solvers).
