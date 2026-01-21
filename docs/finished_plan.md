@@ -323,3 +323,19 @@ To support the Research Analyst, the SPAK Kernel requires critical upgrades to r
 
   The agent is now a true Level 3 Planning Agent that explicitly manages its strategy rather than just reacting to the
   conversation history.	  
+  
+  ✦ I have updated both the specification and the implementation.
+
+   1. Specification (`specs/chatbot.agent.spec.md`):
+       * Renamed component to PersonaChatBot.
+       * Updated State to include last_user_input and last_response.
+       * Defined think and reply operations in the LLM effect (mapping to the phases in ChatBot.txt).
+
+   2. Implementation (`src/chatbot.py`):
+       * Implemented PersonaChatBot class matching the new spec.
+       * Used ReasoningTrace to implement the "Think" phase (logging the intent).
+       * Used Generate (LLMRequest) for the "Respond" phase.
+       * Implemented "Reflect" by updating the history state after generation.
+       * Added a start() method to allow interactive running via the kernel's run command (and autostart).
+
+  You can now run (kernel) > run PersonaChatBot to test the new persona-based agent.

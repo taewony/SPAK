@@ -25,6 +25,7 @@ class SpecREPL(cmd.Cmd):
             "model": "ollama/qwen3:8b",
             "language": "English",
             "goal": "becomming a CEO of AI-Powered Content Creation one-person company",
+            "persona": "financial consultant",
             "autostart": True
         }
         # Apply model config to builder
@@ -418,6 +419,11 @@ class SpecREPL(cmd.Cmd):
         if comp_name == "Coach" and not constructor_args:
             if "goal" in self.config:
                 constructor_args = [self.config["goal"]]
+        
+        # Auto-inject persona for PersonaChatBot if not provided
+        if comp_name == "PersonaChatBot" and not constructor_args:
+            if "persona" in self.config:
+                constructor_args = [self.config["persona"]]
 
         src_dir = "src"
         module_path = os.path.join(src_dir, f"{comp_name.lower()}.py")
