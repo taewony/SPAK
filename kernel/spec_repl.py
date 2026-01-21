@@ -19,15 +19,61 @@ class SpecREPL(cmd.Cmd):
         self.current_specs = {}  # {name: spec}
         self.current_spec = None # active spec
         self.last_trace = []     # Store the execution trace from last run
+        
+        # Default Config
+        self.config = {
+            "model": "ollama/qwen3:8b",
+            "language": "English",
+            "goal": "becomming a CEO of AI-Powered Content Creation one-person company",
+            "autostart": True
+        }
+        # Apply model config to builder
+        self.builder.model_name = self.config["model"]
+        
+        # Show Config on Startup
+        print("\n🔧 Current Configuration:")
+        for k, v in self.config.items():
+            print(f"   {k}: {v}")
+        print("")
 
     def emptyline(self):
         pass
 
+    def do_config(self, arg):
+        """Manage configuration. Usage: config [key] [value]"""
+        args = arg.split(' ', 1)
+        if not arg:
+            # Show all
+            print("\n🔧 Current Configuration:")
+            for k, v in self.config.items():
+                print(f"   {k}: {v}")
+            return
+
+        key = args[0]
+        if len(args) == 1:
+            # Show specific
+            if key in self.config:
+                print(f"{key}: {self.config[key]}")
+            else:
+                print(f"Key '{key}' not found.")
+        else:
+            # Set value
+            value = args[1]
+            self.config[key] = value
+            print(f"✅ Set '{key}' to '{value}'")
+            
+            # Side effects
+            if key == "model":
+                self.builder.model_name = value
+                print(f"   (Updated Builder model to {value})")
+
     def do_trace(self, arg):
-        """Display the execution trace (system calls/effects) of the last run."""
+        """Display the execution trace. Usage: trace (thoughts only) OR trace all (full log)"""
         if not self.last_trace:
             print("No trace available. Run an agent first.")
             return
+        
+        show_all = arg.strip() == "all"
         
         from rich.console import Console
         from rich.table import Table
@@ -35,7 +81,8 @@ class SpecREPL(cmd.Cmd):
         import json
 
         console = Console()
-        table = Table(title="Execution Trace (System Effects)")
+        title = "Execution Trace (Full System Effects)" if show_all else "Execution Trace (reasoning & Plan Only)"
+        table = Table(title=title)
         table.add_column("Step", justify="right", style="cyan", no_wrap=True)
         table.add_column("Effect", style="magenta")
         table.add_column("Payload", style="green")
@@ -46,14 +93,23 @@ class SpecREPL(cmd.Cmd):
             payload = entry['payload']
             result = entry.get('result', 'N/A')
             
+            # Filter logic: If not 'all', skip anything that isn't reasoning
+            if not show_all and name != "ReasoningTrace":
+                continue
+
             # Special highlighting for ReasoningTrace
             if name == "ReasoningTrace":
                 thought = getattr(payload, 'thought', 'N/A')
                 plan = getattr(payload, 'plan', {})
                 raw = getattr(payload, 'raw_response', '')
+                
                 payload_str = f"[bold yellow]Thought:[/bold yellow] {thought}\n[bold cyan]Plan:[/bold cyan] {plan}"
-                if raw:
-                    payload_str += f"\n[dim]Raw LLM:[/dim] {raw[:100]}..."
+                if show_all and raw:
+                     payload_str += f"\n[dim]Raw LLM:[/dim] {raw[:100]}..."
+            elif name == "Generate" and show_all:
+                # Provide better formatting for Generate (LLM Request)
+                msgs = getattr(payload, 'messages', [])
+                payload_str = f"Generate({len(msgs)} messages)"
             else:
                 payload_str = str(payload)
             
@@ -357,6 +413,11 @@ class SpecREPL(cmd.Cmd):
         
         # Args after component name (and removing --mock)
         constructor_args = args[1:]
+        
+        # Auto-inject goal for Coach if not provided
+        if comp_name == "Coach" and not constructor_args:
+            if "goal" in self.config:
+                constructor_args = [self.config["goal"]]
 
         src_dir = "src"
         module_path = os.path.join(src_dir, f"{comp_name.lower()}.py")

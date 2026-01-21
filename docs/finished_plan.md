@@ -300,3 +300,26 @@ To support the Research Analyst, the SPAK Kernel requires critical upgrades to r
        * `FileSystem`: Standardized to include list_files.
    4. Workflow Update: The SelfImprovement workflow now includes a VerifyConsistency step, closing the loop on
       autonomous self-audit.
+	  
+✦ I have implemented the improvements outlined in plan.md for the CoachingAgent.
+
+  Key Changes:
+
+   1. Code (`src/coach.py`):
+       * Stateful Planning: Added plan to the agent's state to track the active coaching strategy.
+       * Think-Plan-Execute Loop: The agent now performs a separate "Think" step (LLM analysis) to decide whether to
+         revise the current plan or continue with it before responding.
+       * Structured Logging: ReasoningTrace now uses distinct action: revise or action: continue payloads, making it
+         easy to see when and why a plan changed using the trace command.
+
+   2. Specification (`specs/level3.agent.spec.md`):
+       * Updated the formal spec to reflect the distinction between think (reasoning) and plan/revise (strategic state
+         changes).
+       * Cleaned up the LLM effect operations to match the new architecture.
+
+   3. Command Usage:
+       * Use trace to see the agent's internal reasoning and plan revisions.
+       * Use trace all to see the raw LLM prompts used for the thinking and response phases.
+
+  The agent is now a true Level 3 Planning Agent that explicitly manages its strategy rather than just reacting to the
+  conversation history.	  

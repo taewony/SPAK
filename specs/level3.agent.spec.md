@@ -28,10 +28,16 @@ contract AgentScope {
 
 system CoachingAgent {
     effect LLM {
-        operation think(goal: String) -> String;
-        operation decide(plan: String, context: String) -> String;
-        operation reflect(reason: String) -> String;
-        operation revise(plan: String) -> String;
+        // 'think' captures the latent reasoning process (THOUGHT)
+        operation think(context: String) -> String;
+        
+        // 'plan' translates thought into an executable or stateful strategy (PLAN)
+        operation plan(thought: String) -> String;
+        
+        // 'revise' updates the current plan based on new reasoning
+        operation revise(current_plan: String, reason: String) -> String;
+        
+        operation respond(plan: String, history: List<String>) -> String;
     }
     
     effect User {
@@ -40,28 +46,15 @@ system CoachingAgent {
     }
 
     component Coach {
-        description: "A coaching agent that plans, executes, and self-corrects.";
+        description: "A planning agent that maintains an explicit strategy. It thinks before acting and revises its plan based on user feedback.";
         
         state Session {
             goal: String
-            plan: String
+            plan: String // Explicit strategy state
             history: List<String>
-            user_feeling: String
         }
-
-        function configure_session(goal: String) -> String;
         
-        workflow StartSession(feeling: String) {
-            step Greet {
-                perform User.reply("Hello! I am your Coach. How are you feeling today?")
-            }
-            step Listen {
-                # Only performed if feeling is not provided
-                perform User.listen()
-            }
-            step Plan {
-                perform LLM.think(state.goal)
-            }
-        }
+        function start(feeling: String) -> String;
+        function end() -> String;
     }
 }

@@ -8,7 +8,7 @@ meta {
 contract AgentScope {
     supported_intents = [
         "Agent Synthesis: Compiling Specs into verifiable Python artifacts.",
-        "Autonomous Orchestration: Driving agents via Thought-Action-Observation loops.",
+        "Autonomous Orchestration: Driving agents via Thought-Plan-Action-Observation loops.",
         "Advanced Verification: Validating latent reasoning against symbolic PlanIR."
     ]
 
