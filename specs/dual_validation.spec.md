@@ -51,7 +51,7 @@ system Dual_Validation_System {
     component DualVerifier {
         description: "Unified auditing kernel that gates output based on cognitive and engineering validity."
 
-        state {
+        state VerifierState {
             consistency_score: Float
             active_violations: List[Violation]
             is_verified: Boolean

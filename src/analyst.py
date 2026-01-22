@@ -43,7 +43,7 @@ class Analyst:
         )))
         
         try:
-            # Robust JSON extraction
+            # Clean JSON
             clean_json = response.strip()
             if "```json" in clean_json:
                 clean_json = clean_json.split("```json")[1].split("```")[0]
@@ -51,6 +51,9 @@ class Analyst:
                 clean_json = clean_json.split("```")[1].split("```")[0]
             
             clean_json = clean_json.strip()
+            # Fix common LLM JSON syntax errors (e.g. escaped underscores)
+            clean_json = clean_json.replace("\\_", "_")
+            
             # Handle potential trailing characters or intro text if LLM is chatty
             if not clean_json.startswith("["):
                 # Try to find the list

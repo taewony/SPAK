@@ -60,7 +60,7 @@ system ProjectTeam {
         
         function assign_task(task: Task) -> String;
         
-        // Handling incoming messages (e.g., "Finished Task X")
+        // Handling incoming messages
         function handle_message(sender: String, content: String) -> String;
     }
 
@@ -80,13 +80,11 @@ system ProjectTeam {
 
         step Delegate {
             // Loop through tasks and assign
-            // (Simplified representation)
             perform Manager.assign_task(tasks[0]) 
         }
 
         step WaitAndMonitor {
             // In a real async system, this would be an event loop
-            // Here we imply the Manager waits for callbacks
         }
     }
 }
