@@ -1,7 +1,7 @@
-(kernel) run ResearchAnalyst ChiefEditor docs 'agent AI'
+(kernel) run ResearchAnalyst ChiefEditor docs "AI agents"
 ✅ Active System set to: 'ResearchAnalyst'
 🚀 Initializing ChiefEditor Runtime...
-✅ [System] GPU Detected: NVIDIA GeForce RTX 5070, 12227 MiB, 11944 MiB
+✅ [System] GPU Detected: NVIDIA GeForce RTX 5070, 12227 MiB, 6399 MiB
 ✅ ChiefEditor instantiated as 'app'.
 💡 Available methods:
    - app.start()
@@ -9,27 +9,28 @@
 ▶️ Auto-starting ChiefEditor...
 🎬 [ChiefEditor] Starting 'AuthorPaper' workflow...
    Source: docs
-   Topic: 'agent
-🧠 [Trace] Thought: I need to gather materials about ''agent' from 'docs'.
+   Topic: AI
+🧠 [Trace] Thought: I need to gather materials about 'AI' from 'docs'.
    [Trace] Plan: {'action': 'gather_materials'}
-📚 [Librarian] Fast-searching for ''agent' in docs...
-    Found 0 candidate files.
-   ✅ Collected 0 documents.
+📚 [Librarian] Fast-searching for 'AI' in docs...
+    Found 21 candidate files.
+   ✅ Collected 21 documents.
 🧠 [Trace] Thought: Now I will extract insights from the collected documents.
    [Trace] Plan: {'action': 'extract_insights'}
-   ✅ Extracted 0 insights.
-🧠 [Trace] Thought: Creating a structured outline for a 'AI''.
+⏳ [LiteLLM] Generating with 'ollama/qwen3:8b'... (This may take time) Done.
+   ✅ Extracted 6 insights.
+🧠 [Trace] Thought: Creating a structured outline for a 'agents"'.
    [Trace] Plan: {'action': 'create_structured_outline'}
 ⏳ [LiteLLM] Generating with 'ollama/qwen3:8b'... (This may take time) Done.
    ✅ Outline created.
 🧠 [Trace] Thought: Drafting the full content based on the outline.
    [Trace] Plan: {'action': 'draft_content'}
 ⏳ [LiteLLM] Generating with 'ollama/qwen3:8b'... (This may take time) Done.
-   ✅ Draft generated (20034 chars).
+   ✅ Draft generated (10517 chars).
 🧠 [Trace] Thought: Evaluating the draft against quality criteria.
    [Trace] Plan: {'action': 'evaluate'}
 ⏳ [LiteLLM] Generating with 'ollama/qwen3:8b'... (This may take time) Done.
-   ✅ Evaluation: 8.8/10 - PASS
+   ✅ Evaluation: 9.2/10 - PASS
 🧠 [Trace] Thought: Finalizing and saving the artifact.
    [Trace] Plan: {'action': 'finalize_artifact'}
 🎉 [ChiefEditor] Paper published to: File written to final_paper.md
@@ -37,7 +38,7 @@ Result: Workflow Complete
 Python 3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)] on win32
 Type "help", "copyright", "credits" or "license" for more information.
 (InteractiveConsole)
->>>
+>>> ^Z
 
 (kernel) check
 
@@ -61,4 +62,3 @@ Type "help", "copyright", "credits" or "license" for more information.
 2. Domain Invariants:       0/2 passed (verified)
 
 Overall Status: FAIL
-========================================

@@ -396,11 +396,12 @@ class SpecREPL(cmd.Cmd):
 
     def do_run(self, arg):
         """Run a component. Usage: run [SystemName] [ComponentName] [--mock] [args...]"""
+        import shlex
         from . import semantic_kernel
         from .handlers import LiteLLMHandler, SafeREPLHandler, FileSystemHandler, MockLLMHandler, MathHandler, UserInteractionHandler, ReasoningHandler
         from .runtime import Runtime
 
-        args = arg.split()
+        args = shlex.split(arg)
 
         # 1. Check if the first argument is a loaded System (Context Switch)
         if args and args[0] in self.current_specs:
