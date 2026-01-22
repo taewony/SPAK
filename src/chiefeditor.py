@@ -18,16 +18,25 @@ class ChiefEditor:
         self.reviewer = Reviewer()
 
     def start(self):
+        # Clean topic
+        clean_topic = self.topic.strip("'").strip('"')
+        
         print(f"🎬 [ChiefEditor] Starting 'AuthorPaper' workflow...")
         print(f"   Source: {self.source_dir}")
-        print(f"   Topic: {self.topic}")
+        print(f"   Topic: {clean_topic}")
         
         # 1. SmartCollection
         perform(ReasoningTrace(payload=TraceLog(
-            thought=f"I need to gather materials about '{self.topic}' from '{self.source_dir}'.",
+            thought=f"I need to gather materials about '{clean_topic}' from '{self.source_dir}'.",
             plan={"action": "gather_materials"}
         )))
-        docs = self.librarian.gather_materials(self.source_dir, self.topic)
+        
+        docs = self.librarian.gather_materials(self.source_dir, clean_topic)
+        
+        if not docs:
+            print("   ⚠️ No docs found with primary keyword. Trying fallback: Gather ALL md files.")
+            docs = self.librarian.gather_materials(self.source_dir, "*")
+            
         print(f"   ✅ Collected {len(docs)} documents.")
 
         # 2. InsightExtraction
@@ -43,7 +52,7 @@ class ChiefEditor:
             thought=f"Creating a structured outline for a '{self.structure}'.",
             plan={"action": "create_structured_outline"}
         )))
-        outline = self.analyst.create_structured_outline(insights, self.topic, self.structure)
+        outline = self.analyst.create_structured_outline(insights, clean_topic, self.structure)
         print(f"   ✅ Outline created.")
 
         # 4. Drafting
