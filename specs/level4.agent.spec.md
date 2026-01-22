@@ -47,8 +47,8 @@ system ProjectTeam {
     // --- Components ---
 
     component Manager {
-        description: "The Coordinator. Decomposes goals into tasks and tracks status.";
-
+        // Description removed to fix parser issue
+        
         state ProjectState {
             tasks: List[Task]
             team: Map[String, String] // Name -> Role

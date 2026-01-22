@@ -178,6 +178,8 @@ The system composes four specialized agents:
 
 ### 7.2 Results
 
+In our empirical evaluation, the Knowledge Chef was deployed using the **ollama/qwen3:8b** model accelerated by an **NVIDIA GeForce RTX 5070** GPU. The workflow executed seamlessly, producing the following terminal status: `🎉 [ChiefEditor] Paper published to: final_paper.md; Result: Workflow Complete`.
+
 The Reviewer agent, enforcing the **"Source Fidelity Invariant,"** successfully rejected hallucinations where the Writer invented details not present in the Analyst's output. The resulting documents maintained **100% citation accuracy** relative to the provided context, as verified by manual audit of the `ReasoningTrace`.
 
 ---

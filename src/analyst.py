@@ -56,14 +56,31 @@ class Analyst:
             
             # Handle potential trailing characters or intro text if LLM is chatty
             if not clean_json.startswith("["):
-                # Try to find the list
                 start = clean_json.find("[")
-                end = clean_json.rfind("]")
-                if start != -1 and end != -1:
-                    clean_json = clean_json[start:end+1]
-
-            data = json.loads(clean_json)
-            insights = [Insight(**item) for item in data]
+                if start != -1:
+                    clean_json = clean_json[start:]
+            
+            # Robust Parsing Strategy: Try whole list first, then individual objects
+            import re
+            try:
+                data = json.loads(clean_json)
+            except json.JSONDecodeError:
+                print("    ⚠️ Full JSON parse failed. Trying regex extraction of objects...")
+                # Extract individual objects: { "claim": ... }
+                # We assume no nested objects for this specific schema (flat list)
+                # Regex matches { ... } non-greedily, allowing for newlines
+                matches = re.findall(r'\{[^{}]+\}', clean_json, re.DOTALL)
+                data = []
+                for m in matches:
+                    try:
+                        # Clean each object string just in case
+                        m_clean = m.replace("\\_", "_") 
+                        obj = json.loads(m_clean)
+                        data.append(obj)
+                    except:
+                        continue
+            
+            insights = [Insight(**item) for item in data if isinstance(item, dict) and "claim" in item]
             return insights
         except Exception as e:
             print(f"Error parsing insights: {e}")

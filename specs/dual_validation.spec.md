@@ -58,9 +58,17 @@ system Dual_Validation_System {
         }
 
         workflow audit_cycle(trace: List[TraceEvent], plan: List[PlanStep], final_state: Map[String, Any], spec_invariants: List[Invariant]) {
-            step verify_operational_consistency
-            step verify_domain_invariants
-            step finalize_audit_report
+            step verify_operational_consistency {
+                // Logic to invoke checker
+                score = perform OperationalConsistencyChecker.check_alignment(trace, plan)
+            }
+            step verify_domain_invariants {
+                // Logic to invoke checker
+                violations = perform DomainInvariantChecker.check_invariants(final_state, spec_invariants)
+            }
+            step finalize_audit_report {
+                // Logic
+            }
         }
 
         invariant: "An execution is marked 'Verified' only if consistency > threshold AND violations is empty."
