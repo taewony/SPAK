@@ -15,10 +15,31 @@ from RestrictedPython.PrintCollector import PrintCollector
 class LiteLLMHandler(Handler):
     def __init__(self, default_model: str = "ollama/qwen3:8b"):
         self.default_model = default_model
+        self._check_gpu()
+
+    def _check_gpu(self):
+        try:
+            import subprocess
+            # Check NVIDIA GPU
+            try:
+                res = subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total,memory.free", "--format=csv,noheader"], 
+                                     capture_output=True, text=True)
+                if res.returncode == 0:
+                    print(f"✅ [System] GPU Detected: {res.stdout.strip()}")
+                    return
+            except FileNotFoundError:
+                pass
+            
+            print("⚠️ [System] No NVIDIA GPU detected (nvidia-smi failed). LLM might run on CPU (Slow).")
+        except Exception as e:
+            print(f"⚠️ [System] GPU Check failed: {e}")
 
     def handle(self, effect: Effect) -> Any:
         if isinstance(effect, Generate):
             req: LLMRequest = effect.payload
+            model = req.model or self.default_model
+            
+            print(f"⏳ [LiteLLM] Generating with '{model}'... (This may take time)", end="", flush=True)
             
             # Simple Retry Logic
             max_retries = 3
@@ -27,13 +48,14 @@ class LiteLLMHandler(Handler):
             for attempt in range(max_retries):
                 try:
                     response = litellm.completion(
-                        model=req.model or self.default_model,
+                        model=model,
                         messages=req.messages,
                         stop=req.stop
                     )
+                    print(" Done.")
                     return response.choices[0].message.content
                 except Exception as e:
-                    print(f"⚠️ [LiteLLM] Error (Attempt {attempt+1}/{max_retries}): {e}")
+                    print(f"\\n⚠️ [LiteLLM] Error (Attempt {attempt+1}/{max_retries}): {e}")
                     if attempt < max_retries - 1:
                         time.sleep(2) # Wait 2 seconds before retry
                     else:
