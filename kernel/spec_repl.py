@@ -646,6 +646,128 @@ class SpecREPL(cmd.Cmd):
         except Exception as e:
             print(f"❌ Chef execution failed: {e}")
 
+    def do_check(self, arg):
+        """Perform Dual Validation (Operational Consistency + Domain Invariants) on the last trace.
+        Usage: check [plan_file]
+        If plan_file is omitted, it attempts to derive the plan from the Active Spec's Workflow.
+        """
+        if not self.last_trace:
+            print("No trace available. Run an agent first.")
+            return
+
+        if not self.current_spec:
+            print("No active spec to check invariants against.")
+            return
+
+        print("\n🔎 Starting Dual Validation Process...\n")
+        
+        # --- 1. Operational Consistency (Trace <-> Plan) ---
+        op_score = 0.0
+        op_passed = False
+        plan_file = arg.strip()
+        plan_object = None
+
+        from .consistency import PlanIR, StepExpectation, ConsistencyVerifier
+        
+        if plan_file and os.path.exists(plan_file):
+            print(f"🔹 [Operational Consistency] Checking against plan file: {plan_file}")
+            import yaml
+            try:
+                with open(plan_file, 'r', encoding='utf-8') as f:
+                    data = yaml.safe_load(f)
+                
+                steps = []
+                for s in data.get('steps', []):
+                    steps.append(StepExpectation(
+                        phase=s['phase'],
+                        must_use_action=s['must_use_action'],
+                        required_thought_keywords=s['required_thought_keywords']
+                    ))
+                plan_object = PlanIR(name=data.get('name', 'Unnamed Plan'), steps=steps)
+
+            except Exception as e:
+                print(f"   ⚠️ Error loading plan file: {e}")
+
+        elif self.current_spec.workflows:
+            # AUTO-DERIVE PLAN FROM SPEC
+            wf = self.current_spec.workflows[0] # Take the first workflow as default
+            print(f"🔹 [Operational Consistency] Deriving plan from Spec Workflow: '{wf.name}'")
+            
+            steps = []
+            import re
+            
+            # Simple heuristic: Try to find 'perform Component.Function' in step logic
+            for step_str in wf.steps:
+                # Step string format from compiler: "Step {Name}: {Body}"
+                # e.g. "Step SmartCollection: docs = perform Librarian.gather_materials(source_dir, intent)"
+                
+                parts = step_str.split(":", 1)
+                if len(parts) < 2: continue
+                
+                step_name = parts[0].replace("Step", "").strip()
+                step_body = parts[1].strip()
+                
+                # Extract Action
+                action_match = re.search(r"perform\s+([a-zA-Z0-9_]+\.[a-zA-Z0-9_]+)", step_body)
+                action = action_match.group(1).split('.')[-1] if action_match else "unknown_action"
+                
+                # Extract Keywords (Heuristic: Component Name + Action Name)
+                # Ideally we read 'expect_thought' comments, but compiler strips them.
+                # So we use the component/function names as keywords.
+                keywords = [action.split('_')[-1], action.split('_')[0]] # e.g. gather_materials -> [materials, gather]
+                
+                steps.append(StepExpectation(
+                    phase=step_name,
+                    must_use_action=action,
+                    required_thought_keywords=keywords
+                ))
+            
+            plan_object = PlanIR(name=wf.name, steps=steps)
+            
+        if plan_object:
+            try:
+                verifier = ConsistencyVerifier()
+                result = verifier.verify(self.last_trace, plan_object)
+                
+                op_score = result['score']
+                op_passed = result['passed']
+                print(f"   Score: {op_score * 100:.1f}%")
+                if not op_passed:
+                    print("   ❌ Failed Operational Consistency")
+                    for d in result['details']: print(f"      {d}")
+                else:
+                    print("   ✅ Passed Operational Consistency")
+            except Exception as e:
+                 print(f"   ⚠️ Error running consistency verification: {e}")
+        else:
+             print("🔹 [Operational Consistency] Skipped (No plan file and no Workflows in Spec).")
+
+
+        # --- 2. Domain Invariants (Trace <-> Spec) ---
+        print(f"\n🔹 [Domain Invariants] Checking against Spec: {self.current_spec.name}")
+        from .invariants import DomainInvariantChecker
+        
+        inv_checker = DomainInvariantChecker()
+        inv_results = inv_checker.check_invariants(self.last_trace, self.current_spec)
+        
+        inv_passed_count = 0
+        for res in inv_results:
+            icon = "✅" if res.status == "PASS" else "❌" if res.status == "FAIL" else "❓"
+            print(f"   {icon} [{res.status}] {res.name}")
+            print(f"      {res.details}")
+            if res.status == "PASS": inv_passed_count += 1
+        
+        # --- Summary ---
+        print("\n" + "="*40)
+        print("📝 Dual Validation Report")
+        print("="*40)
+        print(f"1. Operational Consistency: {'✅ PASS' if op_passed else '❌ FAIL' if plan_object else '⚪ SKIP'}")
+        print(f"2. Domain Invariants:       {inv_passed_count}/{len(inv_results)} passed (verified)")
+        
+        overall = "PASS" if (op_passed or not plan_object) and all(r.status != 'FAIL' for r in inv_results) else "FAIL"
+        print(f"\nOverall Status: {overall}")
+        print("="*40 + "\n")
+
     def do_exit(self, arg):
         """Exit the shell."""
         print("Goodbye.")

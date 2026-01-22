@@ -47,6 +47,11 @@ system ResearchAnalyst {
 
     // --- Components ---
     
+    component ChiefEditor {
+        description: "The Orchestrator. Coordinates the entire paper authoring workflow.";
+        function start() -> String;
+    }
+
     component Librarian {
         description: "The Buyer. Hybrid engine engaging fast tools (grep) for speed and LLMs for depth.";
         function gather_materials(source_path: String, topic_keywords: String) -> List<String>;
@@ -67,27 +72,33 @@ system ResearchAnalyst {
 
     component Reviewer {
         description: "The Taster. Evaluates artifacts against success criteria.";
+        
+        // --- Domain Invariants ---
+        invariant: "Final artifact must contain all required sections (Motivation, Background, Methodology, Results)"
+        invariant: "No hallucinated citations allowed (Result coverage > 0.9)"
+        
         function evaluate(draft: String, criteria: List<String>) -> EvaluationResult;
     }
 
-    // --- Workflows ---
+    // --- Workflows (Source of Operational Consistency Plan) ---
 
     workflow AuthorPaper(source_dir: String, intent: String, structure_type: String) {
-        step Collect {
+        step SmartCollection {
             docs = perform Librarian.gather_materials(source_dir, intent)
         }
-        step Analyze {
+        step InsightExtraction {
             insights = perform Analyst.extract_insights(docs)
+        }
+        step StructuralBlueprinting {
             outline = perform Analyst.create_structured_outline(insights, intent, structure_type)
         }
         step Drafting {
             draft = perform Writer.draft_content(outline)
         }
         step QualityControl {
-            // In a full implementation, this would be a loop.
             eval = perform Reviewer.evaluate(draft, ["Source Fidelity", "Logical Flow"])
         }
-        step Finalize {
+        step Finalization {
             perform Writer.finalize_artifact(draft, "final_paper.md")
         }
     }

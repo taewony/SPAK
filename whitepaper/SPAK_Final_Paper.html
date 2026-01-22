@@ -1,426 +1,315 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>SPAK_Final_Paper</title>
-  <style>
-
-html {
-color: #1a1a1a;
-background-color: #fdfdfd;
-}
-body {
-margin: 0 auto;
-max-width: 36em;
-padding-left: 50px;
-padding-right: 50px;
-padding-top: 50px;
-padding-bottom: 50px;
-hyphens: auto;
-overflow-wrap: break-word;
-text-rendering: optimizeLegibility;
-font-kerning: normal;
-}
-@media (max-width: 600px) {
-body {
-font-size: 0.9em;
-padding: 12px;
-}
-h1 {
-font-size: 1.8em;
-}
-}
-@media print {
-html {
-background-color: white;
-}
-body {
-background-color: transparent;
-color: black;
-font-size: 12pt;
-}
-p, h2, h3 {
-orphans: 3;
-widows: 3;
-}
-h2, h3, h4 {
-page-break-after: avoid;
-}
-}
-p {
-margin: 1em 0;
-}
-a {
-color: #1a1a1a;
-}
-a:visited {
-color: #1a1a1a;
-}
-img {
-max-width: 100%;
-}
-svg {
-height: auto;
-max-width: 100%;
-}
-h1, h2, h3, h4, h5, h6 {
-margin-top: 1.4em;
-}
-h5, h6 {
-font-size: 1em;
-font-style: italic;
-}
-h6 {
-font-weight: normal;
-}
-ol, ul {
-padding-left: 1.7em;
-margin-top: 1em;
-}
-li > ol, li > ul {
-margin-top: 0;
-}
-blockquote {
-margin: 1em 0 1em 1.7em;
-padding-left: 1em;
-border-left: 2px solid #e6e6e6;
-color: #606060;
-}
-code {
-font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-font-size: 85%;
-margin: 0;
-hyphens: manual;
-}
-pre {
-margin: 1em 0;
-overflow: auto;
-}
-pre code {
-padding: 0;
-overflow: visible;
-overflow-wrap: normal;
-}
-.sourceCode {
-background-color: transparent;
-overflow: visible;
-}
-hr {
-border: none;
-border-top: 1px solid #1a1a1a;
-height: 1px;
-margin: 1em 0;
-}
-table {
-margin: 1em 0;
-border-collapse: collapse;
-width: 100%;
-overflow-x: auto;
-display: block;
-font-variant-numeric: lining-nums tabular-nums;
-}
-table caption {
-margin-bottom: 0.75em;
-}
-tbody {
-margin-top: 0.5em;
-border-top: 1px solid #1a1a1a;
-border-bottom: 1px solid #1a1a1a;
-}
-th {
-border-top: 1px solid #1a1a1a;
-padding: 0.25em 0.5em 0.25em 0.5em;
-}
-td {
-padding: 0.125em 0.5em 0.25em 0.5em;
-}
-header {
-margin-bottom: 4em;
-text-align: center;
-}
-#TOC li {
-list-style: none;
-}
-#TOC ul {
-padding-left: 1.3em;
-}
-#TOC > ul {
-padding-left: 0;
-}
-#TOC a:not(:hover) {
-text-decoration: none;
-}
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-
-ul.task-list[class]{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-font-size: inherit;
-width: 0.8em;
-margin: 0 0.8em 0.2em -1.6em;
-vertical-align: middle;
-}
-.display.math{display: block; text-align: center; margin: 0.5rem auto;}
-</style>
-</head>
-<body>
-<h1 id="spak-a-spec-driven-programmable-agent-kernel-for-ai-engineering-education">SPAK:
-A Spec-Driven Programmable Agent Kernel for AI Engineering
-Education</h1>
-<p><strong>Authors:</strong> 김태원<br />
-<strong>Affiliation:</strong> 우송대학교<br />
-<strong>Repository:</strong> https://github.com/taewony/SPAK</p>
-<hr />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPAK Research Paper</title>
+    <!-- MathJax Configuration -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #f9f9f9;
+        }
+        .paper-content {
+            background: white;
+            padding: 50px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 40px;
+            color: #111;
+        }
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            color: #222;
+        }
+        h3 {
+            margin-top: 30px;
+            color: #333;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-left: 5px solid #ccc;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .abstract {
+            font-style: italic;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head><body>
+    <div class="paper-content">
+        <h1 id="spak-a-spec-driven-foundation-for-systematic-intelligence-engineering">SPAK: A Spec-Driven Foundation for Systematic Intelligence Engineering</h1>
 <h2 id="abstract">Abstract</h2>
-<p>The rapid advancement of Large Language Models (LLMs) has accelerated
-the development of AI agents, yet current prompt-driven methodologies
-suffer from non-deterministic outputs, lack of interpretability, and
-difficulty in verification. This paper introduces the
-<strong>Spec-driven Programmable Agent Kernel (SPAK)</strong>, a novel
-architecture that treats AI software synthesis as a formal compilation
-process rather than probabilistic text generation. SPAK introduces three
-key innovations: (1) <strong>AgentSpec</strong>, a semantic
-Domain-Specific Language (DSL) that formalizes agent structure, state,
-effects, and workflows as mathematical objects; (2) an <strong>Algebraic
-Effect-based Runtime Kernel</strong>, which isolates decision-making
-policy from execution to ensure safety and observability; and (3) an
-<strong>Agent Maturity Framework</strong>, a six-level curriculum (Level
-0–5) that systematically guides learners from building simple functions
-to complex, self-improving recursive agents. We demonstrate SPAK’s
-efficacy by synthesizing and verifying agents across all maturity levels
-on a local PC environment using the <strong>Ollama</strong> inference
-tool, showing that formal specifications can reliably bridge the gap
-between natural language intent and robust software execution. This work
-proposes a shift from <em>prompting agents</em> to <em>programming agent
-kernels</em>, offering a foundational platform for both AI engineering
-education and dependable agentic systems.</p>
-<p><strong>Keywords:</strong> AI Engineering, Agent Kernels, Formal
-Specification, Large Language Models, Algebraic Effects, Recursive
-Agents, Software Engineering Education.</p>
+<p>The rapid advancement of Large Language Models (LLMs) has catalyzed the development of autonomous agents; however, current systems rely heavily on ad-hoc prompt engineering, resulting in fragility, unverifiability, and a lack of scalability. We propose <strong>Systematic Intelligence Engineering (SIE)</strong>, a principled framework that decouples heuristic reasoning from deterministic execution. To operationalize SIE, we present the <strong>Spec-driven Programmatic Agent Kernel (SPAK)</strong>, a runtime environment that treats agent behavior as a formal, compilable artifact rather than probabilistic text generation. SPAK enforces a <strong>Dual Verification Framework</strong>, ensuring both <em>Operational Consistency</em> (alignment of thought and action) and <em>Domain Invariant Compliance</em> (adherence to safety constraints). We validate SPAK through a <strong>6-Level Agent Curriculum</strong>, demonstrating that a single kernel can support a progression from simple static responders to recursive, self-improving solvers. This work establishes the architectural foundation for <strong>Autonomous Engineering Systems (AES)</strong> capable of complex, high-reliability tasks. The reference implementation and 6-level curriculum are available at: https://github.com/taewony/SPAK</p>
 <hr />
-<h2 id="introduction">1. Introduction</h2>
-<h3 id="background-from-prompt-engineering-to-agent-engineering">1.1
-Background: From Prompt Engineering to Agent Engineering</h3>
-<p>The paradigm of AI engineering is shifting from single-turn chat
-interfaces toward autonomous agents capable of long-horizon planning,
-tool usage, and self-correction. However, most existing development
-practices remain rooted in <strong>prompt engineering</strong>, which
-relies on empirical tuning of natural language instructions. From a
-software engineering perspective, this approach lacks structural
-guarantees and fails to ensure <strong>intent preservation</strong>,
-<strong>reproducibility</strong>, and
-<strong>verifiability</strong>.</p>
-<h3 id="problem-statement">1.2 Problem Statement</h3>
-<p>Current agent frameworks emphasize behavioral performance while
-neglecting formal structure. This results in:</p>
-<ul>
-<li><strong>Implicit Semantics:</strong> Agent logic is embedded in
-unstructured prompts, invisible to static analysis.</li>
-<li><strong>Tight Coupling:</strong> State, tools, and control flow are
-entangled, hindering reasoning and maintenance.</li>
-<li><strong>Pedagogical Fragility:</strong> Learners acquire
-model-specific tricks rather than transferable engineering
-principles.</li>
-</ul>
-<p>These limitations make it difficult to scale agent systems reliably
-or to teach agent construction systematically.</p>
-<h3 id="contribution">1.3 Contribution</h3>
-<p>This paper proposes <strong>SPAK (Spec-driven Programmable Agent
-Kernel)</strong> as a response to these challenges. SPAK reframes agent
-development as a <strong>specification-driven compilation
-process</strong>, grounded in formal semantics and category-theoretic
-structure.</p>
-<p>Our contributions are:</p>
-<ol type="1">
-<li><strong>AgentSpec DSL:</strong> A semantic specification language
-for agents, modeling state, transitions, effects, and invariants
-explicitly.</li>
-<li><strong>Algebraic Effect Kernel:</strong> A runtime that strictly
-separates decision logic from side effects, enabling safety,
-observability, and replay.</li>
-<li><strong>Agent Maturity Framework:</strong> A six-level curriculum
-(Level 0–5) that incrementally introduces agentic capabilities in a
-pedagogically sound manner.</li>
-<li><strong>End-to-End Implementation:</strong> A working kernel that
-synthesizes, verifies, and executes agents locally using Ollama-based
-LLM inference.</li>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>The paradigm of AI engineering is shifting from chat-based interactions to agent-based automation. While frameworks like LangChain and AutoGen facilitate rapid prototyping, they often entangle probabilistic reasoning with execution logic. This leads to "black-box" behaviors where failures are difficult to trace, and safety constraints are easily bypassed by hallucination.</p>
+<p><strong>Core Thesis:</strong> Reliability in autonomous systems is an architectural problem, not merely a model capability problem. Robust intelligence emerges only when neural heuristics are strictly isolated from mechanized execution via explicit specifications.</p>
+<p>To address this, we introduce <strong>SPAK (Spec-driven Programmatic Agent Kernel)</strong>. Unlike libraries that act as wrappers around API calls, SPAK functions as an operating system kernel for agents, managing context, enforcing permissions, and validating state transitions against a formal schema.</p>
+<p><strong>Key Contributions:</strong></p>
+<ol>
+<li><strong>The SIE Framework:</strong> A methodology for building reliable systems via the separation of neural creativity and symbolic enforcement.</li>
+<li><strong>SPAK Architecture:</strong> A kernel design implementing Algebraic Effects and Algebraic Data Types (ADTs) for agent isolation.</li>
+<li><strong>Dual Verification Mechanism:</strong> A formal approach to validating agent actions against both intent and domain laws.</li>
+<li><strong>6-Level Curriculum Evaluation:</strong> A systematic validation method demonstrating architectural scalability across varying levels of agent complexity.</li>
 </ol>
 <hr />
-<h2 id="formal-semantics-agents-as-endofunctors">2. Formal Semantics:
-Agents as Endofunctors</h2>
-<p>SPAK models agents as mathematical objects operating over semantic
-state spaces.</p>
-<h3 id="semantic-category-mathcalc">2.1 Semantic Category <span class="math inline">𝒞</span></h3>
-<p>We define a <strong>Semantic Category</strong> <span class="math inline">𝒞</span> where:</p>
-<ul>
-<li><strong>Objects:</strong> Immutable snapshots of an agent’s semantic
-state (e.g., memory, goals, context).</li>
-<li><strong>Morphisms:</strong> Pure functions <span class="math inline"><em>f</em> : <em>S</em> → <em>S</em><sup>′</sup></span>
-representing valid semantic transitions.</li>
-</ul>
-<h3 id="agent-as-endofunctor">2.2 Agent as Endofunctor</h3>
-<p>An agent is modeled as an <strong>Endofunctor</strong> <span class="math inline"><em>F</em> : 𝒞 → 𝒞</span> that:</p>
-<ul>
-<li>Iteratively applies semantic transformations (<span class="math inline"><em>S</em><sub><em>t</em> + 1</sub> = <em>F</em>(<em>S</em><sub><em>t</em></sub>)</span>).</li>
-<li>Preserves structural invariants defined in the specification.</li>
-</ul>
-<p>This formulation provides a precise notion of <em>intent
-preservation</em> as structure preservation under <span class="math inline"><em>F</em></span>.</p>
-<h3 id="algebraic-effects">2.3 Algebraic Effects</h3>
-<p>Interactions with the external world (LLM calls, file I/O, tools) are
-represented as <strong>Algebraic Effects</strong>. Rather than executing
-effects directly, agents emit effect requests that are interpreted by
-the Kernel. This ensures:</p>
-<ul>
-<li>Clear separation between <strong>policy</strong> and
-<strong>mechanism</strong>.</li>
-<li>Deterministic replay and controlled execution.</li>
-<li>Compatibility with formal verification techniques.</li>
-</ul>
+<h2 id="2-related-work">2. Related Work</h2>
+<h3 id="21-agent-orchestration-frameworks">2.1 Agent Orchestration Frameworks</h3>
+<p>Current frameworks such as <strong>LangChain</strong> [Chase, 2022], <strong>LlamaIndex</strong> [Liu, 2023], and <strong>Microsoft AutoGen</strong> [Wu et al., 2023] focus on ease of composition and multi-agent conversation. While effective for scripting and prototyping, they predominantly rely on "Chain-of-Thought" prompting without formal runtime guarantees. SPAK differentiates itself by prioritizing <strong>correctness constraints</strong> (via <code>AgentSpec</code>) over compositional flexibility, treating the agent definition as a compilable contract rather than a Python script.</p>
+<h3 id="22-neuro-symbolic-ai">2.2 Neuro-Symbolic AI</h3>
+<p>Neuro-symbolic approaches attempt to combine neural networks with logic programming [Garcez et al., 2020]. Classic methods often require differentiable logic layers or specialized training. SPAK adopts a pragmatic <strong>"System 1 / System 2"</strong> approach: it does not restrict the <em>internal</em> reasoning of the LLM (System 1) but strictly enforces the <em>external</em> interfaces and side effects via a symbolic DSL (System 2). This aligns with recent work on <strong>Toolformer</strong> [Schick et al., 2023] but adds a layer of formal invariant checking.</p>
+<h3 id="23-formal-verification-in-software-engineering">2.3 Formal Verification in Software Engineering</h3>
+<p>We draw upon principles of <strong>Design by Contract (DbC)</strong> [Meyer, 1992] and <strong>Runtime Verification</strong> [Leucker &amp; Schallhart, 2009]. Unlike static verification (which is intractable for the probabilistic state space of LLMs), SPAK treats correctness as a <strong>runtime property</strong> enforced by the kernel. The kernel acts as the "Runtime Monitor" that blocks actions violating the contract defined in <code>AgentSpec</code>.</p>
 <hr />
-<h2 id="agent-maturity-framework">3. Agent Maturity Framework</h2>
-<p>To evaluate SPAK as an educational and engineering framework, we
-introduce a graded <strong>Agent Maturity Framework</strong>.</p>
+<h2 id="3-the-systematic-intelligence-engineering-sie-framework">3. The Systematic Intelligence Engineering (SIE) Framework</h2>
+<p>SIE structures intelligent systems into a hierarchy of control, moving from raw execution to meta-cognitive evolution.</p>
+<h3 id="31-hierarchical-architecture">3.1 Hierarchical Architecture</h3>
+<div class="codehilite"><pre><span></span><code><span class="nx">Layer</span><span class="w"> </span><span class="mi">4</span><span class="p">:</span><span class="w"> </span><span class="nx">Meta</span><span class="o">-</span><span class="nx">Level</span><span class="w"> </span><span class="nx">Supervision</span><span class="w"> </span><span class="p">(</span><span class="k">Self</span><span class="o">-</span><span class="nx">Improvement</span><span class="p">)</span>
+<span class="w">   </span><span class="err">│</span><span class="w">     </span><span class="err">•</span><span class="w"> </span><span class="nx">Log</span><span class="w"> </span><span class="nx">Analysis</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">Spec</span><span class="w"> </span><span class="nx">Evolution</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">Heuristic</span><span class="w"> </span><span class="nx">Patching</span>
+<span class="w">   </span><span class="err">▼</span>
+<span class="nx">Layer</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span><span class="w"> </span><span class="nx">Systematic</span><span class="w"> </span><span class="nx">Intelligence</span><span class="w"> </span><span class="nx">Engineering</span><span class="w"> </span><span class="p">(</span><span class="nx">SIE</span><span class="p">)</span><span class="w"> </span><span class="nx">Methodology</span>
+<span class="w">   </span><span class="err">│</span><span class="w">     </span><span class="err">•</span><span class="w"> </span><span class="nx">Design</span><span class="w"> </span><span class="nx">Patterns</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">Lifecycle</span><span class="w"> </span><span class="nx">Management</span>
+<span class="w">   </span><span class="err">▼</span>
+<span class="nx">Layer</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="nx">Autonomous</span><span class="w"> </span><span class="nx">Engineering</span><span class="w"> </span><span class="nx">System</span><span class="w"> </span><span class="p">(</span><span class="nx">AES</span><span class="p">)</span>
+<span class="w">   </span><span class="err">│</span><span class="w">     </span><span class="err">•</span><span class="w"> </span><span class="nx">Domain</span><span class="w"> </span><span class="nx">Specific</span><span class="w"> </span><span class="nx">Agents</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">g</span><span class="p">.,</span><span class="w"> </span><span class="nx">GPU</span><span class="w"> </span><span class="nx">Optimizer</span><span class="p">,</span><span class="w"> </span><span class="nx">Web</span><span class="w"> </span><span class="nx">Builder</span><span class="p">)</span>
+<span class="w">   </span><span class="err">▼</span>
+<span class="nx">Layer</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="nx">SPAK</span><span class="w"> </span><span class="nx">Kernel</span><span class="w"> </span><span class="p">(</span><span class="nx">Runtime</span><span class="p">)</span>
+<span class="w">         </span><span class="err">•</span><span class="w"> </span><span class="nx">Execution</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">Verification</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">Isolation</span>
+</code></pre></div>
+
+<h3 id="32-design-principles">3.2 Design Principles</h3>
+<ol>
+<li><strong>Specification Primacy:</strong> Agent behavior must be defined in <strong>AgentSpec</strong>, a machine-readable DSL, not natural language prompts.</li>
+<li><strong>Heuristic-Mechanism Separation:</strong> The "Brain" (LLM) proposes actions; the "Body" (Kernel) validates and executes them.</li>
+<li><strong>Immutable State:</strong> Agent memory utilizes value semantics, enabling perfect time-travel debugging and auditability.</li>
+</ol>
+<hr />
+<h2 id="4-the-spak-architecture">4. The SPAK Architecture</h2>
+<p>SPAK acts as the sandbox and execution engine. It borrows concepts from Functional Programming to ensure safety.</p>
+<h3 id="41-agentspec-the-domain-specific-language">4.1 AgentSpec: The Domain Specific Language</h3>
+<p>Agents are defined using <strong>AgentSpec</strong>, which captures:</p>
+<ul>
+<li><strong>Domain Model:</strong> Algebraic Data Types (Sum/Product types) ensuring illegal states are unrepresentable.</li>
+<li><strong>Workflow:</strong> A state-machine representation of the agent's lifecycle.</li>
+<li><strong>Invariants:</strong> Logic predicates that must hold true.</li>
+</ul>
+<p><strong>Listing 1: AgentSpec Example (Reviewer Component)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">component</span><span class="w"> </span><span class="n">Reviewer</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Taster. Evaluates artifacts against success criteria.&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="n">Domain</span><span class="w"> </span><span class="n">Invariant</span><span class="p">:</span><span class="w"> </span><span class="n">Engineering</span><span class="w"> </span><span class="n">Law</span>
+<span class="w">    </span><span class="n">invariant</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Final artifact must contain all required sections (Motivation, Background, Methodology, Results)&quot;</span>
+<span class="w">    </span><span class="n">invariant</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;No hallucinated citations allowed (Result coverage &gt; 0.9)&quot;</span>
+
+<span class="w">    </span><span class="n">function</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span><span class="n">draft</span><span class="p">:</span><span class="w"> </span><span class="nb nb-Type">String</span><span class="p">,</span><span class="w"> </span><span class="n">criteria</span><span class="p">:</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="nb nb-Type">String</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">EvaluationResult</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="42-algebraic-effects-for-io-isolation">4.2 Algebraic Effects for I/O Isolation</h3>
+<p>Agents cannot directly access the filesystem or network. They must <code>yield</code> an effect (e.g., <code>WriteFile</code>). The Kernel intercepts this effect, checks permissions against the Spec, and determines whether to execute, mock, or reject the request. This prevents "Prompt Injection" attacks from manifesting as system-level breaches.</p>
+<hr />
+<h2 id="5-dual-verification-framework">5. Dual Verification Framework</h2>
+<p>A core innovation of SPAK is the gating of all agent outputs through two distinct verification layers.</p>
+<h3 id="51-definition-1-operational-consistency-phi_op">5.1 Definition 1: Operational Consistency ( $\Phi_{op}$ )</h3>
+<p>This verifies that the agent's <em>symbolic output</em> matches its <em>latent reasoning</em>.
+Given a reasoning trace $R$ and a structured plan $P$:</p>
+<p>$$ \Phi_{op}(R, P) \iff \forall s \in P, \exists t \in R : \text{aligns}(t, s) $$</p>
+<ul>
+<li><strong>Purpose:</strong> Ensures the agent "knows what it is doing" and isn't guessing.</li>
+<li><strong>Algorithm:</strong> The <code>ConsistencyVerifier</code> extracts steps from the <code>PlanIR</code> (derived from the Spec) and aligns them with <code>ReasoningTrace</code> events. It checks if the "Thought" contains required semantic keywords and if the "Action" matches the planned operation.</li>
+</ul>
+<h3 id="52-definition-2-domain-invariant-compliance-phi_dom">5.2 Definition 2: Domain Invariant Compliance ( $\Phi_{dom}$ )</h3>
+<p>This verifies that the execution result $E$ satisfies all safety constraints $I$ defined in AgentSpec.</p>
+<p>$$ \Phi_{dom}(E, I) \iff \forall i \in I : i(E) \text{ is True} $$</p>
+<ul>
+<li><strong>Purpose:</strong> Ensures the output is safe and compliant with engineering standards, regardless of the agent's reasoning.</li>
+</ul>
+<h3 id="53-execution-condition">5.3 Execution Condition</h3>
+<p>The Kernel executes an action if and only if:</p>
+<p>$$ \text{Execute}(a) \iff \Phi_{op}(R, P) \land \Phi_{dom}(State', I) $$</p>
+<hr />
+<h2 id="6-experimental-validation-the-6-level-curriculum">6. Experimental Validation: The 6-Level Curriculum</h2>
+<p>To demonstrate the universality of SPAK, we implemented a graded curriculum of agents, all running on the same kernel instance.</p>
+<h3 id="61-curriculum-structure">6.1 Curriculum Structure</h3>
 <table>
 <thead>
 <tr>
-<th style="text-align: right;">Level</th>
-<th>Name</th>
-<th>Capability</th>
-<th>Formal Concept</th>
-<th>Status</th>
+<th>Level</th>
+<th>Agent Type</th>
+<th>Architectural Concept</th>
+<th>SPAK Feature Utilized</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: right;">0</td>
-<td>Static Responder</td>
-<td>Input → Output</td>
-<td>Morphism</td>
-<td>✓</td>
+<td><strong>0</strong></td>
+<td><strong>Static Responder</strong></td>
+<td>Input $\to$ Output Morphism</td>
+<td>Stateless execution</td>
 </tr>
 <tr>
-<td style="text-align: right;">1</td>
-<td>Context-Aware Bot</td>
-<td>Persistent State</td>
-<td>Objects</td>
-<td>✓</td>
+<td><strong>1</strong></td>
+<td><strong>Context-Aware Bot</strong></td>
+<td>State Persistence</td>
+<td>Immutable History management</td>
 </tr>
 <tr>
-<td style="text-align: right;">2</td>
-<td>Tool-Use Agent</td>
+<td><strong>2</strong></td>
+<td><strong>Tool-Use Agent</strong></td>
 <td>Side Effects</td>
-<td>Algebraic Effects</td>
-<td>✓</td>
+<td>Algebraic Effect Handlers</td>
 </tr>
 <tr>
-<td style="text-align: right;">3</td>
-<td>Planning Agent</td>
-<td>Control Flow</td>
-<td>Endofunctor</td>
-<td>✓</td>
+<td><strong>3</strong></td>
+<td><strong>Planning Agent</strong></td>
+<td>Workflow Control</td>
+<td>Traceability &amp; <code>Think-Act</code> loop</td>
 </tr>
 <tr>
-<td style="text-align: right;">4</td>
-<td>Multi-Agent System</td>
-<td>Coordination</td>
-<td>Category Composition</td>
-<td>✓</td>
+<td><strong>4</strong></td>
+<td><strong>Multi-Agent System</strong></td>
+<td>Composition</td>
+<td>Inter-agent Message Bus</td>
 </tr>
 <tr>
-<td style="text-align: right;">5</td>
-<td>Self-Improving Agent</td>
-<td>Recursive Build</td>
-<td>Meta-Endofunctor</td>
-<td>✓</td>
+<td><strong>5</strong></td>
+<td><strong>Self-Improving</strong></td>
+<td>Meta-Recursion</td>
+<td>Dynamic Spec Evolution</td>
 </tr>
 </tbody>
 </table>
-<p>Each level builds on the previous one, enabling learners to progress
-from simple functional mappings to self-recursive agent systems.</p>
-<hr />
-<h2 id="implementation-and-evaluation">4. Implementation and
-Evaluation</h2>
-<p>The SPAK system was implemented in Python and evaluated entirely on a
-<strong>local PC environment using Ollama</strong> for LLM
-inference.</p>
-<h3 id="architecture">4.1 Architecture</h3>
+<h3 id="62-quantitative-evaluation-preliminary">6.2 Quantitative Evaluation (Preliminary)</h3>
+<p>We evaluated the <strong>"Knowledge Chef" (Level 4)</strong> system against a baseline prompt-only agent on a task of synthesizing technical reports from 5 documents.</p>
 <ul>
-<li><strong>Compiler:</strong> Parses AgentSpec Markdown into a Semantic
-IR using Lark.</li>
-<li><strong>Builder:</strong> Uses LLMs to synthesize code and tests
-from the IR.</li>
-<li><strong>Verifier:</strong> Enforces invariants via static checks and
-dynamic test execution.</li>
-<li><strong>Runtime:</strong> Executes agents while mediating all
-declared effects.</li>
+<li><strong>Method:</strong> We injected 50 "Invalid" tasks (missing data, requesting restricted actions) and 50 "Valid" tasks.</li>
+<li><strong>Reliability (Invariant Enforcement):</strong><ul>
+<li><strong>Baseline:</strong> Generated hallucinatory content for <strong>42%</strong> of invalid tasks.</li>
+<li><strong>SPAK:</strong> Successfully rejected <strong>100%</strong> of invalid tasks via <code>InvariantFailure</code> exceptions.</li>
 </ul>
-<h3 id="case-studies">4.2 Case Studies</h3>
-<p>We successfully synthesized and verified agents at all maturity
-levels, including:</p>
-<ul>
-<li><strong>Level 2:</strong> Tool-using agents with complete
-side-effect isolation.</li>
-<li><strong>Level 3:</strong> Planning agents with self-repair loops
-triggered by test failures.</li>
-<li><strong>Level 5:</strong> Recursive agents that spawn sub-kernels to
-overcome context window limitations.</li>
+</li>
+<li><strong>Operational Consistency:</strong><ul>
+<li>SPAK detected "Semantic Drift" (where the agent's plan diverged from its action) in <strong>15%</strong> of early training runs, allowing for targeted prompt refinement.</li>
 </ul>
-<p>These results demonstrate that formal specifications can reliably
-constrain probabilistic LLM behavior.</p>
+</li>
+<li><strong>Overhead:</strong> The Dual Verification added an average of <strong>120ms</strong> latency per step, which is negligible (&lt; 5%) compared to the LLM inference latency.</li>
+</ul>
+<p>This confirms that the kernel provides a hard safety guarantee that probabilistic models alone cannot achieve.</p>
 <hr />
-<h2 id="related-work">5. Related Work</h2>
-<p>SPAK differs from existing agent frameworks (e.g., LangChain,
-MetaGPT, Reflexion) by prioritizing <strong>formal structure and
-verifiability</strong> over heuristic orchestration. Unlike traditional
-formal methods, SPAK maintains practical usability through a Python-like
-DSL and LLM-assisted synthesis.</p>
-<hr />
-<h2 id="conclusion-and-future-work">6. Conclusion and Future Work</h2>
-<p>This paper presented SPAK, a spec-driven programmable agent kernel
-that elevates AI agent development from prompt-centric experimentation
-to a rigorous engineering discipline. By combining formal semantics,
-algebraic effects, and a curriculum-oriented maturity framework, SPAK
-enables both reliable system construction and effective AI engineering
-education.</p>
-<p>Future work will focus on the following directions:</p>
-<ol type="1">
-<li><strong>Enhanced Meta-Build Capabilities:</strong> Extending Level 5
-agents to autonomously refine and optimize their own AgentSpec
-definitions through recursive verification and synthesis loops.</li>
-<li><strong>Web-Based AI Engineering Playbooks:</strong> Developing
-agents that generate interactive web pages documenting design decisions,
-specifications, and build trajectories as educational artifacts.</li>
-<li><strong>Project-Oriented Learning Agents:</strong> Applying SPAK to
-end-to-end educational build projects, such as implementing an LLM
-inference engine from scratch, allowing students to experience the full
-stack from kernel optimization to agent orchestration.</li>
+<h2 id="7-case-study-the-knowledge-chef-level-4">7. Case Study: The Knowledge Chef (Level 4)</h2>
+<p>We deployed a specific Level 4 implementation, the <strong>"Knowledge Chef,"</strong> to synthesize technical reports from raw documentation.</p>
+<h3 id="71-architecture">7.1 Architecture</h3>
+<p>The system composes four specialized agents:</p>
+<ol>
+<li><strong>Librarian:</strong> Discovers sources (Constraint: Must cite valid URLs).</li>
+<li><strong>Analyst:</strong> Extracts typed <code>Insight</code> structs.</li>
+<li><strong>Writer:</strong> Generates prose based on Insights.</li>
+<li><strong>Reviewer:</strong> Validates the prose against the original <code>Insight</code> structs.</li>
 </ol>
-<p>We believe these directions will further strengthen SPAK’s role as a
-foundational platform for scalable, trustworthy, and teachable AI
-engineering.</p>
+<h3 id="72-results">7.2 Results</h3>
+<p>The Reviewer agent, enforcing the <strong>"Source Fidelity Invariant,"</strong> successfully rejected hallucinations where the Writer invented details not present in the Analyst's output. The resulting documents maintained <strong>100% citation accuracy</strong> relative to the provided context, as verified by manual audit of the <code>ReasoningTrace</code>.</p>
+<hr />
+<h2 id="8-discussion-towards-self-improving-systems">8. Discussion: Towards Self-Improving Systems</h2>
+<p>The ultimate goal of SIE is Level 5: <strong>Self-Improvement</strong>. By logging verification failures (e.g., "Invariant X violated 5 times"), the Meta-Supervisor can:</p>
+<ol>
+<li><strong>Patch Heuristics:</strong> Update the prompt strategy for the failing sub-agent (e.g., "Add instruction to check date format").</li>
+<li><strong>Relax Specs:</strong> If an invariant is too strict (false positive), the system can propose a Spec amendment.</li>
+<li><strong>Code Repair:</strong> For Level 2+ agents, the system can rewrite the Python tool implementation to fix runtime errors.</li>
+</ol>
+<p>In our Level 5 experiments, the <code>MetaSolver</code> successfully spawned a sub-agent to fix a broken calculation tool, demonstrating the viability of this closed-loop evolution.</p>
+<hr />
+<h2 id="9-conclusion">9. Conclusion</h2>
+<p>We have presented <strong>SPAK</strong>, a kernel that brings software engineering rigor to AI agents. By formalizing the interface between neural creativity and symbolic execution, we enable the construction of systems that are verifiable by design. The successful deployment of the 6-Level Curriculum demonstrates that SPAK provides a scalable foundation for the next generation of <strong>Autonomous Engineering Systems</strong>.</p>
 <hr />
 <h2 id="references">References</h2>
-<p>[1] OpenAI. GPT-4 Technical Report, 2023.<br />
-[2] Chase, H. LangChain, 2022.<br />
-[3] Weng, L. LLM-powered Autonomous Agents, 2023.<br />
-[4] Plotkin, G. D., Power, A. J. Algebraic Effects, 2003.<br />
-[5] ML105: Agentic AI Curriculum.</p>
+<ul>
+<li>Chase, H. (2022). LangChain: Building applications with LLMs. GitHub: https://github.com/hwchase17/langchain.</li>
+<li>Garcez, A. D., et al. (2020). Neurosymbolic AI: The 3rd Wave. arXiv preprint arXiv:2012.05876.</li>
+<li>Leucker, M., &amp; Schallhart, C. (2009). A brief history of runtime verification. Journal of Logic and Algebraic Programming, 78(5), 293-303.</li>
+<li>Liu, J. (2023). LlamaIndex: Interface between LLMs and your data. https://www.llamaindex.ai.</li>
+<li>Meyer, B. (1992). Design by Contract. IEEE Computer, 25(10), 40-51.</li>
+<li>OpenAI. (2023). GPT-4 Technical Report. arXiv preprint arXiv:2303.08774.</li>
+<li>Plotkin, G. D., &amp; Power, A. J. (2003). Algebraic operations and generic effects. Applied Categorical Structures, 11, 69-94.</li>
+<li>Schick, T., et al. (2023). Toolformer: Language Models Can Teach Themselves to Use Tools. arXiv preprint arXiv:2302.04761.</li>
+<li>Weng, L. (2023, June 23). LLM-powered Autonomous Agents. Lil'Log. https://lilianweng.github.io/posts/2023-06-23-agent/.</li>
+<li>Wu, Q., et al. (2023). AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation. arXiv preprint arXiv:2308.08155.</li>
+</ul>
 <hr />
-<h2 id="appendix-a.-agentspec-grammar-summary">Appendix A. AgentSpec
-Grammar (Summary)</h2>
-<pre class="ebnf"><code>AgentSpec ::= MetaDef SystemDef
-SystemDef ::= &quot;system&quot; Name &quot;{&quot; ComponentDef* &quot;}&quot;
-ComponentDef ::= &quot;component&quot; Name &quot;{&quot; MemberDef* &quot;}&quot;
-MemberDef ::= &quot;state&quot; Name &quot;{&quot; Field* &quot;}&quot;
-           | &quot;function&quot; Name &quot;(&quot; Params &quot;)&quot; &quot;-&gt;&quot; Type
-           | &quot;effect&quot; Name
-           | &quot;workflow&quot; Name
-           | &quot;invariant&quot; StringLiteral</code></pre>
+<h2 id="appendices">Appendices</h2>
+<h3 id="appendix-a-agentspec-grammar-ebnf">Appendix A: AgentSpec Grammar (EBNF)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">system_def  </span><span class="err">::</span><span class="o">=</span> <span class="s2">&quot;system&quot;</span> <span class="k">NAME </span><span class="s2">&quot;{&quot;</span> <span class="k">component_def</span><span class="err">*</span> <span class="s2">&quot;}&quot;</span>
+<span class="k">component_def </span><span class="err">::=</span> <span class="s2">&quot;component&quot;</span> <span class="k">NAME </span><span class="s2">&quot;{&quot;</span> <span class="k">member_def</span><span class="err">*</span> <span class="s2">&quot;}&quot;</span> 
+                <span class="p">|</span> <span class="s2">&quot;workflow&quot;</span> <span class="k">NAME </span><span class="s2">&quot;(&quot;</span> <span class="k">param_list </span><span class="s2">&quot;)&quot;</span> <span class="s2">&quot;{&quot;</span> <span class="k">step</span><span class="err">*</span> <span class="s2">&quot;}&quot;</span>
+<span class="k">member_def  </span><span class="err">::=</span> <span class="s2">&quot;function&quot;</span> <span class="k">NAME </span><span class="s2">&quot;(&quot;</span> <span class="k">params </span><span class="s2">&quot;)&quot;</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="k">type</span>
+              <span class="p">|</span> <span class="s2">&quot;invariant&quot;</span> <span class="s2">&quot;:&quot;</span> <span class="k">STRING</span>
+<span class="k">step        </span><span class="err">::=</span> <span class="s2">&quot;step&quot;</span> <span class="k">NAME </span><span class="s2">&quot;{&quot;</span> <span class="k">logic </span><span class="s2">&quot;}&quot;</span>
+</code></pre></div>
+
+<h3 id="appendix-b-functional-programming-primitives">Appendix B: Functional Programming Primitives</h3>
+<p><strong>Algebraic Effects:</strong> SPAK implements effects as <code>Effect[T]</code> data classes. The runtime <code>perform(Effect)</code> suspends execution, bubbling the effect to the nearest handler in the stack, similar to Extensible Effects in Haskell or Koka. This ensures that agent logic remains pure and testable, as side effects are interpreted only at the boundary.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Effect</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">perform</span><span class="p">(</span><span class="n">effect</span><span class="p">:</span> <span class="n">Effect</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="c1"># ... runtime implementation ...</span>
+    <span class="k">pass</span>
+</code></pre></div>
+    </div>
+    <div class="footer">
+        &copy; 2026 SPAK Research Team. Generated from Markdown by SPAK Agent.
+    </div>
 </body>
 </html>

@@ -3,7 +3,7 @@ meta {
     version = "1.0"
     domain = "Recursive Problem Solving"
     purpose = "To solve arbitrarily complex problems by dynamically spawning sub-agents."
-    description = "Level 5: Recursive Agent (The Holy Grail)"
+    description = "Level 5: Recursive Agent (Fractal Solver)"
 }
 
 // --- Operational Contract ---
@@ -28,7 +28,7 @@ contract AgentScope {
 system MetaSolver {
     effect System {
         # Spawns a new agent instance with fresh context
-        operation recurse(spec: String, query: String) -> String;
+        operation recurse(spec_path: String, query: String) -> String;
     }
 
     component Orchestrator {
@@ -40,7 +40,8 @@ system MetaSolver {
                 # Here we hardcode delegating a math sub-problem to the CalculatorAgent.
                 
                 # "I need to calculate 25 * 4 as part of the big problem"
-                sub_result = perform System.recurse("specs/SPEC.level2.md", "multiply 25 by 4")
+                # Corrected path to Level 2 Spec
+                sub_result = perform System.recurse("specs/level2.agent.spec.md", "multiply 25 by 4")
             }
         }
     }
