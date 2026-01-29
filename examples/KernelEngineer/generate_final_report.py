@@ -15,37 +15,46 @@ TARGET_SIZE = 4096  # Standard benchmark size
 ITERATIONS = 20
 WARMUP = 5
 
+# Determine the directory where this script resides
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Define the "Optimization Journey"
+# Paths are now relative to BASE_DIR
 BENCHMARKS = [
     {
         "name": "Level 0: Baseline (PyTorch)",
-        "script": "examples/KernelEngineer/matmul_baseline.py", 
+        "script": os.path.join(BASE_DIR, "matmul_baseline.py"), 
         "desc": "Standard cuBLAS implementation (The Target to Beat).",
     },
     {
         "name": "Level 1: Naive Tiling",
-        "script": "examples/KernelEngineer/step1_naive_tiling.py",
+        "script": os.path.join(BASE_DIR, "step1_naive_tiling.py"),
         "desc": "Basic tiling, low occupancy (Fixed Grid).",
     },
     {
         "name": "Level 2: Optimized Occupancy",
-        "script": "examples/KernelEngineer/step2_occupancy.py",
+        "script": os.path.join(BASE_DIR, "step2_occupancy.py"),
         "desc": "Launching enough CTAs to saturate the GPU.",
     },
     {
         "name": "Level 3: Swizzling",
-        "script": "examples/KernelEngineer/step3_swizzling.py",
+        "script": os.path.join(BASE_DIR, "step3_swizzling.py"),
         "desc": "Reordering block execution for L2 locality.",
     },
     {
         "name": "Level 4: Pipelining (Manual)",
-        "script": "examples/KernelEngineer/step4_pipelining.py",
+        "script": os.path.join(BASE_DIR, "step4_pipelining.py"),
         "desc": "Double Buffering with manually selected 'safe' tile size (64x64).",
     },
     {
         "name": "Level 5: Auto-Tuned",
-        "script": "examples/KernelEngineer/step5_autotuner.py",
+        "script": os.path.join(BASE_DIR, "step5_autotuner.py"),
         "desc": "Pipelining + Automated Hyperparameter Search (Finding the True Optima).",
+    },
+    {
+        "name": "Level 6: Ablation Study",
+        "script": os.path.join(BASE_DIR, "step6_ablation.py"),
+        "desc": "Verifying Pipelining Gain on the Best Config.",
     }
 ]
 
@@ -54,19 +63,18 @@ def run_script_and_extract_perf(script_path):
     Runs a python script and attempts to parse "X ms" or "Y TFLOPS" from stdout.
     This relies on the scripts printing standard output formats.
     """
-    full_path = os.path.abspath(script_path)
-    if not os.path.exists(full_path):
+    if not os.path.exists(script_path):
         return f"File not found: {script_path}", 0.0
 
-    print(f"[*] Running {script_path}...")
+    print(f"[*] Running {os.path.basename(script_path)}...")
     try:
         # Run process
         result = subprocess.run(
-            [sys.executable, full_path], 
+            [sys.executable, script_path], 
             capture_output=True, 
             text=True, 
             timeout=120,
-            cwd=os.path.dirname(full_path) # Run in its own dir to fix imports
+            cwd=os.path.dirname(script_path) # Run in its own dir to fix imports
         )
         
         output = result.stdout
@@ -108,6 +116,13 @@ def run_script_and_extract_perf(script_path):
                             return output, spak_tflops
                         except ValueError:
                             pass
+
+        # Strategy 4: Parse Step 6 Ablation (Double Buffered)
+        if "Double Buffered" in output:
+            # Line: "Double Buffered      | 68.00      | 1.13x"
+            dbl_match = re.search(r'Double Buffered\s+\|\s+([\d\.]+)', output)
+            if dbl_match:
+                return output, float(dbl_match.group(1))
 
         return output, 0.0
 

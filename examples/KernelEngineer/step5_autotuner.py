@@ -121,6 +121,9 @@ def run_benchmark(M, N, K, configs, stream):
     for _ in range(5): torch.matmul(t_A, t_B)
     torch.cuda.synchronize()
     
+    # Calculate Reference for Verification
+    ref_C = torch.matmul(t_A, t_B)
+
     start_evt = torch.cuda.Event(enable_timing=True)
     end_evt = torch.cuda.Event(enable_timing=True)
     
@@ -156,7 +159,16 @@ def run_benchmark(M, N, K, configs, stream):
             ct.launch(stream, grid, kernel, args)
             
         stream.synchronize()
-        for _ in range(5): run_kernel() # Warmup
+        run_kernel() # Single run for verification
+        stream.synchronize()
+
+        # Verification
+        c_tensor = torch.as_tensor(d_C, device='cuda')
+        if not torch.allclose(ref_C, c_tensor, atol=1e-1, rtol=1e-2):
+            # print(f"Config {cfg} FAILED verification")
+            continue
+
+        for _ in range(4): run_kernel() # Finish Warmup (1+4=5)
         stream.synchronize()
         
         start_evt.record()
