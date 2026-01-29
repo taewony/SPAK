@@ -133,6 +133,7 @@ def run_benchmark(M, N, K, configs, stream):
     torch_tflops = (2.0 * M * N * K) / (torch_ms * 1e-3) / 1e12
 
     best_spak_tflops = 0
+    best_spak_ms = 0 # Initialize ms
     best_cfg_str = ""
 
     # Sweep Configs
@@ -170,12 +171,13 @@ def run_benchmark(M, N, K, configs, stream):
         
         if spak_tflops > best_spak_tflops:
             best_spak_tflops = spak_tflops
+            best_spak_ms = spak_ms # Track best ms
             best_cfg_str = f"{cfg.tile_m}x{cfg.tile_n}x{cfg.tile_k} (Occ={cfg.occupancy})"
 
     del d_A, d_B, d_C, t_A, t_B
     cp.get_default_memory_pool().free_all_blocks()
     
-    return (torch_tflops, best_spak_tflops, best_cfg_str, results)
+    return (torch_tflops, best_spak_tflops, best_spak_ms, best_cfg_str, results) # Added spak_ms return
 
 # ============================================================
 # 3. Main
@@ -188,10 +190,10 @@ def main():
     
     print(f">> SPAK Auto-Tuner on {props['name'].decode()} | SMs: {NUM_SMS}")
     print(">> Strategy: Double-Buffered Pipeline + Config Sweep")
-    print("-" * 110)
-    print(f"{'Size':<10} | {'PyTorch':<8} | {'SPAK Tuned':<10} | {'Speedup':<8} | {'Best Config':<35}")
-    print(f"{'(MxNxK)':<10} | {'(TFLOPS)':<8} | {'(TFLOPS)':<10} | {'(%)':<8}     | {'(Tile_M x Tile_N x Tile_K)'}")
-    print("-" * 110)
+    print("-" * 125)
+    print(f"{'Size':<10} | {'PyTorch':<8} | {'SPAK Tuned':<10} | {'Time':<8} | {'Speedup':<8} | {'Best Config':<35}")
+    print(f"{'(MxNxK)':<10} | {'(TFLOPS)':<8} | {'(TFLOPS)':<10} | {'(ms)':<8} | {'(%)':<8}     | {'(Tile_M x Tile_N x Tile_K)'}")
+    print("-" * 125)
 
     # Search Space
     configs = [
@@ -218,13 +220,13 @@ def main():
             print(f"{size:<10} | OOM")
             continue
             
-        torch_tf, spak_tf, best_cfg, _ = ret
+        torch_tf, spak_tf, spak_ms, best_cfg, _ = ret # Unpack ms
         speedup = (spak_tf - torch_tf) / torch_tf * 100
         sign = "+" if speedup > 0 else ""
         
-        print(f"{size:<10} | {torch_tf:<8.2f} | {spak_tf:<10.2f} | {sign}{speedup:<7.1f}% | {best_cfg}")
+        print(f"{size:<10} | {torch_tf:<8.2f} | {spak_tf:<10.2f} | {spak_ms:<8.3f} | {sign}{speedup:<7.1f}% | {best_cfg}")
 
-    print("-" * 110)
+    print("-" * 125)
 
 if __name__ == "__main__":
     main()

@@ -74,18 +74,40 @@ def run_script_and_extract_perf(script_path):
         # Regex to find TFLOPS or ms
         # Looking for lines like: "SPAK Optimized : 12.34 ms" or "150.5 TFLOPS"
         
-        # Strategy 1: Look for TFLOPS explicitly
-        tflops_match = re.search(r'([\d\.]+)\s*TFLOPS', output)
-        if tflops_match:
-            return output, float(tflops_match.group(1))
+        # Strategy 1: Look for explicit "TFLOPS: X" (Steps 1-4 New Standard)
+        # Format: "Time: 123.456 ms | TFLOPS: 12.34"
+        tflops_explicit = re.search(r'TFLOPS:\s+([\d\.]+)', output)
+        if tflops_explicit:
+             return output, float(tflops_explicit.group(1))
 
-        # Strategy 2: Look for ms and calc TFLOPS
-        ms_match = re.search(r'([\d\.]+)\s*ms', output)
+        # Strategy 2: Look for "Time: X ms" and calculate (Fallback)
+        ms_match = re.search(r'Time:\s+([\d\.]+)\s*ms', output)
         if ms_match:
             ms = float(ms_match.group(1))
             # TFLOPS = 2 * M * N * K / (ms * 1e-3) / 1e12
             tflops = (2.0 * TARGET_SIZE**3) / (ms * 1e-3) / 1e12
             return output, tflops
+
+        # Strategy 3: Look for TFLOPS explicitly (Simple old format)
+        tflops_match = re.search(r'([\d\.]+)\s*TFLOPS', output)
+        if tflops_match and "Size" not in output: # Avoid matching headers
+            return output, float(tflops_match.group(1))
+
+        # Strategy 3: Parse Step 5 Table (Complex format)
+        # Row format: 4096 | 68.83 | 67.03 | ...
+        if "SPAK Tuned" in output:
+            for line in output.splitlines():
+                # Find the row starting with our target size (4096)
+                if line.strip().startswith(str(TARGET_SIZE)):
+                    parts = line.split('|')
+                    if len(parts) >= 3:
+                        try:
+                            # Column 2 is SPAK Tuned TFLOPS (0-indexed)
+                            # Size | PyTorch | SPAK Tuned | ...
+                            spak_tflops = float(parts[2].strip())
+                            return output, spak_tflops
+                        except ValueError:
+                            pass
 
         return output, 0.0
 

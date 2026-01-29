@@ -1,6 +1,5 @@
 import cuda.tile as ct
 import cupy as cp
-import torch
 import numpy as np
 
 # Level 4: Pipelining (Double Buffering)
@@ -43,7 +42,8 @@ def kernel(A, B, C):
                 b_curr = ct.load(B, (k+1, bid_n), (TILE_SIZE, TILE_SIZE))
             
             # COMPUTE: Overlaps with the Load above
-            acc = ct.mma(ct.astype(a_compute, ct.float16), ct.astype(b_compute, ct.float16), acc)
+            # Optimization: Inputs are already float16, direct MMA
+            acc = ct.mma(a_compute, b_compute, acc)
             
         ct.store(C, (bid_m, bid_n), ct.astype(acc, C.dtype))
 
@@ -53,12 +53,20 @@ def main():
     d_B = cp.random.randn(K, N).astype(cp.float16)
     d_C = cp.zeros((M, N), dtype=cp.float16)
     
-    # We use Occupancy=2 (NUM_SMS*2) which is generally good
     grid = (NUM_SMS * 2, 1, 1) 
     
+    # Warmup
+    for _ in range(5): ct.launch(cp.cuda.get_current_stream(), grid, kernel, (d_A, d_B, d_C))
+    cp.cuda.Device().synchronize()
+
+    # Measure
     start = cp.cuda.Event(); end = cp.cuda.Event(); start.record()
     for _ in range(20): ct.launch(cp.cuda.get_current_stream(), grid, kernel, (d_A, d_B, d_C))
     end.record(); end.synchronize()
-    print(f"Time: {cp.cuda.get_elapsed_time(start, end)/20:.3f} ms")
+    
+    ms = cp.cuda.get_elapsed_time(start, end)/20
+    tflops = (2 * M * N * K) / (ms * 1e-3) / 1e12
+
+    print(f"Time: {ms:.3f} ms | TFLOPS: {tflops:.2f}")
 
 if __name__ == "__main__": main()
