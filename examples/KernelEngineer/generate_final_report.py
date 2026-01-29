@@ -129,16 +129,6 @@ The **SPAK Agent** decomposed the optimization problem into specific architectur
         report += f"| {r['name']} | {r['desc']} | {r['tflops']:.2f} | **{speedup:.2f}x** |
 "
 
-    report += """
-## 4. Analysis
-*   **Tiling vs. Baseline:** Naive tiling usually achieves 10-30% of peak due to memory stalls.
-*   **Swizzling Impact:** Swizzling typically improves performance by 15-20% by reducing DRAM partition camping.
-*   **Pipelining Impact:** This is the critical step for Tensor Core GPUs, allowing the SMs to keep crunching FP16/BF16 data without waiting for memory.
-*   **Auto-Tuning:** The final tuning adapts the theoretical kernel to the physical reality of the RTX 5070's SM count and cache size, often squeezing out the final 10-20% of performance.
-
-## 5. Conclusion
-The SPAK framework successfully navigated the optimization space, producing a kernel that competes with or exceeds standard libraries for specific shapes. The transition from **Symbolic Definition (DSL)** to **Optimized Code (Auto-Tuned)** validates the agent's capability in high-performance computing tasks.
-"""
     return report
 
 def main():
