@@ -8,6 +8,7 @@ class LLMRequest:
     messages: List[Dict[str, str]]
     model: Optional[str] = None
     stop: Optional[List[str]] = None
+    system_model: Optional[str] = None
 
 @dataclass
 class Generate(Effect[str]):

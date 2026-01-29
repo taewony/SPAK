@@ -13,7 +13,7 @@ from RestrictedPython.Guards import guarded_iter_unpack_sequence, safer_getattr
 from RestrictedPython.PrintCollector import PrintCollector
 
 class LiteLLMHandler(Handler):
-    def __init__(self, default_model: str = "ollama/qwen3:8b"):
+    def __init__(self, default_model: str = "ollama/qwen2.5-coder:3b"):
         self.default_model = default_model
         self._check_gpu()
 
@@ -39,6 +39,11 @@ class LiteLLMHandler(Handler):
             req: LLMRequest = effect.payload
             model = req.model or self.default_model
             
+            messages = req.messages.copy()
+            if req.system_model:
+                # Prepend system model as a system prompt
+                messages.insert(0, {"role": "system", "content": f"SYSTEM_MODEL:\n{req.system_model}"})
+            
             print(f"⏳ [LiteLLM] Generating with '{model}'... (This may take time)", end="", flush=True)
             
             # Simple Retry Logic
@@ -49,7 +54,7 @@ class LiteLLMHandler(Handler):
                 try:
                     response = litellm.completion(
                         model=model,
-                        messages=req.messages,
+                        messages=messages,
                         stop=req.stop
                     )
                     print(" Done.")

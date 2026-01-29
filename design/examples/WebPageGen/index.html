@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductPage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Our Products</h1>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <aside class="w-full md:w-64 flex-shrink-0 hidden md:block">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 sticky top-4">
+                    <h2 class="text-lg font-semibold mb-4 text-gray-800">Filters</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-2">Category</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center space-x-2 text-sm text-gray-600">
+                                    <input type="checkbox" class="rounded text-blue-600 focus:ring-blue-500"> <span>Clothing</span>
+                                </label>
+                                <label class="flex items-center space-x-2 text-sm text-gray-600">
+                                    <input type="checkbox" class="rounded text-blue-600 focus:ring-blue-500"> <span>Accessories</span>
+                                </label>
+                            </div>
+                        </div>
+                        <hr class="border-gray-100">
+                        
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-2">Price Range</h3>
+                            <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>$0</span>
+                                <span>$500+</span>
+                            </div>
+                        </div>
+                        <hr class="border-gray-100">
+
+                        <div>
+                            <h3 class="font-medium text-gray-900 mb-2">Colors</h3>
+                            <div class="flex gap-2">
+                                <div class="w-6 h-6 rounded-full bg-black cursor-pointer border border-gray-200"></div>
+                                <div class="w-6 h-6 rounded-full bg-blue-500 cursor-pointer border border-gray-200"></div>
+                                <div class="w-6 h-6 rounded-full bg-red-500 cursor-pointer border border-gray-200"></div>
+                                <div class="w-6 h-6 rounded-full bg-green-500 cursor-pointer border border-gray-200"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="flex-1">
+                <div class="flex flex-wrap gap-4">
+                    
+                    <div class="group relative w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.7rem)] bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
+                        
+                        <button class="absolute top-3 right-3 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors shadow-sm group/btn">
+                            <i class="fa-regular fa-heart text-gray-400 group-hover/btn:text-red-500 text-lg"></i>
+                        </button>
+
+                        <div class="aspect-[4/5] w-full overflow-hidden bg-gray-200 relative">
+                            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                                 alt="{{$product.name}}" 
+                                 class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                        </div>
+
+                        <div class="p-5 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">
+                                {{$product.name}}
+                            </h3>
+
+                            <div class="flex items-center mb-3">
+                                <div class="text-yellow-400 text-sm space-x-0.5">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-2">({{$product.avg_rating}})</span>
+                            </div>
+
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-xl font-bold text-gray-900">
+                                    {{$product.current_price}}
+                                </span>
+                                
+                                <button class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="group relative w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.7rem)] bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
+                         <button class="absolute top-3 right-3 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors shadow-sm group/btn">
+                            <i class="fa-solid fa-heart text-red-500 text-lg"></i> </button>
+                        <div class="aspect-[4/5] w-full overflow-hidden bg-gray-200 relative">
+                             <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                                 alt="Sample Product" 
+                                 class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Classic Wool Coat</h3>
+                            <div class="flex items-center mb-3">
+                                <div class="text-yellow-400 text-sm space-x-0.5">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-xs text-gray-500 ml-2">(4.0)</span>
+                            </div>
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-xl font-bold text-gray-900">$129.00</span>
+                                <button class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

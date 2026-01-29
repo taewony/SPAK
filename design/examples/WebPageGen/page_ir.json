@@ -1,0 +1,71 @@
+{
+  "type": "page",
+  "name": "ProductPage",
+  "children": [
+    {
+      "type": "component",
+      "name": "ProductGrid",
+      "props": [
+        {
+          "container": {
+            "type": "function",
+            "callee": "flexbox",
+            "args": [
+              {
+                "wrap": true
+              },
+              {
+                "gap": "1rem"
+              }
+            ]
+          }
+        },
+        {
+          "item": {
+            "type": "loop",
+            "component": "ProductCard",
+            "source": "$products",
+            "properties": {
+              "image": "$product.hero_image",
+              "title": "$product.name",
+              "price": "$product.current_price",
+              "rating": {
+                "type": "function",
+                "callee": "stars",
+                "args": [
+                  "$product.avg_rating"
+                ]
+              },
+              "styling": "Large card with shadow, rounded corners. Clean white background.",
+              "hover_effects": {},
+              "button": {
+                "type": "component_usage",
+                "name": "WishlistButton",
+                "properties": {
+                  "position": "top-right absolute",
+                  "style": "Small heart icon, red when active, otherwise gray outline"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "component",
+      "name": "SidebarFilters",
+      "props": [
+        {
+          "layout": "Vertical sidebar on left, hidden on mobile"
+        },
+        {
+          "items": [
+            "Category",
+            "Price Range",
+            "Colors"
+          ]
+        }
+      ]
+    }
+  ]
+}

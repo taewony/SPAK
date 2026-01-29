@@ -1,43 +1,36 @@
 meta {
-    name = "ContextBot"
+    name = "ContextualCoder"
     version = "1.0"
-    domain = "Conversational AI (Contextual)"
-    purpose = "To engage in multi-turn conversations by maintaining dialogue history."
-    description = "Level 1: Context-Aware Agent"
+    domain = "Iterative Code Generation"
+    purpose = "Level 1: Recalls previous errors but does not perform formal planning."
+    description = "The Contextual Coder uses a memory buffer to avoid repeating past mistakes, but still maps input to output directly."
 }
 
-// --- Operational Contract ---
-contract AgentScope {
+// --- System Model ---
+system_model ContextualPrinciples {
     supported_intents = [
-        "Contextual Chat: Answering questions based on previous turns.",
-        "Conversation Tracking: Remembering user details mentioned earlier."
+        "Iterative Refinement: Improving code based on previous execution logs."
     ]
 
-    success_criteria = [
-        "Continuity: Responses must reflect prior context.",
-        "Coherence: The conversation flow must be logical."
-    ]
+    heuristic: "Reference similar past solutions when applicable"
+    prediction: "With more history, accuracy improves"
 }
 
-system ContextBot {
+system ContextualCoder {
     effect LLM {
-        operation generate(prompt: String) -> String;
+        operation generate_with_context(prompt: String, history: List<String>) -> String;
     }
 
-    component Assistant {
-        description: "Maintains conversation history and responds with context.";
-
-        state Conversation {
-            history: List<String>
+	// --- Core Component ---
+    component ContextualWorker {
+        description: "Generates code while maintaining a simple memory of previous interactions.";
+        
+        state Memory {
+            logs: List[String]
         }
 
-        function chat(message: String) -> String {
-            # In a real implementation, this would append to history
-            # and send the full context to the LLM.
-            prompt = "History: " + str(state.history) + "\nUser: " + message
-            response = perform LLM.generate(prompt)
-            return response
+        function implement_with_memory(query: String) -> String {
+            return perform LLM.generate_with_context(query, state.logs)
         }
     }
 }
-

@@ -1,0 +1,49 @@
+# SPAK (Semantic Programmable Agent Kernel)
+
+**The Semantic Programmable Agent Kernel (SPAK)** is a bi-level optimization framework designed to bridge the gap between high-level human intent and low-level execution logic.
+
+> **Update (v2):** The SPAK v2 Kernel is now a fully functional **Neuro-Symbolic Agent Engine**. It successfully offloads the **"Latent Reasoning"** to a local LLM (Ollama) while maintaining the **"Symbolic Structure"** of the DSL.
+
+### Core Philosophy: The Neuro-Symbolic Split
+
+SPAK solves the "Unreliable Agent" problem by enforcing a strict separation of concerns:
+
+1.  **Symbolic Space (The Body)**:
+    *   Defined by the **DSL** (`task`, `step`, `tool`).
+    *   Deterministic, Type-Safe, and Verifiable.
+    *   Handles execution, state management, and metric collection.
+2.  **Latent Space (The Brain)**:
+    *   Provided by the **LLM** (Ollama/Gemini).
+    *   Probabilistic, Creative, and Context-Aware.
+    *   Handles planning, diagnosis, and semantic analysis.
+
+### The DSL as the Interface
+
+The DSL serves as the "Contract" between these two worlds.
+
+*   **Constraint Injection**: The `system_model` (Axioms/Heuristics) is injected into the Latent Space to constrain reasoning.
+*   **Variable Binding**: The `{{variable}}` syntax allows the Latent Space to read from and write to the Symbolic state.
+*   **Planning via Binding**: The Latent Space can "act" by outputting strings that the Symbolic Space interprets as commands (e.g., `cmd: "{{next_tool}}" `).
+
+### Execution Flow: The Dual Loop
+
+#### 1. Inner Loop (Tactical Execution)
+*   **Observe**: The Kernel captures tool outputs into variables.
+*   **Reason**: The LLM analyzes variables against the `system_model`.
+*   **Act**: The LLM outputs a plan (string), which the Kernel executes.
+*   **Evaluate**: The Kernel runs the `evaluation` block to score the performance.
+
+#### 2. Outer Loop (Strategic Refinement) - *Future Work*
+*   **Analyze**: An external optimizer reads `metrics.json` and `trace.json`.
+*   **Optimize**: It patches the DSL (e.g., changing prompts, adding heuristics) to maximize the score.
+
+### Supported Features (v2 Implementation)
+
+*   **Simulation Mode**: Manually act as the LLM to debug logic flow without API costs.
+*   **Autonomous Mode**: Connect to local/cloud LLMs for fully automated execution.
+*   **Quantitative Evaluation**: Built-in "LLM-as-a-Judge" blocks to measure agent reliability.
+*   **Dynamic Tool Selection**: Agents can choose which tools to run based on context.
+
+### Why this matters?
+
+This architecture transforms "Prompt Engineering" into **Systematic Intelligence Engineering**. We do not just "chat" with agents; we **compile**, **execute**, **measure**, and **optimize** them like software artifacts.

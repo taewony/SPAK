@@ -1,33 +1,32 @@
 meta {
-    name = "StaticResponder"
+    name = "ZeroShotCoder"
     version = "1.0"
-    domain = "Conversational AI (Basic)"
-    purpose = "To provide immediate, stateless responses to user inputs."
-    description = "Level 0: Simple Input-Output Agent"
+    domain = "Direct Code Generation"
+    purpose = "Level 0: Maps Input directly to Code without simulation or planning."
+    description = "The Zero-Shot Coder performs no latent simulation. It assumes a static mapping from request to implementation."
 }
 
-// --- Operational Contract ---
-contract AgentScope {
+// --- System Model ---
+system_model ZeroShotPrinciples {
+	
     supported_intents = [
-        "General Chat: Responding to greetings, facts, or questions."
-    ]
-
-    success_criteria = [
-        "Responsiveness: Must generate a text response.",
-        "Relevance: Response must address the input."
+        "Direct Implementation: Generating snippets based on prompts."
     ]
 }
 
-system StaticResponder {
+system ZeroShotCoder {
+    // Level 0 uses a minimal LLM effect without planning wrappers
     effect LLM {
         operation generate(prompt: String) -> String;
     }
 
-    component Responder {
-        description: "Responds to user queries using an LLM without maintaining state.";
+	// --- Core Component ---
+    component ZeroShotWorker {
+        description: "Directly generates code from a prompt without internal verification.";
         
-        function reply(query: String) -> String {
-            return perform LLM.generate(query)
+        function implement(query: String) -> String {
+            // Note: No 'synthesize_plan' step here.
+            return perform LLM.generate("Generate code for: " + query)
         }
     }
 }

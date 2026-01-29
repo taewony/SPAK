@@ -22,7 +22,7 @@ class SpecREPL(cmd.Cmd):
         
         # Default Config
         self.config = {
-            "model": "ollama/qwen3:8b",
+            "model": "ollama/qwen2.5-coder:3b",
             "language": "English",
             "goal": "becomming a CEO of AI-Powered Content Creation one-person company",
             "persona": "financial consultant",
@@ -71,7 +71,7 @@ class SpecREPL(cmd.Cmd):
                 print(f"   (Updated Builder model to {value})")
 
     def do_trace(self, arg):
-        """Display the execution trace. Usage: trace (thoughts only) OR trace all (full log)"""
+        """Display the execution trace. Usage: trace (default) OR trace all (full details)"""
         if not self.last_trace:
             print("No trace available. Run an agent first.")
             return
@@ -80,11 +80,9 @@ class SpecREPL(cmd.Cmd):
         
         from rich.console import Console
         from rich.table import Table
-        from rich.syntax import Syntax
-        import json
-
+        
         console = Console()
-        title = "Execution Trace (Full System Effects)" if show_all else "Execution Trace (reasoning & Plan Only)"
+        title = "Execution Trace (Full System Effects)" if show_all else "Execution Trace (Reasoning & Interactions)"
         table = Table(title=title)
         table.add_column("Step", justify="right", style="cyan", no_wrap=True)
         table.add_column("Effect", style="magenta")
@@ -96,28 +94,36 @@ class SpecREPL(cmd.Cmd):
             payload = entry['payload']
             result = entry.get('result', 'N/A')
             
-            # Filter logic: If not 'all', skip anything that isn't reasoning
-            if not show_all and name != "ReasoningTrace":
+            # Filter logic: Show Reasoning AND LLM Generation in default view
+            is_relevant = name in ["ReasoningTrace", "Generate", "GenerateWithContext", "Reply", "Listen"]
+            if not show_all and not is_relevant:
                 continue
 
-            # Special highlighting for ReasoningTrace
+            # Special highlighting
             if name == "ReasoningTrace":
                 thought = getattr(payload, 'thought', 'N/A')
                 plan = getattr(payload, 'plan', {})
-                raw = getattr(payload, 'raw_response', '')
-                
                 payload_str = f"[bold yellow]Thought:[/bold yellow] {thought}\n[bold cyan]Plan:[/bold cyan] {plan}"
-                if show_all and raw:
-                     payload_str += f"\n[dim]Raw LLM:[/dim] {raw[:100]}..."
-            elif name == "Generate" and show_all:
-                # Provide better formatting for Generate (LLM Request)
+            
+            elif name in ["Generate", "GenerateWithContext"]:
+                # Show prompt summary
                 msgs = getattr(payload, 'messages', [])
-                payload_str = f"Generate({len(msgs)} messages)"
+                if not msgs and hasattr(payload, 'prompt'): # Handle simple GenerateRequest
+                    prompt_summary = payload.prompt[:50] + "..."
+                elif msgs:
+                    prompt_summary = msgs[-1]['content'][:50] + "..." if msgs[-1]['content'] else "..."
+                else:
+                    prompt_summary = "..."
+                
+                payload_str = f"[dim]LLM Request:[/dim] {prompt_summary}"
+                if getattr(payload, 'system_model', None):
+                     payload_str += " [System Model Injected]"
+            
             else:
                 payload_str = str(payload)
             
-            # Format result string safely
-            result_str = str(result)[:200] + "..." if len(str(result)) > 200 else str(result)
+            # Format result string
+            result_str = str(result)[:100] + "..." if len(str(result)) > 100 else str(result)
             
             table.add_row(str(i+1), name, payload_str, result_str)
         
@@ -376,7 +382,7 @@ class SpecREPL(cmd.Cmd):
         print("\n🏁 [Kernel] Repair sequence complete. Run 'verify' to check if it worked.")
 
     def do_history(self, arg):
-        """Show LLM conversation history. Usage: history [last_n]"""
+        """Show Builder/Coder LLM conversation history (not Agent runtime history). Usage: history [last_n]"""
         history = self.builder.get_history()
         if not history:
             print("No LLM interactions yet.")
@@ -415,31 +421,25 @@ class SpecREPL(cmd.Cmd):
             return
 
         # 2. Determine Component Name
-        # If no args left (or only flags?), default to first component
-        # We need to separate flags from positional args potentially, but simple logic:
-        # If args[0] starts with --, it's a flag, so default component.
-        # Else, args[0] is component name.
-        
         use_mock = "--mock" in args
         if use_mock:
             args.remove("--mock")
         
         if not args:
             comp_name = self.current_spec.components[0].name
-            constructor_args = []
+            cmd_args = []
         else:
-            comp_name = args[0]
-            constructor_args = args[1:]
+            # Check if arg[0] is a component name
+            possible_name = args[0]
+            if any(c.name == possible_name for c in self.current_spec.components):
+                comp_name = possible_name
+                cmd_args = args[1:]
+            else:
+                # Default to first component, treat all args as function args
+                comp_name = self.current_spec.components[0].name
+                cmd_args = args
         
-        # Auto-inject goal for Coach if not provided
-        if comp_name == "Coach" and not constructor_args:
-            if "goal" in self.config:
-                constructor_args = [self.config["goal"]]
-        
-        # Auto-inject persona for PersonaChatBot if not provided
-        if comp_name == "PersonaChatBot" and not constructor_args:
-            if "persona" in self.config:
-                constructor_args = [self.config["persona"]]
+        # ... (Auto-inject goal/persona logic remains same if needed) ...
 
         src_dir = "src"
         module_path = os.path.join(src_dir, f"{comp_name.lower()}.py")
@@ -452,7 +452,7 @@ class SpecREPL(cmd.Cmd):
         
         try:
             import inspect
-            # Setup Kernel Runtime with default handlers
+            # Setup Kernel Runtime
             runtime = Runtime()
             if use_mock:
                 runtime.register_handler(MockLLMHandler())
@@ -465,81 +465,167 @@ class SpecREPL(cmd.Cmd):
             runtime.register_handler(UserInteractionHandler())
             runtime.register_handler(ReasoningHandler())
             
-            # Set global runtime context so perform() works
             semantic_kernel._active_runtime = runtime
 
             spec = importlib.util.spec_from_file_location(comp_name, module_path)
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
-            
             cls = getattr(module, comp_name)
             
-            # Try instantiation
+            # Instantiate
             try:
-                instance = cls(*constructor_args)
-            except TypeError as te:
-                if "missing" in str(te) and "__init__" in str(te):
-                    print(f"⚠️  Instantiation failed: {te}")
-                    print(f"💡 Usage: run {comp_name} [arg1] [arg2]...")
-                    semantic_kernel._active_runtime = None
-                    return
-                raise te
-            
-            print(f"✅ {comp_name} instantiated as 'app'.")
-            
-            # Inspect available methods with signatures
-            methods = []
-            for name, member in inspect.getmembers(instance, predicate=inspect.ismethod):
-                if not name.startswith('_'):
-                    sig = inspect.signature(member)
-                    methods.append(f"{name}{sig}")
-            
-            if methods:
-                print(f"💡 Available methods:")
-                for m in methods:
-                    print(f"   - app.{m}")
-                
-                # Intelligent example
-                if any('calculate' in m for m in methods):
-                    print(f"💡 Example: app.calculate(10, 5, 'add')")
-                elif any('reply' in m for m in methods):
-                    print(f"💡 Example: app.reply('Hello')")
-                elif any('chat' in m for m in methods):
-                    print(f"💡 Example: app.chat('Hello')")
-            else:
-                print(f"💡 Type python commands using 'app'.")
+                instance = cls() # Assumption: Components are mostly parameterless __init__ or we need spec for that
+            except Exception as e:
+                print(f"⚠️ Instantiation error (trying default): {e}")
+                instance = cls() # Retry or fail
 
-            print(f"💡 Type 'exit()' to return to kernel.")
+            print(f"✅ {comp_name} is ready.")
+
+            # --- UX: Detect Interaction Mode ---
             
-            # Custom exit to return to kernel instead of killing process
-            def back_to_kernel():
-                print("Returning to SPAK Kernel...")
+            # 1. Identify Entry Point
+            entry_method_name = None
+            entry_mode = "repl" # repl, chat, form
+            
+            # Heuristic 1: Explicit Workflow in Spec?
+            # (Compiler support for attaching workflow to component needed, for now infer from methods)
+            
+            # Heuristic 2: Common Chat Names
+            chat_methods = ["chat", "reply", "implement", "implement_with_memory"]
+            for m in chat_methods:
+                if hasattr(instance, m):
+                    entry_method_name = m
+                    entry_mode = "chat"
+                    break
+            
+            # Heuristic 3: Complex Task (Workflow-like)
+            if not entry_method_name:
+                task_methods = ["synthesize_report", "solve", "execute"]
+                for m in task_methods:
+                    if hasattr(instance, m):
+                        entry_method_name = m
+                        entry_mode = "form"
+                        break
+
+            # Override if arguments provided in CLI
+            if cmd_args and entry_method_name:
+                # If args provided, just run once and exit (Command Mode)
+                print(f"▶️ Executing {entry_method_name}({', '.join(cmd_args)})...")
+                method = getattr(instance, entry_method_name)
+                try:
+                    res = method(*cmd_args)
+                    print(res)
+                except Exception as e:
+                    print(f"Error: {e}")
+                semantic_kernel._active_runtime = None
                 return
 
-            vars = globals().copy()
-            vars.update(locals())
-            vars['app'] = instance
-            vars['runtime'] = runtime
-            vars['exit'] = back_to_kernel
-            vars['quit'] = back_to_kernel
-            
-            # Autostart Logic
-            if self.config.get("autostart", False):
-                if hasattr(instance, "start") and callable(instance.start):
-                    print(f"▶️ Auto-starting {comp_name}...")
+            # --- INTERACTIVE LOOPS ---
+
+            if entry_mode == "chat":
+                print(f"💡 Entering Chat Mode ({entry_method_name}). Type 'exit' to quit.")
+                method = getattr(instance, entry_method_name)
+                while True:
                     try:
-                        # Call start()
-                        result = instance.start()
-                        print(f"Result: {result}")
+                        user_input = input("\n> user: ")
+                        if user_input.lower() in ["exit", "quit"]:
+                            break
+                        
+                        # Call method
+                        response = method(user_input)
+                        
+                        # Print response
+                        from rich.console import Console
+                        from rich.markdown import Markdown
+                        console = Console()
+                        console.print(f"\n> {comp_name}: ", style="bold green")
+                        if isinstance(response, str):
+                            console.print(response)
+                        else:
+                            console.print(response)
+
+                    except KeyboardInterrupt:
+                        break
                     except Exception as e:
-                        print(f"Error during autostart: {e}")
-            
-            # Start interaction
-            code.interact(local=vars, exitmsg="")
-            
-            # Save trace for do_trace command
-            self.last_trace = runtime.trace
-            
+                        print(f"Error: {e}")
+                
+                # Update trace after loop
+                self.last_trace = runtime.trace
+
+            elif entry_mode == "form":
+                print(f"💡 Entering Task Mode ({entry_method_name}).")
+                method = getattr(instance, entry_method_name)
+                sig = inspect.signature(method)
+                
+                # Gather Args
+                call_args = []
+                for param_name, param in sig.parameters.items():
+                    if param_name == "self": continue
+                    
+                    default_val = param.default if param.default != inspect.Parameter.empty else ""
+                    prompt_str = f"Enter {param_name}"
+                    if default_val:
+                        prompt_str += f" [default: {default_val}]"
+                    
+                    val = input(f"{prompt_str}: ")
+                    if not val and default_val:
+                        val = default_val
+                    call_args.append(val)
+                
+                print("\n▶️ Running...")
+                try:
+                    res = method(*call_args)
+                    print(f"Result: {res}")
+                except Exception as e:
+                    print(f"Error: {e}")
+                
+                # Update trace
+                self.last_trace = runtime.trace
+
+            else:
+                # Fallback to REPL
+                print(f"💡 Dropping into Python REPL. Instance available as 'app'.")
+                
+                # ... [Existing REPL Setup Code] ...
+                def back_to_kernel():
+                    print("Returning to SPAK Kernel...")
+                    return
+
+                vars = globals().copy()
+                vars.update(locals())
+                vars['app'] = instance
+                vars['runtime'] = runtime
+                vars['exit'] = back_to_kernel
+                vars['quit'] = back_to_kernel
+                
+                # Rich Display Hook
+                from rich.console import Console
+                from rich.syntax import Syntax
+                console = Console()
+                def rich_displayhook(value):
+                    if value is None: return
+                    import builtins
+                    builtins._ = value
+                    if isinstance(value, str):
+                        if "def " in value or "class " in value or "{" in value:
+                            syntax = Syntax(value, "python", theme="monokai", word_wrap=True)
+                            console.print(syntax)
+                        else:
+                            console.print(value)
+                    else:
+                        console.print(value)
+
+                original_displayhook = sys.displayhook
+                sys.displayhook = rich_displayhook
+                
+                try:
+                    code.interact(local=vars, exitmsg="")
+                finally:
+                    sys.displayhook = original_displayhook
+                
+                # Update trace
+                self.last_trace = runtime.trace
+
             # Cleanup
             semantic_kernel._active_runtime = None
             

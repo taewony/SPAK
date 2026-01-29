@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DateApp (DSL → Lit)</title>
+
+    <!-- ========== Page DSL : Global Styles ========== -->
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #324fff;
+        padding-bottom: 10px;
+      }
+
+      .instructions {
+        background: #e8f4ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #324fff;
+      }
+
+      .history-log {
+        margin-top: 30px;
+        padding: 15px;
+        background: #f0f0f0;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .history-log h3 {
+        margin-top: 0;
+        color: #666;
+      }
+
+      .log-entry {
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+        font-family: monospace;
+      }
+    </style>
+
+    <!-- ========== Lit Library ========== -->
+    <script type="module">
+      import { LitElement, html, css } from "https://unpkg.com/lit@3/index.js?module";
+
+      /* =====================================================
+         Utils DSL → Global Helper Functions
+         ===================================================== */
+
+      function isSameDate(d1, d2) {
+        if (!d1 || !d2) return false;
+        return d1.toLocaleDateString() === d2.toLocaleDateString();
+      }
+
+      function localDateFromUTC(utc) {
+        return new Date(
+          utc.getUTCFullYear(),
+          utc.getUTCMonth(),
+          utc.getUTCDate()
+        );
+      }
+
+      function now() {
+        return new Date();
+      }
+
+      function addLog(message) {
+        const container = document.getElementById("log-entries");
+        if (!container) return;
+
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+        const timestamp = new Date().toLocaleTimeString();
+        entry.textContent = `[${timestamp}] ${message}`;
+
+        container.prepend(entry);
+
+        while (container.children.length > 10) {
+          container.removeChild(container.lastChild);
+        }
+      }
+
+      function exposeToGlobal(instance) {
+        window.DateApp = {
+          instance,
+          getCurrentDate: () => instance.date,
+        };
+        addLog("DateApp 초기화 완료 (window.DateApp 노출)");
+      }
+
+      /* =====================================================
+         component DateDisplay
+         DSL: invariant + on update(date)
+         ===================================================== */
+
+      class DateDisplay extends LitElement {
+        static properties = {
+          date: {
+            hasChanged: (value, oldValue) => {
+              // DSL invariant:
+              // renderOnlyIf isSameDate(old.date, date) == false
+              return !isSameDate(value, oldValue);
+            },
+          },
+        };
+
+        static styles = css`
+          .date-field {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+          }
+        `;
+
+        render() {
+          return html`
+            <span id="date-field" class="date-field">
+              ${this.date
+                ? this.date.toLocaleDateString()
+                : "날짜를 선택하세요"}
+            </span>
+          `;
+        }
+
+        updated(changed) {
+          if (changed.has("date")) {
+            // DSL: on update(date) -> animate
+            const el = this.renderRoot.querySelector("#date-field");
+            el.animate(
+              [
+                { backgroundColor: "#fff" },
+                { backgroundColor: "#324fff" },
+                { backgroundColor: "#fff" },
+              ],
+              { duration: 1000 }
+            );
+            addLog("DateDisplay 애니메이션 실행됨");
+          }
+        }
+      }
+
+      customElements.define("date-display", DateDisplay);
+
+      /* =====================================================
+         component MyElement
+         DSL: state + transition
+         ===================================================== */
+
+      class MyElement extends LitElement {
+        static properties = {
+          date: {},
+        };
+
+        static styles = css`
+          .date-picker {
+            padding: 10px 0;
+          }
+
+          .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+          }
+
+          button {
+            background: #324fff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+          }
+
+          button:hover {
+            opacity: 0.9;
+          }
+        `;
+
+        constructor() {
+          super();
+          this.date = null;
+        }
+
+        /* DSL: transition dateChanged(e) */
+        dateChanged(e) {
+          const utc = e.target.valueAsDate;
+          if (utc != null) {
+            this.date = localDateFromUTC(utc);
+            addLog("날짜 변경됨: " + this.date.toLocaleDateString());
+          }
+        }
+
+        /* DSL: transition chooseToday */
+        chooseToday() {
+          this.date = now();
+          addLog("오늘 날짜 선택: " + this.date.toLocaleDateString());
+        }
+
+        render() {
+          return html`
+            <div class="date-picker">
+              <h2>MyElement 컴포넌트</h2>
+
+              <div class="input-group">
+                <strong>Choose a date:</strong>
+                <input type="date" @change=${this.dateChanged} />
+                <button @click=${this.chooseToday}>Choose Today</button>
+              </div>
+
+              <p><strong>Date chosen:</strong></p>
+
+              <!-- DSL: DateDisplay bind date -->
+              <date-display .date=${this.date}></date-display>
+            </div>
+          `;
+        }
+
+        firstUpdated() {
+          exposeToGlobal(this);
+        }
+      }
+
+      customElements.define("my-element", MyElement);
+    </script>
+  </head>
+
+  <body>
+    <!-- ========== Page DSL : body layout ========== -->
+    <div class="container">
+      <h1>📅 DateApp</h1>
+
+      <div class="instructions">
+        <p>이 앱은 DSL(DateApp)을 HTML/CSS/JavaScript로 구현한 예제입니다.</p>
+        <p>
+          날짜를 선택하거나 "Choose Today" 버튼을 클릭하면 DateDisplay
+          컴포넌트가 애니메이션과 함께 업데이트됩니다.
+        </p>
+      </div>
+
+      <!-- DSL: page body → MyElement -->
+      <my-element></my-element>
+
+      <div class="history-log">
+        <h3>📝 상태 변경 로그</h3>
+        <div id="log-entries"></div>
+      </div>
+    </div>
+  </body>
+</html>

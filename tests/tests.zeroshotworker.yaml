@@ -1,0 +1,23 @@
+tests:
+  - name: "Basic Code Generation"
+    function: "implement"
+    inputs:
+      query: "Write a fibonacci function in Python"
+    
+    # We mock the LLM effect to return a predictable string
+    mocks:
+      - effect: "Generate"
+        return: "def fib(n): return n if n < 2 else fib(n-1) + fib(n-2)"
+    
+    expect:
+      return: "def fib(n): return n if n < 2 else fib(n-1) + fib(n-2)"
+
+  - name: "Empty Query Handling"
+    function: "implement"
+    inputs:
+      query: ""
+    mocks:
+      - effect: "Generate"
+        return: "# No code generated"
+    expect:
+      return: "# No code generated"

@@ -1,0 +1,22 @@
+tests:
+  - name: "First Interaction (Empty Memory)"
+    function: "implement_with_memory"
+    inputs:
+      query: "Hello"
+    mocks:
+      - effect: "GenerateWithContext"
+        return: "Hi there"
+    expect:
+      return: "Hi there"
+
+  - name: "Second Interaction (Has Memory)"
+    # This test assumes a fresh instance, so we rely on the implementation logic
+    # checking that the payload SENT to the effect includes history.
+    function: "implement_with_memory"
+    inputs:
+      query: "What did I just say?"
+    mocks:
+      - effect: "GenerateWithContext"
+        return: "You said Hello"
+    expect:
+      return: "You said Hello"

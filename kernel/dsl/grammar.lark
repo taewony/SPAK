@@ -1,0 +1,49 @@
+// SPAK DSL Grammar (Lark)
+
+start: system_model? task_def
+
+// --- System Model ---
+system_model: "system_model" NAME "{" model_stmt* "}"
+model_stmt: "axiom" ":" STRING
+          | "heuristic" ":" STRING
+          | "prediction" ":" STRING
+
+task_def: "task" NAME "{" step_def+ evaluation_block? success_criteria? "}"
+
+evaluation_block: "evaluation" "{" metric_def+ "}"
+
+metric_def: "check" NAME ":" metric_body
+metric_body: tool_call | llm_call
+
+step_def: "step" NAME ":" step_body
+
+step_body: tool_call | llm_call
+
+// --- Tool Step ---
+tool_call: "tool." NAME "{" param_list "}"
+param_list: (param_pair)*
+param_pair: NAME ":" value
+
+// --- LLM Step ---
+llm_call: "llm." NAME "{" llm_params "}"
+llm_params: (llm_param)*
+llm_param: NAME ":" value
+
+// --- Values ---
+value: STRING | MULTILINE_STRING | NAME
+
+// --- Success Criteria ---
+success_criteria: "success" ":" condition_block
+condition_block: condition+
+condition: NAME "(" arg_list? ")"
+arg_list: value ("," value)*
+
+// --- Lexer Rules ---
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+STRING: /"[^"]*"/
+MULTILINE_STRING: /"""[\s\S]*?"""/
+
+%import common.WS
+%import common.SH_COMMENT
+%ignore WS
+%ignore SH_COMMENT

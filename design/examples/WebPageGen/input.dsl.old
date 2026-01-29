@@ -1,0 +1,43 @@
+page Shop {
+
+  component ProductCard {
+    layout {
+      article.card {
+        h3 { text product.name }
+        span.price { text product.price }
+        button.add { text "Add" }
+      }
+    }
+  }
+
+  layout {
+    header#top {
+      h1 { text "My Awesome Shop" }
+      /* 중괄호 없이 사용 가능 (Void Element) */
+      input#searchBox
+    }
+
+    main {
+      section#products.grid {
+        /* Loop 구문 */
+        ProductCard(product: p) foreach products
+      }
+    }
+
+    footer {
+      text "© 2026 CodeGen"
+    }
+  }
+
+  style {
+    #top { background: #222; color: white; padding: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .card { border: 1px solid #ddd; padding: 16px; border-radius: 8px; }
+    #searchBox { padding: 8px; margin-left: 10px; }
+  }
+
+  behavior {
+    when click on .add then alert("Item added!");
+    when change on #searchBox then console.log("Searching...");
+  }
+}

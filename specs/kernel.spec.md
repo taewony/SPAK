@@ -1,95 +1,56 @@
 meta {
     name = "SPAK_Kernel"
-    version = "0.6.0"
-    description = "The Spec-driven Programmable Agent Kernel with Autonomous Orchestration and Round-Trip Verification"
+    version = "0.7.0"
+    description = "A lightweight runtime for Spec-Guided Latent Planning and Re-entrant Execution."
 }
 
-// --- Operational Contract ---
-contract AgentScope {
+contract KernelScope {
     supported_intents = [
-        "Agent Synthesis: Compiling Specs into verifiable Python artifacts.",
-        "Autonomous Orchestration: Driving agents via Thought-Plan-Action-Observation loops.",
-        "Advanced Verification: Validating latent reasoning against symbolic PlanIR."
+        "Spec Compilation: Lark-based parsing of AgentSpec into System Prompts.",
+        "Latent Planning: Injection of 'System Models' into LLM context.",
+        "Soft-Sandboxing: Restricted Python exec() for effect handling."
     ]
-
-    success_criteria = [
-        "Semantic Fidelity: Agent actions match the intended PlanIR.",
-        "Effect Isolation: All side effects are mediated and logged.",
-        "Traceability: 100% of LLM interactions are captured in the TraceIR."
-    ]
-
-    autonomy {
-        mode = "autonomous"
-        loop_interval = "2s"
-        max_steps = 100
-    }
 }
 
 kernel SPAK_Kernel {
 
-    // --- 1. Algebraic Effects (The Syscall Interface) ---
+    // --- 1. The "Cognitive" Effects (Interfaces to the LLM) ---
     
-    effect LLM {
-        operation generate(prompt: String) -> String;
+    effect Planner {
+        // Injects the 'system_model' and requests a structured Plan-IR
+        operation synthesize_plan(goal: String, model_context: String) -> PlanIR;
+        
+        // Asks the LLM to critique its own result against the expected outcome
+        operation reflect(result: String, expectation: String) -> Reflection;
     }
 
-    effect FileSystem {
-        operation read(path: String) -> String;
-        operation write(path: String, content: String) -> String;
-        operation list_files(dir_path: String) -> List<String>;
-    }
-    
-    effect System {
-        operation recurse(spec: String, query: String) -> String;
-    }
-
-    effect ReasoningTrace {
-        operation log(thought: String, plan: Map<String, Any>, raw_response: String) -> Unit;
+    effect ToolRuntime {
+        // Soft-sandbox: executes Python code strings within a restricted namespace
+        operation exec_restricted(code: String, allowed_modules: List<String>) -> Result;
+        
+        // Standard File I/O (mediated)
+        operation read_file(path: String) -> String;
+        operation write_file(path: String, content: String) -> String;
     }
 
-    // --- 2. Core Kernel Components ---
+    // --- 2. Core Components ---
 
-    component Compiler {
-        description: "Parses AgentSpec DSL into Semantic IR (AST).";
-        function compile_file(path: String) -> String;
+    component SpecLoader {
+        description: "Lark-based Parser. Converts .spec files into Runtime Objects.";
+        function extract_system_model(spec_path: String) -> String; 
+        function extract_invariants(spec_path: String) -> List<Constraint>;
     }
 
     component Orchestrator {
-        description: "The autonomous execution engine. Implements the Thought-Action-Observation loop.";
-        function run_loop(agent: Agent, goal: String) -> Result<String>;
+        description: "The Level 4 Loop Engine.";
+        
+        // The main loop for "Re-planning if result is not good enough"
+        function run_adaptive_loop(agent_name: String, goal: String) -> Artifact;
     }
 
-    component Verifier {
-        description: "Enforces structural, behavioral, and semantic consistency.";
-        function verify_structure(spec: String, src_dir: String) -> List<String>;
-        function verify_behavior(test_path: String) -> List<String>;
-        function verify_consistency(trace: List<String>, plan: String) -> Result<Float>;
-    }
-
-    component Builder {
-        description: "Interface to LLMs for Code Synthesis, Test Generation, and Self-Repair.";
-
-        function implement_component(spec: String, context: String) -> String;
-        function generate_tests(spec: String) -> String;
-        function fix_implementation(code: String, error_log: String) -> String;
-    }
-
-    component Runtime {
-        description: "The isolated environment where effects are resolved and state is managed.";
-        function handle_effect(effect: Effect) -> Any;
-    }
-    
-    // --- 3. Self-Evolution Workflows ---
-
-    workflow SelfImprovement(goal: String) {
-        step Analyze {
-            perform LLM.generate("Analyze kernel performance against: " + goal)
-        }
-        step Synthesize {
-            perform LLM.generate("Propose optimized kernel implementation")
-        }
-        step VerifyConsistency {
-            perform Verifier.verify_consistency(current_trace, "plans/kernel_upgrade.plan.yaml")
-        }
+    component SafetyMonitor {
+        description: "The 'Soft' Guardrail.";
+        // Checks generated Python code for banned AST nodes (e.g., 'import os', 'subprocess')
+        function scan_code_safety(code: String) -> Bool;
     }
 }
