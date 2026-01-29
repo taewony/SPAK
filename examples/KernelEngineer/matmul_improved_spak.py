@@ -57,18 +57,16 @@ def matmul_kernel_spak_optimized(A, B, C, group_size_m):
         b_curr = ct.load(B, index=(0, bid_n), shape=(TILE_SIZE, TILE_SIZE)).astype(dtype)
         
         for k in range(NUM_K_TILES):
-            # Prefetch next tile
+            a_tile_to_compute = a_curr
+            b_tile_to_compute = b_curr
+
+            # Prefetch next tile (becomes current for next iteration)
             if k < NUM_K_TILES - 1:
-                a_next = ct.load(A, index=(bid_m, k+1), shape=(TILE_SIZE, TILE_SIZE)).astype(dtype)
-                b_next = ct.load(B, index=(k+1, bid_n), shape=(TILE_SIZE, TILE_SIZE)).astype(dtype)
-            
-            # Compute current (overlaps with prefetch)
-            acc = ct.mma(a_curr, b_curr, acc=acc)
-            
-            # Shift
-            if k < NUM_K_TILES - 1:
-                a_curr = a_next
-                b_curr = b_next
+                a_curr = ct.load(A, index=(bid_m, k+1), shape=(TILE_SIZE, TILE_SIZE)).astype(dtype)
+                b_curr = ct.load(B, index=(k+1, bid_n), shape=(TILE_SIZE, TILE_SIZE)).astype(dtype)
+
+            # Compute current (overlaps with prefetch of next)
+            acc = ct.mma(a_tile_to_compute, b_tile_to_compute, acc=acc)
 
         ct.store(C, index=(bid_m, bid_n), tile=ct.astype(acc, C.dtype))
 
