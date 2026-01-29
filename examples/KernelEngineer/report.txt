@@ -1,0 +1,49 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python generate_final_report.py
+=== SPAK Final Report Generator ===
+
+--- Testing Level 0: Baseline (PyTorch) ---
+   Result: 0.00 TFLOPS
+
+--- Testing Level 1: Naive Tiling ---
+   Result: 0.00 TFLOPS
+
+--- Testing Level 2: Optimized Occupancy ---
+   Result: 0.00 TFLOPS
+
+--- Testing Level 3: Swizzling ---
+   Result: 0.00 TFLOPS
+
+--- Testing Level 4: Pipelining (Manual) ---
+   Result: 0.00 TFLOPS
+
+--- Testing Level 5: Auto-Tuned ---
+   Result: 0.00 TFLOPS
+
+[+] Report Generated: Final_MatMul_Report.md
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step1_naive_tiling.py
+=== Level 1: Naive Tiling ===
+Time: 112.421 ms
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step2_occupancy.py
+=== Level 2: Optimized Occupancy ===
+Launching 96 CTAs on 48 SMs
+Time: 20.869 ms
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step3_swizzling.py
+=== Level 3: Swizzling ===
+Time: 19.908 ms
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step4_pipelining.py
+=== Level 4: Pipelining (Double Buffering) ===
+Time: 16.808 ms
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step5_autotuner.py
+>> SPAK Auto-Tuner on NVIDIA GeForce RTX 5070 | SMs: 48
+>> Strategy: Double-Buffered Pipeline + Config Sweep
+--------------------------------------------------------------------------------------------------------------
+Size       | PyTorch  | SPAK Tuned | Speedup  | Best Config
+(MxNxK)    | (TFLOPS) | (TFLOPS)   | (%)          | (Tile_M x Tile_N x Tile_K)
+--------------------------------------------------------------------------------------------------------------
+2048       | 66.03    | 64.11      | -2.9   % | 64x64x64 (Occ=2)
+4096       | 68.83    | 67.03      | -2.6   % | 64x64x64 (Occ=2)
+8192       | 67.91    | 65.94      | -2.9   % | 64x64x64 (Occ=2)
+--------------------------------------------------------------------------------------------------------------
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$
