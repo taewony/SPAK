@@ -6,15 +6,15 @@ import torch
 # ============================================================
 # 1. Problem size
 # ============================================================
-M_SIZE = 2048
-N_SIZE = 2048
-K_SIZE = 2048
+M_SIZE = 4096 # Updated to match benchmark standard
+N_SIZE = 4096
+K_SIZE = 4096
 
 TILE_SIZE = 128   # tile size
 
-GRID_M = M_SIZE // TILE_SIZE   # 16
-GRID_N = N_SIZE // TILE_SIZE   # 16
-GRID_K = K_SIZE // TILE_SIZE   # 16
+GRID_M = M_SIZE // TILE_SIZE
+GRID_N = N_SIZE // TILE_SIZE
+GRID_K = K_SIZE // TILE_SIZE
 
 
 # ============================================================
@@ -63,7 +63,7 @@ def matmul_tile_kernel(A, B, C):
 # 3. Main
 # ============================================================
 def main():
-    print("=== cuTile 2048x2048 MatMul (WORKING) ===")
+    print(f"=== cuTile Baseline Benchmark ({M_SIZE}x{N_SIZE}x{K_SIZE}) ===")
 
     # --------------------------------------------------------
     # Host data
@@ -73,53 +73,54 @@ def main():
     h_B = np.random.randn(K_SIZE, N_SIZE).astype(np.float16)
     h_C = np.zeros((M_SIZE, N_SIZE), dtype=np.float16)
 
-    # --------------------------------------------------------
-    # Device copy
-    # --------------------------------------------------------
     d_A = cp.asarray(h_A)
     d_B = cp.asarray(h_B)
     d_C = cp.asarray(h_C)
-
-    # --------------------------------------------------------
-    # Launch kernel
-    # --------------------------------------------------------
-    stream = cp.cuda.get_current_stream()
-    ct.launch(
-        stream,
-        (GRID_M, GRID_N, 1),
-        matmul_tile_kernel,
-        (d_A, d_B, d_C)
-    )
-    stream.synchronize()
-
-    result_cutile = cp.asnumpy(d_C)
-
-    # ========================================================
-    # Verification with PyTorch's result
-    # ========================================================
-    print("Verifying with PyTorch...")
-
+    
     A_torch = torch.from_numpy(h_A).cuda()
     B_torch = torch.from_numpy(h_B).cuda()
 
+    # --------------------------------------------------------
+    # Benchmarking
+    # --------------------------------------------------------
+    stream = cp.cuda.get_current_stream()
+    
+    # Warmup
+    for _ in range(5):
+        ct.launch((GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
+    stream.synchronize()
+    
+    # Measure
+    start_evt = cp.cuda.Event(); end_evt = cp.cuda.Event()
+    start_evt.record()
+    for _ in range(20):
+        ct.launch((GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
+    end_evt.record()
+    end_evt.synchronize()
+    
+    ms = cp.cuda.get_elapsed_time(start_evt, end_evt) / 20.0
+    tflops = (2 * M_SIZE * N_SIZE * K_SIZE) / (ms * 1e-3) / 1e12
+
+    # --------------------------------------------------------
+    # Verification
+    # --------------------------------------------------------
+    print("Verifying with PyTorch...")
     with torch.no_grad():
         C_ref = torch.matmul(A_torch, B_torch)
-
     C_ref_np = C_ref.cpu().numpy()
+    result_cutile = cp.asnumpy(d_C)
 
-    abs_diff = np.abs(result_cutile - C_ref_np)
-    print("Max error :", abs_diff.max())
-    print("Mean error:", abs_diff.mean())
-
-    # Relax absolute tolerance accounting for FP16 precision limits 
-    # A deviation of 0.125 corresponds to the quantization error of FP16.
-    # We set atol to 0.2 to accommodate these inherent 1-2 bit differences.
     if np.allclose(result_cutile, C_ref_np, atol=2e-1, rtol=2e-2):
-        print("O Verification: Success! (Within FP16 precision limits)")
+        print("✅ Verification: Success!")
     else:
-        print("X Verification: Failed!")
+        print("❌ Verification: Failed!")
 
+    # --------------------------------------------------------
+    # Standard Output for Reporter
+    # --------------------------------------------------------
+    print("-" * 60)
+    print(f"Time: {ms:.3f} ms | TFLOPS: {tflops:.2f}")
+    print("-" * 60)
 
 if __name__ == "__main__":
     main()
-

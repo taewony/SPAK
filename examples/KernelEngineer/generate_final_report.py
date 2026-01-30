@@ -155,15 +155,34 @@ def generate_report(results):
     report += "| Level | Strategy | TFLOPS (Est) | Speedup vs Baseline |\n"
     report += "|-------|----------|--------------|---------------------|\n"
     
-    # Calculate baseline (usually PyTorch)
+    # Calculate baseline (PyTorch)
+    # Search for the most reliable PyTorch baseline from the logs
     baseline_tflops = 1.0
+    
+    # Priority 1: Step 5 (Auto-Tuner) usually has the most accurate PyTorch measurement
     for r in results:
-        if "Baseline" in r['name']:
-            baseline_tflops = r['tflops'] if r['tflops'] > 0 else 1.0
-            break
+        if "Auto-Tuned" in r['name']:
+            # Parse table line for target size
+            # 4096 | 68.96 | ...
+            for line in r.get('log', '').splitlines():
+                if line.strip().startswith(str(TARGET_SIZE)):
+                    parts = line.split('|')
+                    if len(parts) >= 2:
+                        try:
+                            baseline_tflops = float(parts[1].strip())
+                            break
+                        except: pass
+            if baseline_tflops > 1.0: break
+
+    # Priority 2: If Step 5 failed, use Level 0 if valid
+    if baseline_tflops == 1.0:
+        for r in results:
+            if "Baseline" in r['name'] and r['tflops'] > 0:
+                baseline_tflops = r['tflops']
+                break
 
     for r in results:
-        speedup = r['tflops'] / baseline_tflops
+        speedup = r['tflops'] / baseline_tflops if baseline_tflops > 0 else 0
         report += f"| {r['name']} | {r['desc']} | {r['tflops']:.2f} | **{speedup:.2f}x** |\n"
 
     report += """
