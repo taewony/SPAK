@@ -47,7 +47,7 @@ if HAS_CUDA:
             s_acc = ct.zeros((TILE_M, TILE_N), dtype=ct.float32)
             s_tile = ct.mma(q_tile, k_tile, s_acc) # Q[M,D] @ K[D,N] -> [M,N]
             
-            ct.store(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), s_tile[None, None, None, None])
+            ct.store(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), s_tile.reshape((1, 1, 1, 1, TILE_M, TILE_N)))
 
          # Force memory sync (simulation)
         
@@ -57,13 +57,13 @@ if HAS_CUDA:
         
         for j in range(num_n_tiles):
             s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
-            m_max = ct.max(m_max, ct.max(s_tile, dim=1, keepdims=True))
+            m_max = ct.max(m_max, ct.max(s_tile, axis=1, keepdims=True))
             
         for j in range(num_n_tiles):
             s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
             p_tile = ct.exp(s_tile - m_max)
-            l_sum = l_sum + ct.sum(p_tile, dim=1, keepdims=True)
-            ct.store(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), p_tile[None, None, None, None])
+            l_sum = l_sum + ct.sum(p_tile, axis=1, keepdims=True)
+            ct.store(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), p_tile.reshape((1, 1, 1, 1, TILE_M, TILE_N)))
             
         
             
@@ -72,10 +72,10 @@ if HAS_CUDA:
         for j in range(num_n_tiles):
             p_tile = ct.load(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
             v_tile = ct.load(V, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D)).reshape((TILE_N, D))
-            p_norm = p_tile / l_sum
+            p_norm = (p_tile / l_sum).astype(ct.float16)
             acc = ct.mma(p_norm, v_tile, acc)
             
-        ct.store(O, (b_idx, h_idx, bid_m, 0), acc[None, None])
+        ct.store(O, (b_idx, h_idx, bid_m, 0), acc.reshape((1, 1, TILE_M, D)))
 
 def run_real_kernel():
     print(f"=== FMHA Step 2: Naive Kernel ({M}x{N}) ===")

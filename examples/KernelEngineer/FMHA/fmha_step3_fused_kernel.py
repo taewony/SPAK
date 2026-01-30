@@ -141,10 +141,10 @@ def run_real_kernel():
     print("=== FMHA Step 3: Fused Kernel (Implementation) ===")
     
     # Configuration
-    BATCH_SIZE = 2
-    NUM_HEADS = 8
-    SEQ_LEN_Q = 128
-    SEQ_LEN_KV = 128
+    BATCH_SIZE = 8
+    NUM_HEADS = 16
+    SEQ_LEN_Q = 1024
+    SEQ_LEN_KV = 1024
     D_K = 64
     D_V = 64
     TILE_M = 128
