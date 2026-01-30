@@ -87,14 +87,14 @@ def main():
     
     # Warmup
     for _ in range(5):
-        ct.launch((GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
+        ct.launch(stream, (GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
     stream.synchronize()
     
     # Measure
     start_evt = cp.cuda.Event(); end_evt = cp.cuda.Event()
     start_evt.record()
     for _ in range(20):
-        ct.launch((GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
+        ct.launch(stream, (GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
     end_evt.record()
     end_evt.synchronize()
     

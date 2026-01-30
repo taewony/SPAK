@@ -21,9 +21,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Define the "Optimization Journey"
 # Paths are now relative to BASE_DIR
 BENCHMARKS = [
+    # Level 0 is a Virtual Entry filled dynamically
     {
         "name": "Level 0: Baseline (PyTorch)",
-        "script": os.path.join(BASE_DIR, "matmul_baseline.py"), 
+        "script": None, 
         "desc": "Standard cuBLAS implementation (The Target to Beat).",
     },
     {
@@ -63,8 +64,11 @@ def run_script_and_extract_perf(script_path):
     Runs a python script and attempts to parse "X ms" or "Y TFLOPS" from stdout.
     This relies on the scripts printing standard output formats.
     """
+    if script_path is None: return "Virtual", 0.0
+
     if not os.path.exists(script_path):
         return f"File not found: {script_path}", 0.0
+
 
     print(f"[*] Running {os.path.basename(script_path)}...")
     try:
@@ -174,16 +178,17 @@ def generate_report(results):
                         except: pass
             if baseline_tflops > 1.0: break
 
-    # Priority 2: If Step 5 failed, use Level 0 if valid
-    if baseline_tflops == 1.0:
-        for r in results:
-            if "Baseline" in r['name'] and r['tflops'] > 0:
-                baseline_tflops = r['tflops']
-                break
-
+    # Priority 2: If Step 5 failed, use Level 0 if valid (Not applicable now as Level 0 is virtual)
+    
     for r in results:
+        # Calculate Speedup
         speedup = r['tflops'] / baseline_tflops if baseline_tflops > 0 else 0
-        report += f"| {r['name']} | {r['desc']} | {r['tflops']:.2f} | **{speedup:.2f}x** |\n"
+        
+        # Override for Virtual Level 0
+        if r['name'] == "Level 0: Baseline (PyTorch)":
+            report += f"| {r['name']} | {r['desc']} | {baseline_tflops:.2f} | **1.00x** |\n"
+        else:
+            report += f"| {r['name']} | {r['desc']} | {r['tflops']:.2f} | **{speedup:.2f}x** |\n"
 
     report += """
 ## 4. Analysis
