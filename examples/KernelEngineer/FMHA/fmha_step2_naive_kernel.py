@@ -57,7 +57,7 @@ if HAS_CUDA:
         
         for j in range(num_n_tiles):
             s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
-            m_max = ct.max(m_max, ct.max(s_tile, axis=1, keepdims=True))
+            m_max = max(m_max, ct.max(s_tile, axis=1, keepdims=True))
             
         for j in range(num_n_tiles):
             s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
