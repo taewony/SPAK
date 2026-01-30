@@ -75,7 +75,7 @@ if HAS_CUDA:
             p_norm = (p_tile / l_sum).astype(ct.float16)
             acc = ct.mma(p_norm, v_tile, acc)
             
-        ct.store(O, (b_idx, h_idx, bid_m, 0), acc.reshape((1, 1, TILE_M, D)))
+        ct.store(O, (b_idx, h_idx, bid_m, 0), acc.astype(ct.float16).reshape((1, 1, TILE_M, D)))
 
 def run_real_kernel():
     print(f"=== FMHA Step 2: Naive Kernel ({M}x{N}) ===")
