@@ -1,18 +1,15 @@
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
-=== FMHA Step 1: Python Prototype ===
-Shape: B=1, H=4, Seq=1024x1024, D=64
-Running Standard Attention... Done (0.0825s)
-Running Online Softmax (Tiled)... Done (0.0469s)
-Verifying Invariant...
-Max Error: 9.05e-08
-✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
+=== FMHA Step 3: Fused Kernel (Implementation) ===
+Launching Kernel (Grid: (1, 16, 1))...
+Verifying...
+✅ Verification: Success!
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
 === FMHA Step 2: Naive Kernel (1024x1024) ===
 Warming up...
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 134, in <module>
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 147, in <module>
     main()
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 98, in main
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 111, in main
     ct.launch(stream, grid, naive_attention_kernel, (d_Q, d_K, d_V, d_O, d_S, d_P))
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 225, in __call__
     lib = compile_tile(self.pyfunc, pyfunc_args, self.compiler_options, tile_context)
@@ -42,12 +39,25 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1900, in tile_load_impl
-    shape = require_constant_shape(shape, allow_single_int=True, expected_rank=array_ty.ndim,
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 191, in require_constant_shape
-    raise _make_type_error(f"Expected shape length to be {expected_rank}, got {len(shape)}",
-cuda.tile._exception.TileTypeError: Invalid argument "shape" of load(): Expected shape length to be 4, got 2
-  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 28, col 14--62:
-        q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (TILE_M, D))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1332, in getitem
+    case TileTy(): return tile_getitem(object, key)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1248, in tile_getitem
+    return tile_expand_dims(x, key.get_constant())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1215, in tile_expand_dims
+    raise TileTypeError(
+cuda.tile._exception.TileTypeError: Expected `None|np.newaxis` or `ellipsis` or full slice (`:`), but got 0. Hint: Directly indexing a tile is not supported, use `extract` or `item`.
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 29, col 14--74:
+        q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (1, 1, TILE_M, D))[0, 0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
+=== FMHA Step 1: Python Prototype ===
+Shape: B=1, H=4, Seq=1024x1024, D=64
+Running Standard Attention... Done (0.0818s)
+Running Online Softmax (Tiled)... Done (0.0489s)
+Verifying Invariant...
+Max Error: 9.05e-08
+✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$
