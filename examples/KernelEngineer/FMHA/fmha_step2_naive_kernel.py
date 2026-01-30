@@ -42,7 +42,11 @@ if HAS_CUDA:
         for j in range(num_n_tiles):
             # Fix: K is 4D. Load Transposed (D, N) to avoid .T attribute error.
             k_tile = ct.load(K, (b_idx, h_idx, 0, j), (1, 1, D, TILE_N), order=(0, 1, 3, 2)).reshape((D, TILE_N))
-            s_tile = ct.mma(q_tile, k_tile) # Q[M,D] @ K[D,N] -> [M,N]
+            
+            # Fix: Initialize accumulator for mma
+            s_acc = ct.zeros((TILE_M, TILE_N), dtype=ct.float32)
+            s_tile = ct.mma(q_tile, k_tile, s_acc) # Q[M,D] @ K[D,N] -> [M,N]
+            
             ct.store(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), s_tile[None, None, None, None])
 
         ct.commit() # Force memory sync (simulation)
