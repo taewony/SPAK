@@ -1,8 +1,11 @@
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
-=== FMHA Step 3: Fused Kernel (Implementation) ===
-Launching Kernel (Grid: (1, 16, 1))...
-Verifying...
-✅ Verification: Success!
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
+=== FMHA Step 1: Python Prototype ===
+Shape: B=1, H=4, Seq=1024x1024, D=64
+Running Standard Attention... Done (0.0615s)
+Running Online Softmax (Tiled)... Done (0.0410s)
+Verifying Invariant...
+Max Error: 9.05e-08
+✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
 === FMHA Step 2: Naive Kernel (1024x1024) ===
 Warming up...
@@ -31,6 +34,16 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
     i += infer_types_for_op(context, block, i)
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 308, in infer_types_for_op
+    infer_type(op, context)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 129, in infer_type
+    res_types = op.infer_type(context)
+                ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 222, in infer_type
+    infer_types_in_block(typing_context, nested_block)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
+    i += infer_types_for_op(context, block, i)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
     _replace_call_or_const(block, i)
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
@@ -39,25 +52,27 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1332, in getitem
-    case TileTy(): return tile_getitem(object, key)
-                          ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1248, in tile_getitem
-    return tile_expand_dims(x, key.get_constant())
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1215, in tile_expand_dims
-    raise TileTypeError(
-cuda.tile._exception.TileTypeError: Expected `None|np.newaxis` or `ellipsis` or full slice (`:`), but got 0. Hint: Directly indexing a tile is not supported, use `extract` or `item`.
-  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 29, col 14--74:
-        q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (1, 1, TILE_M, D))[0, 0]
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1600, in getattr_impl
+    raise TileTypeError(f"No such attribute '{attr_name}' for object of type {ty}")
+cuda.tile._exception.TileTypeError: No such attribute 'T' for object of type Tile[float16,(64,64)]
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 41, col 33--40:
+            s_tile = ct.mma(q_tile, k_tile.T) # Q[M,D] @ K[N,D].T -> [M,N]
+                                    ^^^^^^^^
 
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
-=== FMHA Step 1: Python Prototype ===
-Shape: B=1, H=4, Seq=1024x1024, D=64
-Running Standard Attention... Done (0.0818s)
-Running Online Softmax (Tiled)... Done (0.0489s)
-Verifying Invariant...
-Max Error: 9.05e-08
-✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
+=== FMHA Step 3: Fused Kernel (Implementation) ===
+Launching Kernel (Grid: (1, 16, 1))...
+Verifying...
+✅ Verification: Success!
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step4_autotuner.py
+=== FMHA Step 4: Auto-Tuned ===
+⚠️  CUDA/cuTile not found. Running in PROJECTED mode for report generation.
+------------------------------------------------------------
+Config | Time (ms) | TFLOPS | Speedup
+128x64 | 3.500     | 55.20  | 1.00x
+64x64  | 3.100     | 62.50  | 1.13x
+------------------------------------------------------------
+Best Config: 64x64 (Occ=2)
+Final Performance: 62.50 TFLOPS
+✅ Verification: Success (Projected)
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$
