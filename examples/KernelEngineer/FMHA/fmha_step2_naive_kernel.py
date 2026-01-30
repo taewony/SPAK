@@ -25,7 +25,8 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     
     # 1. QK GEMM (Write S to Global/Buffer)
     # Load Q Tile
-    q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (TILE_M, D))
+    # Fix: Q is 4D, so load shape must be 4D. We slice [0,0] to get 2D tile for MMA.
+    q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (1, 1, TILE_M, D))[0, 0]
     
     # Iterate over all N tiles to compute S row
     num_n_tiles = N // TILE_N
@@ -35,10 +36,13 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     
     # Pass 1: Compute Scores (Q @ K.T) -> Global Memory (S_buf)
     for j in range(num_n_tiles):
-        k_tile = ct.load(K, (b_idx, h_idx, j, 0), (TILE_N, D))
+        # Fix: K is 4D
+        k_tile = ct.load(K, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D))[0, 0]
         s_tile = ct.mma(q_tile, k_tile.T) # Q[M,D] @ K[N,D].T -> [M,N]
         # In Naive, we WRITE this to global memory
-        ct.store(S_buf, (b_idx, h_idx, bid_m, j), s_tile)
+        # Fix: S_buf is 6D, use 6 indices. s_tile is 2D.
+        # Unsqueeze s_tile to 6D to match S_buf rank
+        ct.store(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), s_tile[None, None, None, None])
 
     ct.commit() # Force memory sync (simulation)
     
@@ -50,15 +54,18 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     
     # 2a. Find Max
     for j in range(num_n_tiles):
-        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j), (TILE_M, TILE_N))
+        # Fix: S_buf is 6D
+        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N))[0, 0, 0, 0]
         m_max = ct.max(m_max, ct.max(s_tile, dim=1, keepdims=True))
         
     # 2b. Compute Exp & Sum
     for j in range(num_n_tiles):
-        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j), (TILE_M, TILE_N))
+        # Fix: S_buf is 6D
+        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N))[0, 0, 0, 0]
         p_tile = ct.exp(s_tile - m_max)
         l_sum = l_sum + ct.sum(p_tile, dim=1, keepdims=True)
-        ct.store(P_buf, (b_idx, h_idx, bid_m, j), p_tile)
+        # Fix: P_buf is 6D
+        ct.store(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), p_tile[None, None, None, None])
         
     ct.commit()
         
@@ -66,15 +73,21 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     acc = ct.zeros((TILE_M, D), dtype=ct.float32)
     
     for j in range(num_n_tiles):
-        p_tile = ct.load(P_buf, (b_idx, h_idx, bid_m, j), (TILE_M, TILE_N))
-        v_tile = ct.load(V, (b_idx, h_idx, j, 0), (TILE_N, D))
+        # Fix: P_buf is 6D
+        p_tile = ct.load(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N))[0, 0, 0, 0]
+        # Fix: V is 4D
+        v_tile = ct.load(V, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D))[0, 0]
         
         # Normalize P here ( P_buf holds exp(S-m) )
         p_norm = p_tile / l_sum
         
         acc = ct.mma(p_norm, v_tile, acc)
         
-    ct.store(O, (b_idx, h_idx, bid_m, 0), acc)
+    # Fix: O is 4D
+    # For store to 4D with 2D tile, we might need to reshape tile or rely on index?
+    # Trying with 4 indices and hoping store accepts 2D tile for remaining dims.
+    # Note: If this fails, we might need to unsqueeze acc.
+    ct.store(O, (b_idx, h_idx, bid_m, 0), acc[None, None])
 
 def main():
     print(f"=== FMHA Step 2: Naive Kernel ({M}x{N}) ===")
