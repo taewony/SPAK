@@ -1,0 +1,103 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python generate_final_report.py
+=== SPAK Final Report Generator ===
+
+--- Testing Level 0: Baseline (PyTorch) ---
+[*] Running matmul_baseline.py...
+   Result: 0.00 TFLOPS
+
+--- Testing Level 1: Naive Tiling ---
+[*] Running step1_naive_tiling.py...
+   Result: 20.66 TFLOPS
+
+--- Testing Level 2: Optimized Occupancy ---
+[*] Running step2_occupancy.py...
+   Result: 59.45 TFLOPS
+
+--- Testing Level 3: Swizzling ---
+[*] Running step3_swizzling.py...
+   Result: 57.02 TFLOPS
+
+--- Testing Level 4: Pipelining (Manual) ---
+[*] Running step4_pipelining.py...
+   Result: 55.90 TFLOPS
+
+--- Testing Level 5: Auto-Tuned ---
+[*] Running step5_autotuner.py...
+   Result: 67.37 TFLOPS
+
+--- Testing Level 6: Ablation Study ---
+[*] Running step6_ablation.py...
+   Result: 67.36 TFLOPS
+
+[+] Report Generated: Final_MatMul_Report.md
+
+
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python matmul_baseline.py
+=== cuTile 2048x2048 MatMul (WORKING) ===
+Verifying with PyTorch...
+Max error : 0.125
+Mean error: 0.01573
+O Verification: Success! (Within FP16 precision limits)
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step1_naive_tiling.py
+=== Level 1: Naive Tiling ===
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.989      | -        | 1.00x
+Naive Tiling         | 6.658      | 20.64    | 0.30x
+------------------------------------------------------------
+Time: 6.658 ms | TFLOPS: 20.64
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step2_occupancy.py
+=== Level 2: Optimized Occupancy ===
+Launching 96 CTAs on 48 SMs
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.993      | -        | 1.00x
+Occupancy Optimized  | 2.312      | 59.46    | 0.86x
+------------------------------------------------------------
+Time: 2.312 ms | TFLOPS: 59.46
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step3_swizzling.py
+=== Level 3: Swizzling ===
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.989      | -        | 1.00x
+Swizzling            | 2.415      | 56.92    | 0.82x
+------------------------------------------------------------
+Time: 2.415 ms | TFLOPS: 56.92
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step4_pipelining.py
+=== Level 4: Pipelining (Double Buffering) ===
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.991      | -        | 1.00x
+Pipelining           | 2.471      | 55.62    | 0.81x
+------------------------------------------------------------
+Time: 2.471 ms | TFLOPS: 55.62
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step5_autotuner.py
+>> SPAK Auto-Tuner on NVIDIA GeForce RTX 5070 | SMs: 48
+>> Strategy: Double-Buffered Pipeline + Config Sweep
+-----------------------------------------------------------------------------------------------------------------------------
+Size       | PyTorch  | SPAK Tuned | Time     | Speedup  | Best Config
+(MxNxK)    | (TFLOPS) | (TFLOPS)   | (ms)     | (%)          | (Tile_M x Tile_N x Tile_K)
+-----------------------------------------------------------------------------------------------------------------------------
+2048       | 57.63    | 64.16      | 0.268    | +11.3   % | 64x64x64 (Occ=2)
+4096       | 68.96    | 67.22      | 2.045    | -2.5   % | 64x64x64 (Occ=2)
+8192       | 67.66    | 65.87      | 16.693   | -2.6   % | 64x64x64 (Occ=2)
+-----------------------------------------------------------------------------------------------------------------------------
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python step6_ablation.py
+=== Step 6: Ablation Study on NVIDIA GeForce RTX 5070 ===
+Target Config: Tile=64x64x64, Occ=2
+------------------------------------------------------------
+Mode                 | TFLOPS     | Speedup
+------------------------------------------------------------
+Simple Loop          | 63.78      | 1.00x
+Double Buffered      | 67.55      | 1.06x
+------------------------------------------------------------
+ℹ️ Conclusion: Impact is minor. Kernel might be Compute-Bound.
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$
