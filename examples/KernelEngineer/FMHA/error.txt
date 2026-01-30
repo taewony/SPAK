@@ -1,39 +1,16 @@
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
-=== FMHA Step 1: Python Prototype ===
-Shape: B=1, H=4, Seq=1024x1024, D=64
-Running Standard Attention... Done (0.0937s)
-Running Online Softmax (Tiled)... Done (0.0408s)
-Verifying Invariant...
-Max Error: 9.05e-08
-✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
-=== FMHA Step 3: Fused Kernel (Implementation) ===
-Launching Kernel (Grid: (8, 128, 1))...
-------------------------------------------------------------
-Config  | Time (ms) | TFLOPS | Speedup
-128x128 | 0.896     | 38.35  | 1.00x
-------------------------------------------------------------
-Verifying...
-✅ Verification: Success!
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step4_autotuner.py
-=== FMHA Step 4: Manual Auto-Tuner ===
-Benchmarking on NVIDIA GeForce RTX 5070...
-Sweeping search space...
-------------------------------------------------------------
-Config     | Time (ms)  | TFLOPS   | Speedup
-------------------------------------------------------------
-128x64    | 0.332      | 103.44   | 1.00x
-64x64    | 0.302      | 113.81   | 1.10x
-64x128   | 0.327      | 105.14   | 1.02x
-128x128   | 0.552      | 62.24   | 0.60x
-32x32    | 0.471      | 72.88   | 0.70x
-------------------------------------------------------------
-Best Config Found: (64, 64)
-Final Performance: 113.81 TFLOPS
-✅ Verification: Success (Manual Tuner)
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
 === FMHA Step 2: Naive Kernel (1024x1024) ===
 Warming up...
+Traceback (most recent call last):
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1966, in _implicit_cast
+    check_implicit_cast(ty, target_dtype)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops_utils.py", line 323, in check_implicit_cast
+    raise TileTypeError(f"cannot implicitly cast {src_dtype} to {target_dtype}")
+cuda.tile._exception.TileTypeError: cannot implicitly cast float32 to float16
+Unknown location
+
+During handling of the above exception, another exception occurred:
+
 Traceback (most recent call last):
   File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 134, in <module>
     run_real_kernel()
@@ -59,16 +36,6 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
     i += infer_types_for_op(context, block, i)
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 308, in infer_types_for_op
-    infer_type(op, context)
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 129, in infer_type
-    res_types = op.infer_type(context)
-                ^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 222, in infer_type
-    infer_types_in_block(typing_context, nested_block)
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
-    i += infer_types_for_op(context, block, i)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
     _replace_call_or_const(block, i)
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
@@ -77,20 +44,15 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 2825, in reduce_impl_with_ftz
-    axis = _parse_reduce_axis(axis)
-           ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 2805, in _parse_reduce_axis
-    axis = require_optional_constant_int(axis)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 86, in require_optional_constant_int
-    return require_constant_int(var)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 75, in require_constant_int
-    raise _make_type_error("Expected an integer constant, but given value is not constant", var)
-cuda.tile._exception.TileTypeError: Invalid argument "axis" of max(): Expected an integer constant, but given value is not constant
-  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 60, col 21--72:
-                m_max = ct.max(m_max, ct.max(s_tile, axis=1, keepdims=True))
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1983, in tile_store_impl
+    tile = _implicit_cast(tile, array_ty.dtype, "Stored tile is incompatible with array's dtype")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1968, in _implicit_cast
+    raise TileTypeError(f"{error_context}: {str(e)}")
+cuda.tile._exception.TileTypeError: Stored tile is incompatible with array's dtype: cannot implicitly cast float32 to float16
+Unknown location
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 78, col 9--77:
+            ct.store(O, (b_idx, h_idx, bid_m, 0), acc.reshape((1, 1, TILE_M, D)))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$
