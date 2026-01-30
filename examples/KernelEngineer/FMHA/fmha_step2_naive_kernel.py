@@ -25,8 +25,8 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     
     # 1. QK GEMM (Write S to Global/Buffer)
     # Load Q Tile
-    # Fix: Q is 4D, so load shape must be 4D. We slice [0,0] to get 2D tile for MMA.
-    q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (1, 1, TILE_M, D))[0, 0]
+    # Fix: Use reshape instead of slicing [0,0]
+    q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (1, 1, TILE_M, D)).reshape((TILE_M, D))
     
     # Iterate over all N tiles to compute S row
     num_n_tiles = N // TILE_N
@@ -37,7 +37,7 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     # Pass 1: Compute Scores (Q @ K.T) -> Global Memory (S_buf)
     for j in range(num_n_tiles):
         # Fix: K is 4D
-        k_tile = ct.load(K, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D))[0, 0]
+        k_tile = ct.load(K, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D)).reshape((TILE_N, D))
         s_tile = ct.mma(q_tile, k_tile.T) # Q[M,D] @ K[N,D].T -> [M,N]
         # In Naive, we WRITE this to global memory
         # Fix: S_buf is 6D, use 6 indices. s_tile is 2D.
@@ -55,13 +55,13 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     # 2a. Find Max
     for j in range(num_n_tiles):
         # Fix: S_buf is 6D
-        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N))[0, 0, 0, 0]
+        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
         m_max = ct.max(m_max, ct.max(s_tile, dim=1, keepdims=True))
         
     # 2b. Compute Exp & Sum
     for j in range(num_n_tiles):
         # Fix: S_buf is 6D
-        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N))[0, 0, 0, 0]
+        s_tile = ct.load(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
         p_tile = ct.exp(s_tile - m_max)
         l_sum = l_sum + ct.sum(p_tile, dim=1, keepdims=True)
         # Fix: P_buf is 6D
@@ -74,9 +74,9 @@ def naive_attention_kernel(Q, K, V, O, S_buf, P_buf):
     
     for j in range(num_n_tiles):
         # Fix: P_buf is 6D
-        p_tile = ct.load(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N))[0, 0, 0, 0]
+        p_tile = ct.load(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), (1, 1, 1, 1, TILE_M, TILE_N)).reshape((TILE_M, TILE_N))
         # Fix: V is 4D
-        v_tile = ct.load(V, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D))[0, 0]
+        v_tile = ct.load(V, (b_idx, h_idx, j, 0), (1, 1, TILE_N, D)).reshape((TILE_N, D))
         
         # Normalize P here ( P_buf holds exp(S-m) )
         p_norm = p_tile / l_sum

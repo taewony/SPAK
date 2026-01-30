@@ -61,7 +61,15 @@ def run_script(script_path):
             metrics["tflops"] = float(tflops_match.group(1))
 
         # 2. Correctness/Status
-        if "Invariant Check Passed" in output or "Verification: Success" in output:
+        success_markers = [
+            "Invariant Check Passed", 
+            "Verification: Success", 
+            "Logic Verification: Success",
+            "Verification: Success (Projected)",
+            "Verification: Success (Auto-Tuned)"
+        ]
+        
+        if any(marker in output for marker in success_markers):
             metrics["status"] = "Pass"
         elif "Failed" in output:
             metrics["status"] = "Fail"
