@@ -1,0 +1,53 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
+=== FMHA Step 1: Python Prototype ===
+Shape: B=1, H=4, Seq=1024x1024, D=64
+Running Standard Attention... Done (0.0825s)
+Running Online Softmax (Tiled)... Done (0.0469s)
+Verifying Invariant...
+Max Error: 9.05e-08
+✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
+=== FMHA Step 2: Naive Kernel (1024x1024) ===
+Warming up...
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 134, in <module>
+    main()
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 98, in main
+    ct.launch(stream, grid, naive_attention_kernel, (d_Q, d_K, d_V, d_O, d_S, d_P))
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 225, in __call__
+    lib = compile_tile(self.pyfunc, pyfunc_args, self.compiler_options, tile_context)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 70, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 152, in compile_tile
+    func_ir = _get_final_ir(pyfunc, args, context)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 78, in _get_final_ir
+    func_ir = infer_types_pass(func_ir, ir_args, pyfunc, tile_context)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 368, in infer_types_pass
+    return infer_types_in_func(context, func, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 358, in infer_types_in_func
+    infer_types_in_block(context, func.root_block)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
+    i += infer_types_for_op(context, block, i)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
+    _replace_call_or_const(block, i)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
+    result = op_implementations[callee](*arg_list)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1900, in tile_load_impl
+    shape = require_constant_shape(shape, allow_single_int=True, expected_rank=array_ty.ndim,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 191, in require_constant_shape
+    raise _make_type_error(f"Expected shape length to be {expected_rank}, got {len(shape)}",
+cuda.tile._exception.TileTypeError: Invalid argument "shape" of load(): Expected shape length to be 4, got 2
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 28, col 14--62:
+        q_tile = ct.load(Q, (b_idx, h_idx, bid_m, 0), (TILE_M, D))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
