@@ -2,17 +2,13 @@ import sys
 import os
 import math
 
-import sys
-import os
-import math
-
 # Try to import dependencies
 try:
     import torch
     import cuda.tile as ct
-    # Add current directory to path to find AttentionFMHA
+    # Import the kernel defined in Step 3
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    import AttentionFMHA
+    import fmha_step3_fused_kernel as step3
     HAS_CUDA = True
 except ImportError:
     HAS_CUDA = False
@@ -36,7 +32,7 @@ def benchmark_config(Q, K, V, Out, tile_m, tile_n, n_iter=20):
     
     # Warmup
     for _ in range(5):
-        ct.launch(torch.cuda.current_stream(), grid, AttentionFMHA.fmha_kernel, (
+        ct.launch(torch.cuda.current_stream(), grid, step3.fmha_kernel, (
             Q, K, V, Out,
             qk_scale, input_pos, D_k, Heads,
             tile_m, tile_n, query_group_size, causal, even_k
@@ -48,7 +44,7 @@ def benchmark_config(Q, K, V, Out, tile_m, tile_n, n_iter=20):
     
     start.record()
     for _ in range(n_iter):
-        ct.launch(torch.cuda.current_stream(), grid, AttentionFMHA.fmha_kernel, (
+        ct.launch(torch.cuda.current_stream(), grid, step3.fmha_kernel, (
             Q, K, V, Out,
             qk_scale, input_pos, D_k, Heads,
             tile_m, tile_n, query_group_size, causal, even_k
@@ -137,68 +133,12 @@ def main():
 
         print("-" * 60)
         print(f"Best Config Found: {best_config}")
-        print(f"Final Performance: {(4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D) / (best_time * 1e-3) / 1e12:.2f} TFLOPS")
-        print("✅ Verification: Success (Manual Tuner)")
-
-    except Exception as e:
-        print(f"❌ Execution Failed: {e}")
-
-if __name__ == "__main__":
-    main()
-    # =========================================================
-    try:
-        # Configuration
-        BATCH = 8
-        HEADS = 16
-        SEQ_Q = 1024
-        SEQ_KV = 1024
-        D = 64
-        GROUP_SIZE = 1
-        DTYPE = torch.float16
-        
-        print(f"Benchmarking on {torch.cuda.get_device_name(0)}...")
-        print(f"Problem: B={BATCH}, H={HEADS}, Sq={SEQ_Q}, Skv={SEQ_KV}, D={D}")
-
-        # Setup Data
-        Q = torch.randn(BATCH, HEADS, SEQ_Q, D, dtype=DTYPE, device='cuda')
-        K = torch.randn(BATCH, HEADS, SEQ_KV, D, dtype=DTYPE, device='cuda')
-        V = torch.randn(BATCH, HEADS, SEQ_KV, D, dtype=DTYPE, device='cuda')
-        
-        # Run Autotuner
-        print("Sweeping search space...")
-        Out, best_config = AttentionFMHA.cutile_autotune_fmha(
-            Q, K, V, 
-            qk_scale=1.0/math.sqrt(D),
-            causal=True,
-            query_group_size=GROUP_SIZE
-        )
-        
-        print("-" * 60)
-        print(f"Best Config Found: {best_config}")
-        
-        # Benchmark Best Config
-        print("Benchmarking Best Config...")
-        start = torch.cuda.Event(enable_timing=True)
-        end = torch.cuda.Event(enable_timing=True)
-        
-        # Warmup
-        for _ in range(5):
-             AttentionFMHA.cutile_autotune_fmha(Q, K, V, 1.0/math.sqrt(D), 0, GROUP_SIZE, True)
-             
-        start.record()
-        for _ in range(20):
-             AttentionFMHA.cutile_autotune_fmha(Q, K, V, 1.0/math.sqrt(D), 0, GROUP_SIZE, True)
-        end.record()
-        torch.cuda.synchronize()
-        
-        avg_ms = start.elapsed_time(end) / 20.0
-        
-        # TFLOPS: 4 * B * H * M * N * D
-        ops = 4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D
-        tflops = ops / (avg_ms * 1e-3) / 1e12
-        
-        print(f"Time: {avg_ms:.3f} ms | TFLOPS: {tflops:.2f}")
-        print("✅ Verification: Success (Auto-Tuned)")
+        if best_time != float('inf'):
+            final_perf = (4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D) / (best_time * 1e-3) / 1e12
+            print(f"Final Performance: {final_perf:.2f} TFLOPS")
+            print("✅ Verification: Success (Manual Tuner)")
+        else:
+            print("❌ Verification: Failed (No valid config found)")
 
     except Exception as e:
         print(f"❌ Execution Failed: {e}")

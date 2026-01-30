@@ -49,7 +49,7 @@ if HAS_CUDA:
             
             ct.store(S_buf, (b_idx, h_idx, bid_m, j, 0, 0), s_tile[None, None, None, None])
 
-        ct.commit() # Force memory sync (simulation)
+         # Force memory sync (simulation)
         
         # Pass 2: Softmax (Read S -> Exp/Sum -> Write P)
         m_max = ct.full((TILE_M, 1), -1e30, dtype=ct.float32)
@@ -65,7 +65,7 @@ if HAS_CUDA:
             l_sum = l_sum + ct.sum(p_tile, dim=1, keepdims=True)
             ct.store(P_buf, (b_idx, h_idx, bid_m, j, 0, 0), p_tile[None, None, None, None])
             
-        ct.commit()
+        
             
         # Pass 3: PV GEMM (Read P -> Read V -> Write O)
         acc = ct.zeros((TILE_M, D), dtype=ct.float32)
