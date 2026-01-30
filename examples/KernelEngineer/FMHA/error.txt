@@ -1,6 +1,27 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
+=== FMHA Step 1: Python Prototype ===
+Shape: B=1, H=4, Seq=1024x1024, D=64
+Running Standard Attention... Done (0.0618s)
+Running Online Softmax (Tiled)... Done (0.0431s)
+Verifying Invariant...
+Max Error: 9.05e-08
+✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
 === FMHA Step 2: Naive Kernel (1024x1024) ===
 Warming up...
+Traceback (most recent call last):
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 202, in _bind_args
+    bound_args = sig.bind(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/inspect.py", line 3242, in bind
+    return self._bind(args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/inspect.py", line 3231, in _bind
+    raise TypeError(
+TypeError: got an unexpected keyword argument 'dim'
+
+During handling of the above exception, another exception occurred:
+
 Traceback (most recent call last):
   File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 134, in <module>
     run_real_kernel()
@@ -26,53 +47,51 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
     i += infer_types_for_op(context, block, i)
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 308, in infer_types_for_op
+    infer_type(op, context)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 129, in infer_type
+    res_types = op.infer_type(context)
+                ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 222, in infer_type
+    infer_types_in_block(typing_context, nested_block)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
+    i += infer_types_for_op(context, block, i)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
     _replace_call_or_const(block, i)
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
-    result = op_implementations[callee](*arg_list)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1600, in getattr_impl
-    raise TileTypeError(f"No such attribute '{attr_name}' for object of type {ty}")
-cuda.tile._exception.TileTypeError: No such attribute 'commit' for object of type <module 'cuda.tile' from '/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/__init__.py'>
-  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 52, col 9--17:
-            ct.commit() # Force memory sync (simulation)
-            ^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 247, in _replace_call_or_const
+    arg_list = _bind_args(callee, args, op.kwarg_dict())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 204, in _bind_args
+    raise TileTypeError(f"{sig_func.__name__}(): {e}")
+cuda.tile._exception.TileTypeError: max(): got an unexpected keyword argument 'dim'
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 60, col 35--70:
+                m_max = ct.max(m_max, ct.max(s_tile, dim=1, keepdims=True))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
 === FMHA Step 3: Fused Kernel (Implementation) ===
 Launching Kernel (Grid: (1, 16, 1))...
 ------------------------------------------------------------
 Config  | Time (ms) | TFLOPS | Speedup
-128x128 | 0.013     | 5.00  | 1.00x
+128x128 | 0.016     | 4.32  | 1.00x
 ------------------------------------------------------------
 Verifying...
 ✅ Verification: Success!
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step4_autotuner.py
 === FMHA Step 4: Manual Auto-Tuner ===
-⚠️  CUDA/cuTile not found. Running in PROJECTED mode for report generation.
-------------------------------------------------------------
-Config  | Time (ms) | TFLOPS | Speedup
-128x64  | 3.500     | 55.20  | 1.00x
-64x64   | 3.100     | 62.50  | 1.13x
-------------------------------------------------------------
-Best Config: 64x64
-Final Performance: 62.50 TFLOPS
-✅ Verification: Success (Projected)
 Benchmarking on NVIDIA GeForce RTX 5070...
-Problem: B=8, H=16, Sq=1024, Skv=1024, D=64
 Sweeping search space...
-❌ Execution Failed: name 'AttentionFMHA' is not defined
-=== FMHA Step 4: Manual Auto-Tuner ===
-⚠️  CUDA/cuTile not found. Running in PROJECTED mode for report generation.
 ------------------------------------------------------------
-Config  | Time (ms) | TFLOPS | Speedup
-128x64  | 3.500     | 55.20  | 1.00x
-64x64   | 3.100     | 62.50  | 1.13x
+Config     | Time (ms)  | TFLOPS   | Speedup
 ------------------------------------------------------------
-Best Config: 64x64
-Final Performance: 62.50 TFLOPS
-✅ Verification: Success (Projected)
+128x64    | 0.332      | 103.45   | 1.00x
+64x64    | 0.304      | 113.12   | 1.09x
+64x128   | 0.329      | 104.50   | 1.01x
+128x128   | 0.557      | 61.68   | 0.60x
+32x32    | 0.473      | 72.60   | 0.70x
+------------------------------------------------------------
+Best Config Found: (64, 64)
+Final Performance: 113.12 TFLOPS
+✅ Verification: Success (Manual Tuner)
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$
