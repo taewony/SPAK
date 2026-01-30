@@ -9,7 +9,7 @@ import numpy as np
 # This simulates the high memory traffic of non-fused attention.
 # ============================================================
 
-B, H, M, N, D = 1, 4, 1024, 1024, 64
+B, H, M, N, D = 8, 16, 1024, 1024, 64
 TILE_M = 64
 TILE_N = 64
 
