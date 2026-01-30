@@ -1,8 +1,8 @@
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
 === FMHA Step 1: Python Prototype ===
 Shape: B=1, H=4, Seq=1024x1024, D=64
-Running Standard Attention... Done (0.0615s)
-Running Online Softmax (Tiled)... Done (0.0410s)
+Running Standard Attention... Done (0.0824s)
+Running Online Softmax (Tiled)... Done (0.0523s)
 Verifying Invariant...
 Max Error: 9.05e-08
 ✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
@@ -10,9 +10,22 @@ Max Error: 9.05e-08
 === FMHA Step 2: Naive Kernel (1024x1024) ===
 Warming up...
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 147, in <module>
-    main()
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 111, in main
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 202, in _bind_args
+    bound_args = sig.bind(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/inspect.py", line 3242, in bind
+    return self._bind(args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/inspect.py", line 3157, in _bind
+    raise TypeError(msg) from None
+TypeError: missing a required argument: 'acc'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 130, in <module>
+    run_real_kernel()
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 94, in run_real_kernel
     ct.launch(stream, grid, naive_attention_kernel, (d_Q, d_K, d_V, d_O, d_S, d_P))
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 225, in __call__
     lib = compile_tile(self.pyfunc, pyfunc_args, self.compiler_options, tile_context)
@@ -46,22 +59,25 @@ Traceback (most recent call last):
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
     _replace_call_or_const(block, i)
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
-    result = op_implementations[callee](*arg_list)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1600, in getattr_impl
-    raise TileTypeError(f"No such attribute '{attr_name}' for object of type {ty}")
-cuda.tile._exception.TileTypeError: No such attribute 'T' for object of type Tile[float16,(64,64)]
-  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 41, col 33--40:
-            s_tile = ct.mma(q_tile, k_tile.T) # Q[M,D] @ K[N,D].T -> [M,N]
-                                    ^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 247, in _replace_call_or_const
+    arg_list = _bind_args(callee, args, op.kwarg_dict())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 204, in _bind_args
+    raise TileTypeError(f"{sig_func.__name__}(): {e}")
+cuda.tile._exception.TileTypeError: mma(): missing a required argument: 'acc'
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step2_naive_kernel.py", line 45, col 22--43:
+                s_tile = ct.mma(q_tile, k_tile) # Q[M,D] @ K[D,N] -> [M,N]
+                         ^^^^^^^^^^^^^^^^^^^^^^
 
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_
+python: can't open file '/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step3_fused_': [Errno 2] No such file or directory
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
 === FMHA Step 3: Fused Kernel (Implementation) ===
 Launching Kernel (Grid: (1, 16, 1))...
+------------------------------------------------------------
+Config  | Time (ms) | TFLOPS | Speedup
+128x128 | 0.012     | 5.53  | 1.00x
+------------------------------------------------------------
 Verifying...
 ✅ Verification: Success!
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step4_autotuner.py
@@ -75,4 +91,3 @@ Config | Time (ms) | TFLOPS | Speedup
 Best Config: 64x64 (Occ=2)
 Final Performance: 62.50 TFLOPS
 ✅ Verification: Success (Projected)
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$

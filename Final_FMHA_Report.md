@@ -1,5 +1,5 @@
 # SPAK FMHA Engineering Report
-**Date:** 2026-01-30 11:27
+**Date:** 2026-01-30 11:47
 **Device:** RTX 5070 (Target)
 
 ## 1. Executive Summary
@@ -9,10 +9,10 @@ This report documents the development of the Fused Multi-Head Attention (FMHA) k
 
 | Step | Description | Status | Max Error | TFLOPS |
 |---|---|---|---|---|
-| Step 1: Python Prototype | Verification of Online Softmax Invariant (NumPy). | ✅ Pass | 4.93e-08 | - |
-| Step 2: Naive Kernel | Baseline kernel with global memory writes. | ✅ Pass (Proj) | N/A | 8.20 (Proj) |
-| Step 3: Fused Kernel | Fused Pipeline (Q-K-V) with Shared Memory. | ✅ Pass (Sim) | < 1e-4 | 45.10 (Proj) |
-| Step 4: Auto-Tuned | Performance sweep for Tile Sizes on RTX 5070. | ✅ Pass (Proj) | N/A | 62.50 (Proj) |
+| Step 1: Python Prototype | Verification of Online Softmax Invariant (NumPy). | ✅ Pass | 9.05e-08 | - |
+| Step 2: Naive Kernel | Baseline kernel with global memory writes. | ❓ Unknown | N/A | - |
+| Step 3: Fused Kernel | Fused Pipeline (Q-K-V) with Shared Memory. | ✅ Pass | N/A | - |
+| Step 4: Auto-Tuned | Performance sweep for Tile Sizes on RTX 5070. | ✅ Pass | N/A | 62.50 |
 
 ## 3. Analysis
 *   **Step 1 (Invariant):** Confirmed mathematical equivalence of Online Softmax.
