@@ -1,5 +1,5 @@
 # SPAK MatMul Kernel Engineering Report
-**Date:** 2026-01-30 08:53
+**Date:** 2026-02-10 17:15
 **Device:** RTX 5070 (Target)
 **Benchmark Size:** 4096x4096x4096
 
@@ -18,13 +18,13 @@ The **SPAK Agent** decomposed the optimization problem into specific architectur
 
 | Level | Strategy | TFLOPS (Est) | Speedup vs Baseline |
 |-------|----------|--------------|---------------------|
-| Level 0: Baseline (PyTorch) | Standard cuBLAS implementation (The Target to Beat). | 0.00 | **0.00x** |
-| Level 1: Naive Tiling | Basic tiling, low occupancy (Fixed Grid). | 20.66 | **20.66x** |
-| Level 2: Optimized Occupancy | Launching enough CTAs to saturate the GPU. | 59.45 | **59.45x** |
-| Level 3: Swizzling | Reordering block execution for L2 locality. | 57.02 | **57.02x** |
-| Level 4: Pipelining (Manual) | Double Buffering with manually selected 'safe' tile size (64x64). | 55.90 | **55.90x** |
-| Level 5: Auto-Tuned | Pipelining + Automated Hyperparameter Search (Finding the True Optima). | 67.37 | **67.37x** |
-| Level 6: Ablation Study | Verifying Pipelining Gain on the Best Config. | 67.36 | **67.36x** |
+| Level 0: Baseline (PyTorch) | Standard cuBLAS implementation (The Target to Beat). | 68.84 | **1.00x** |
+| Level 1: Naive Tiling | Basic tiling, low occupancy (Fixed Grid). | 20.55 | **0.30x** |
+| Level 2: Optimized Occupancy | Launching enough CTAs to saturate the GPU. | 59.21 | **0.86x** |
+| Level 3: Swizzling | Reordering block execution for L2 locality. | 56.78 | **0.82x** |
+| Level 4: Pipelining (Manual) | Double Buffering with manually selected 'safe' tile size (64x64). | 55.57 | **0.81x** |
+| Level 5: Auto-Tuned | Pipelining + Automated Hyperparameter Search (Finding the True Optima). | 65.35 | **0.95x** |
+| Level 6: Ablation Study | Verifying Pipelining Gain on the Best Config. | 0.00 | **0.00x** |
 
 ## 4. Analysis
 *   **Tiling vs. Baseline:** Naive tiling usually achieves 10-30% of peak due to memory stalls.

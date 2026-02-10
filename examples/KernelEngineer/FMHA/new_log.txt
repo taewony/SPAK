@@ -1,0 +1,56 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python generate_fmha_report.py
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/generate_fmha_report.py", line 119
+    report += "|---|---|---|---|---|
+              ^
+SyntaxError: unterminated string literal (detected at line 119)
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
+=== FMHA Step 1: Python Prototype ===
+Shape: B=1, H=4, Seq=1024x1024, D=64
+Running Standard Attention... Done (0.0746s)
+Running Online Softmax (Tiled)... Done (0.0576s)
+Verifying Invariant...
+Max Error: 9.05e-08
+✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax
+__SPAK_TRACE__{"type": "Correctness", "step_name": "Step 1: Python Prototype", "passed": true, "max_error": 9.048460473601305e-08, "component": "Softmax"}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
+=== FMHA Step 2: Naive Kernel (1024x1024) ===
+Warming up...
+Benchmarking...
+------------------------------------------------------------
+Config  | Time (ms) | TFLOPS | Speedup
+64x64 | 96.852     | 0.35  | 1.00x
+------------------------------------------------------------
+✅ Verification: Success!
+__SPAK_TRACE__{"type": "Performance", "step_name": "Step 2: Naive Kernel", "tflops": 0.35476628554866996, "speedup": 1.0}
+__SPAK_TRACE__{"type": "Correctness", "step_name": "Step 2: Naive Kernel", "passed": true, "max_error": 0.0028486251831054688, "component": "Attention"}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_
+python: can't open file '/home/linux/taewony/SPAK/examples/KernelEngineer/FMHA/fmha_step3_fused_': [Errno 2] No such file or directory
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
+=== FMHA Step 3: Fused Kernel (Implementation) ===
+Launching Kernel (Grid: (8, 128, 1))...
+------------------------------------------------------------
+Config  | Time (ms) | TFLOPS | Speedup
+128x128 | 0.901     | 38.15  | 1.00x
+------------------------------------------------------------
+Verifying...
+✅ Verification: Success!
+__SPAK_TRACE__{"type": "Performance", "step_name": "Step 3: Fused Kernel", "tflops": 38.14852758386706, "speedup": 4.652259461447202}
+__SPAK_TRACE__{"type": "Correctness", "step_name": "Step 3: Fused Kernel", "passed": true, "max_error": 0.0, "component": "Attention"}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step4_autotuner.py
+=== FMHA Step 4: Manual Auto-Tuner ===
+Benchmarking on NVIDIA GeForce RTX 5070...
+Sweeping search space...
+------------------------------------------------------------
+Config     | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+128x64    | 0.333      | 103.18   | 1.00x
+64x64    | 0.303      | 113.35   | 1.10x
+64x128   | 0.327      | 104.95   | 1.02x
+128x128   | 0.554      | 61.98   | 0.60x
+32x32    | 0.474      | 72.51   | 0.70x
+------------------------------------------------------------
+Best Config Found: (64, 64)
+Final Performance: 113.35 TFLOPS
+✅ Verification: Success (Manual Tuner)
+__SPAK_TRACE__{"type": "Performance", "step_name": "Step 4: Auto-Tuned", "tflops": 113.34580352553702, "speedup": 13.822658966528905}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$

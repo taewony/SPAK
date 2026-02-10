@@ -1,0 +1,114 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python matmul_baseline.py
+=== cuTile Baseline Benchmark (4096x4096x4096) ===
+Verifying with PyTorch...
+✅ Verification: Success!
+------------------------------------------------------------
+Time: 1.717 ms | TFLOPS: 80.06
+------------------------------------------------------------
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 0: Baseline (PyTorch)", "tflops": 80.06418908793769, "speedup": 1.0}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python step1_naive_tiling.py
+=== Level 1: Naive Tiling ===
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.990      | -        | 1.00x
+Naive Tiling         | 6.653      | 20.66    | 0.30x
+------------------------------------------------------------
+Time: 6.653 ms | TFLOPS: 20.66
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 1: Naive Tiling", "tflops": 20.659126121876724, "speedup": 0.2990709046258492}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python step2_occupancy.py
+=== Level 2: Optimized Occupancy ===
+Launching 96 CTAs on 48 SMs
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.992      | -        | 1.00x
+Occupancy Optimized  | 2.316      | 59.34    | 0.86x
+------------------------------------------------------------
+Time: 2.316 ms | TFLOPS: 59.34
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 2: Optimized Occupancy", "tflops": 59.33890012008, "speedup": 0.8602292488289317}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python step3_swizzling.py
+=== Level 3: Swizzling ===
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.997      | -        | 1.00x
+Swizzling            | 2.419      | 56.81    | 0.83x
+------------------------------------------------------------
+Time: 2.419 ms | TFLOPS: 56.81
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 3: Swizzling", "tflops": 56.81391499967235, "speedup": 0.8256546965806201}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python step4_pipelining.py
+=== Level 4: Pipelining (Double Buffering) ===
+Verifying... ✅ Correct
+------------------------------------------------------------
+Method               | Time (ms)  | TFLOPS   | Speedup
+------------------------------------------------------------
+PyTorch              | 1.990      | -        | 1.00x
+Pipelining           | 2.469      | 55.66    | 0.81x
+------------------------------------------------------------
+Time: 2.469 ms | TFLOPS: 55.66
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 4: Pipelining", "tflops": 55.66104216300805, "speedup": 0.8061270285172333}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python step5_autotuner.py
+>> SPAK Auto-Tuner on NVIDIA GeForce RTX 5070 | SMs: 48
+>> Strategy: Double-Buffered Pipeline + Config Sweep
+-----------------------------------------------------------------------------------------------------------------------------
+Size       | PyTorch  | SPAK Tuned | Time     | Speedup  | Best Config
+(MxNxK)    | (TFLOPS) | (TFLOPS)   | (ms)     | (%)          | (Tile_M x Tile_N x Tile_K)
+-----------------------------------------------------------------------------------------------------------------------------
+2048       | 60.82    | 64.23      | 0.267    | +5.6    % | 64x64x64 (Occ=2)
+4096       | 68.85    | 66.83      | 2.056    | -2.9   % | 64x64x64 (Occ=2)
+8192       | 67.55    | 65.82      | 16.705   | -2.6   % | 64x64x64 (Occ=2)
+-----------------------------------------------------------------------------------------------------------------------------
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 5: Auto-Tuned", "tflops": 65.81956455326191, "speedup": 0.9744392156669314}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python step6_ablation.py
+=== Step 6: Ablation Study on NVIDIA GeForce RTX 5070 ===
+Target Config: Tile=64x64x64, Occ=2
+------------------------------------------------------------
+Mode                 | TFLOPS     | Speedup
+------------------------------------------------------------
+Simple Loop          | 63.75      | 1.00x
+Double Buffered      | 67.23      | 1.05x
+------------------------------------------------------------
+ℹ️ Conclusion: Impact is minor. Kernel might be Compute-Bound.
+__SPAK_TRACE__{"type": "Performance", "step_name": "Level 6: Ablation Study", "tflops": 67.2291933700882, "speedup": 1.0545179227855421}
+__SPAK_TRACE__{"type": "Analysis", "bottleneck": "DRAM_BW"}
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$ python generate_final_report.py
+=== SPAK Final Report Generator ===
+
+--- Testing Level 0: Baseline (PyTorch) ---
+   Result: 0.00 TFLOPS
+
+--- Testing Level 1: Naive Tiling ---
+[*] Running step1_naive_tiling.py...
+   [Trace] Level 1: Naive Tiling: 20.55 TFLOPS
+   Result: 20.55 TFLOPS
+
+--- Testing Level 2: Optimized Occupancy ---
+[*] Running step2_occupancy.py...
+   [Trace] Level 2: Optimized Occupancy: 59.21 TFLOPS
+   Result: 59.21 TFLOPS
+
+--- Testing Level 3: Swizzling ---
+[*] Running step3_swizzling.py...
+   [Trace] Level 3: Swizzling: 56.78 TFLOPS
+   Result: 56.78 TFLOPS
+
+--- Testing Level 4: Pipelining (Manual) ---
+[*] Running step4_pipelining.py...
+   [Trace] Level 4: Pipelining: 55.57 TFLOPS
+   Result: 55.57 TFLOPS
+
+--- Testing Level 5: Auto-Tuned ---
+[*] Running step5_autotuner.py...
+   [Trace] Level 5: Auto-Tuned: 65.35 TFLOPS
+   Result: 65.35 TFLOPS
+
+--- Testing Level 6: Ablation Study ---
+[*] Running step6_ablation.py...
+   Result: 0.00 TFLOPS
+
+[+] Report Generated: Final_MatMul_Report.md
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/MatMul$
