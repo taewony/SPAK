@@ -1,5 +1,5 @@
 # SPAK Engineering Loop Framework
-**The Dual-Loop Architecture for High-Performance Kernel Engineering**
+**The Dual-Loop Agent Framework for High-Performance Kernel Engineering**
 
 ## 1. Conceptual Overview
 
@@ -62,23 +62,7 @@ Imagine a landscape of all possible programs. Most are broken (Error), some are 
 
 ## 4. Operational Workflow (The Protocol)
 
-1.  **[CPU] Define Invariant:**
-    *   Create `step1_ref.py`.
-    *   *Result:* "Online Softmax math is valid."
-2.  **[CPU] Simulate Kernel:**
-    *   Create `step3_sim.py`.
-    *   *Result:* "Tiling logic works in Python. Causal masking is correct."
-3.  **[CPU -> GPU] Handoff (The Instruction):**
-    *   "Translate `step3_sim.py` into `cuda.tile`. Use the logic verified in the sim."
-4.  **[GPU] Implementation:**
-    *   Write `step3_kernel.py`.
-    *   *Result:* "Kernel compiles. Output matches Sim."
-5.  **[GPU] Optimization:**
-    *   Run `step4_autotuner.py`.
-    *   *Result:* "Best config is 64x64 at 62.5 TFLOPS."
-6.  **[GPU -> CPU] Feedback:**
-    *   Send `Final_Report.md`.
-    *   *Strategic Update:* "Hypothesis confirmed. Fusion provided 5x speedup."
+
 
 ## 5. Case Study: FMHA
 

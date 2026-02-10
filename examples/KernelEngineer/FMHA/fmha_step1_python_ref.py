@@ -115,10 +115,22 @@ def main():
     max_diff = np.abs(ref_O - res_O).max()
     print(f"Max Error: {max_diff:.2e}")
     
-    if np.allclose(ref_O, res_O, atol=1e-5):
+    passed = bool(np.allclose(ref_O, res_O, atol=1e-5))
+    if passed:
         print("✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax")
     else:
         print("❌ Invariant Check Failed")
+
+    # DSL Trace Emission
+    import json
+    trace = {
+        "type": "Correctness",
+        "step_name": "Step 1: Python Prototype",
+        "passed": passed,
+        "max_error": float(max_diff),
+        "component": "Softmax"
+    }
+    print(f"__SPAK_TRACE__{json.dumps(trace)}")
 
 import time
 if __name__ == "__main__":

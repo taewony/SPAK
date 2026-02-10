@@ -1,0 +1,93 @@
+// SPAK DSL Grammar v2.1 (Refined Loops)
+// Supports: Agent Loop, Service Loop, Engineering Loop
+
+start: system_def
+
+system_def: "system" NAME "{" system_body "}"
+system_body: (model_block | trace_block | knowledge_block | loop_block | build_block)*
+
+// --- 1. Model (Data Schema) ---
+model_block: "model" "{" model_stmt* "}"
+model_stmt: type_def | state_def
+
+type_def: "type" NAME "matches" "{" field_list "}"
+state_def: "state" NAME ":" type_ref ("=" value)?
+
+field_list: (field_def)*
+field_def: NAME ":" type_ref
+type_ref: NAME | "[" NAME "]" | "string" | "int" | "float" | "boolean"
+
+// --- 2. Trace Schema (Polymorphism) ---
+trace_block: "trace_schema" "{" trace_def* "}"
+trace_def: "variant" NAME "{" variant_case* "}"
+variant_case: "case" NAME "{" field_list "}"
+
+// --- 3. Knowledge (Rules & Facts) ---
+knowledge_block: "knowledge" "{" knowledge_stmt* "}"
+knowledge_stmt: fact_def | rule_def | invariant_def | hint_def
+
+fact_def: "fact" NAME "(" NAME ":" type_ref ")" "{" logic_body "}"
+rule_def: "rule" NAME "{" "when" ":" condition "apply" ":" action "}"
+invariant_def: "invariant" NAME "{" "assert" ":" STRING "}"
+hint_def: "hint" NAME "{" "trigger" ":" condition "}"
+
+logic_body: /[^}]+/
+
+// --- 4. Loops (Polymorphic Control) ---
+loop_block: agent_loop | service_loop | engineering_loop
+
+// 4.1 Agent Loop (LLM-Mediated, Strategic)
+agent_loop: "agent_loop" NAME "{" step_def* "}"
+
+// 4.2 Service Loop (Deterministic, High-Availability)
+service_loop: "service_loop" NAME "{" service_handler* "}"
+service_handler: "on" NAME "(" param_list? ")" "{" step_detailed "}"
+
+// 4.3 Engineering Loop (Experimental, Optimization)
+engineering_loop: "engineering_loop" NAME "{" eng_stmt* "}"
+eng_stmt: param_sweep | measure_block | step_def
+
+param_sweep: "parameter" NAME ":" value_list
+measure_block: "measure" "{" measure_prop* "}"
+measure_prop: "cmd" ":" STRING
+            | "metric" ":" STRING
+            | "objective" ":" ("maximize" | "minimize")
+
+// --- Steps & Statements ---
+step_def: "step" NAME (":" step_body | "{" step_detailed "}")
+step_body: tool_call | llm_call
+step_detailed: (statement)*
+
+statement: tool_call | llm_call | "emit" NAME | assignment | control_flow
+
+assignment: NAME "=" expression
+control_flow: "if" condition "{" statement* "}"
+
+// --- Build ---
+build_block: "build" "{" artifact_def* "}"
+artifact_def: "artifact" STRING "{" artifact_prop* "}"
+artifact_prop: NAME ":" value
+
+// --- Common ---
+tool_call: "tool." NAME "{" param_list "}"
+llm_call: "llm." NAME "{" param_list "}"
+param_list: (param_pair)*
+param_pair: NAME ":" value
+
+value_list: "[" value ("," value)* "]"
+condition: STRING | NAME
+action: STRING
+expression: STRING | NAME
+
+value: STRING | MULTILINE_STRING | NAME | NUMBER | value_list
+
+// --- Lexer ---
+NAME: /[a-zA-Z_][a-zA-Z0-9_.]*/
+STRING: /"[^"]*"/
+MULTILINE_STRING: /"""[\s\S]*?"""/
+NUMBER: /\d+(\.\d+)?/
+
+%import common.WS
+%import common.SH_COMMENT
+%ignore WS
+%ignore SH_COMMENT

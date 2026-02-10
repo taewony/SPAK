@@ -125,9 +125,29 @@ def run_real_kernel():
     
     if torch.allclose(ref_O, res_O, atol=1e-1, rtol=1e-2):
         print("✅ Verification: Success!")
+        passed = True
     else:
         diff = (ref_O - res_O).abs().max().item()
         print(f"❌ Verification: Failed (Max Diff: {diff:.4f})")
+        passed = False
+
+    # DSL Trace Emission
+    import json
+    trace_perf = {
+        "type": "Performance",
+        "step_name": "Step 2: Naive Kernel",
+        "tflops": tflops,
+        "speedup": 1.0  # Baseline
+    }
+    trace_corr = {
+        "type": "Correctness",
+        "step_name": "Step 2: Naive Kernel",
+        "passed": passed,
+        "max_error": float((ref_O - res_O).abs().max().item()),
+        "component": "Attention"
+    }
+    print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
+    print(f"__SPAK_TRACE__{json.dumps(trace_corr)}")
 
 if __name__ == "__main__":
     if HAS_CUDA:
@@ -140,3 +160,13 @@ if __name__ == "__main__":
         print(f"{TILE_M}x{TILE_N} | 23.100    | 8.20   | 1.00x")
         print("-" * 60)
         print("✅ Verification: Success (Projected)")
+        
+        # DSL Trace Emission (Projected)
+        import json
+        trace_perf = {
+            "type": "Performance",
+            "step_name": "Step 2: Naive Kernel (Projected)",
+            "tflops": 8.20,
+            "speedup": 1.0
+        }
+        print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")

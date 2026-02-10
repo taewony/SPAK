@@ -67,6 +67,16 @@ def main():
         print("Best Config: 64x64")
         print("Final Performance: 62.50 TFLOPS")
         print("✅ Verification: Success (Projected)")
+        
+        # DSL Trace Emission (Projected)
+        import json
+        trace_perf = {
+            "type": "Performance",
+            "step_name": "Step 4: Auto-Tuned (Projected)",
+            "tflops": 62.50,
+            "speedup": 7.62
+        }
+        print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
         return
 
     # =========================================================
@@ -133,12 +143,24 @@ def main():
 
         print("-" * 60)
         print(f"Best Config Found: {best_config}")
+        
+        final_perf = 0.0
         if best_time != float('inf'):
             final_perf = (4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D) / (best_time * 1e-3) / 1e12
             print(f"Final Performance: {final_perf:.2f} TFLOPS")
             print("✅ Verification: Success (Manual Tuner)")
         else:
             print("❌ Verification: Failed (No valid config found)")
+
+        # DSL Trace Emission
+        import json
+        trace_perf = {
+            "type": "Performance",
+            "step_name": "Step 4: Auto-Tuned",
+            "tflops": final_perf,
+            "speedup": final_perf / 8.20 # Relative to naive baseline
+        }
+        print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
 
     except Exception as e:
         print(f"❌ Execution Failed: {e}")

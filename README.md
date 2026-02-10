@@ -1,5 +1,5 @@
-# SPAK: Spec-Driven Programmable Agent Kernel
-## The Operating System for Systematic Intelligence Engineering
+# SPAK: Semantic Programmable Agent Kernel
+## Semiformal DSL based System Engineering Framework
 
 **"From Prompting to Programming: A Formal Kernel for Verifiable Agents"**
 

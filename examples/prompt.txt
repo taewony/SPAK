@@ -1,0 +1,49 @@
+# Dual Loop Agent Framwork
+
+AI시대에 우리는 개별적인 programming language 자체보다는 무엇을 만들 것인지 어떤 engineering을 할 것인지 선언적으로 기술하는 semantic & semiformal DSL이 보다 중요해졌다. (추상화 계층이 한층 더 높아졌다.)
+
+Dual Process Theory - System1 with GPU based computing, System2 with logical program execution
+Semiformal DSL is the intermediate semantic communication protocol between system1 and system2.
+
+Operating System analogy - intelligent environment to build, and generate some atifacts of what we want, to/from semi-formal DSL domain models.
+
+Application of this Intelligent Operasting System to build and/or execute 
+the application should have 'simulation or reasoning' mode or 'online execution' mode.
+
+-- Current Target --
+1) MatMul GPU-kernel generation from engineering guide, which has 'trace' to measure 'cost' or 'time' 
+       for the engineering guide, we could define 'hint' about already-known engineering solutions,
+       'cost-function' to be optimized... 
+       'invariants' or 'constrints' can be used to define the correctness of the artifacts.
+2) FMHA GPU-kernel generation 
+
+-- FFS ---
+1) CoachingAgent, which has 'agent' loop, CLI based service.
+2) Static web page generation from markdown files, which has 'view' and '(data) model', '(system) build'
+3) Web based PersonalizedTutor, which has 'agent' loop, A2UI like protocol for the online service. 
+
+
+<Semiformal DSL based System Engineering Framework>
+“By treating semiformal DSLs as an intermediate representation and decoupling design optimization from artifact generation/execution optimization, we reduce the asymptotic cost of repeated system engineering tasks, analogous to the role of IR in modern compilers.”
+
+- Claim 1: Repeated engineering tasks over similar system patterns exhibit sub-linear total cost when mediated by a semiformal DSL IR.
+- Claim 2: Separating design optimization (outer loop) from execution optimization (inner loop) reduces reasoning redundancy.
+- Claim 3: Trace-guided DSL refinement converges faster than direct prompt-based iteration.
+
+Software system generation from Semiformal DSL ≜ ⟨A | O, V, M, T, F⟩
+where:
+{
+  agent-loop: Agent Loop 정의 집합 (with llm interaction)
+  service-loop: Operational Service Loop 정의 집합 (without llm)
+  view: View 정의 집합  
+  model: Model 정의 집합
+  trace: Trace 정의 집합
+  function () -> : Uitlity Functions or Procedure 정의집합
+  procedure () :
+  build: description of final artifacts
+  hint: engineering 최적화 할 때, 이미 알려져 있는 기법들을 예시로 설명함.
+  rules: generation할 때, constraints, invariants ...
+}
+
+위 정의에서 artifact는 소프트웨어 공학 및 데이터 과학에서 모델이 생성하는 전문적인 결과물(코드, 문서 등)을 의미한다.
+Trace는 LLM interaction 에 대한 trace이든, GPU-kernel 최적화에 대한 correctness 및 execution latency measure든 하나의 polymorphic Item Type으로 정의 되어야 함.
