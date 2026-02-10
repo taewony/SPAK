@@ -124,11 +124,11 @@ def run_real_kernel():
     res_O = torch.as_tensor(d_O, device='cuda').float()
     
     if torch.allclose(ref_O, res_O, atol=1e-1, rtol=1e-2):
-        print("✅ Verification: Success!")
+        print("[OK] Verification: Success!")
         passed = True
     else:
         diff = (ref_O - res_O).abs().max().item()
-        print(f"❌ Verification: Failed (Max Diff: {diff:.4f})")
+        print(f"[FAIL] Verification: Failed (Max Diff: {diff:.4f})")
         passed = False
 
     # DSL Trace Emission
@@ -159,7 +159,7 @@ if __name__ == "__main__":
         print("Config  | Time (ms) | TFLOPS | Speedup")
         print(f"{TILE_M}x{TILE_N} | 23.100    | 8.20   | 1.00x")
         print("-" * 60)
-        print("✅ Verification: Success (Projected)")
+        print("[OK] Verification: Success (Projected)")
         
         # DSL Trace Emission (Projected)
         import json

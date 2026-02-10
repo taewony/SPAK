@@ -58,7 +58,7 @@ def main():
     print("=== FMHA Step 4: Manual Auto-Tuner ===")
     
     if not HAS_CUDA:
-        print("⚠️  CUDA/cuTile not found. Running in PROJECTED mode for report generation.")
+        print("[WARN] CUDA/cuTile not found. Running in PROJECTED mode for report generation.")
         print("-" * 60)
         print("Config  | Time (ms) | TFLOPS | Speedup")
         print("128x64  | 3.500     | 55.20  | 1.00x")
@@ -66,7 +66,7 @@ def main():
         print("-" * 60)
         print("Best Config: 64x64")
         print("Final Performance: 62.50 TFLOPS")
-        print("✅ Verification: Success (Projected)")
+        print("[OK] Verification: Success (Projected)")
         
         # DSL Trace Emission (Projected)
         import json
@@ -148,9 +148,9 @@ def main():
         if best_time != float('inf'):
             final_perf = (4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D) / (best_time * 1e-3) / 1e12
             print(f"Final Performance: {final_perf:.2f} TFLOPS")
-            print("✅ Verification: Success (Manual Tuner)")
+            print("[OK] Verification: Success (Manual Tuner)")
         else:
-            print("❌ Verification: Failed (No valid config found)")
+            print("[FAIL] Verification: Failed (No valid config found)")
 
         # DSL Trace Emission
         import json
@@ -163,7 +163,7 @@ def main():
         print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
 
     except Exception as e:
-        print(f"❌ Execution Failed: {e}")
+        print(f"[FAIL] Execution Failed: {e}")
 
 if __name__ == "__main__":
     main()

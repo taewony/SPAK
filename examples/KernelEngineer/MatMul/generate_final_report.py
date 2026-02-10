@@ -24,7 +24,7 @@ BENCHMARKS = [
     # Level 0 is a Virtual Entry filled dynamically
     {
         "name": "Level 0: Baseline (PyTorch)",
-        "script": None, 
+        "script": os.path.join(BASE_DIR, "matmul_baseline.py"),
         "desc": "Standard cuBLAS implementation (The Target to Beat).",
     },
     {
@@ -87,17 +87,18 @@ def run_script_and_extract_perf(script_path):
         # --- STRATEGY 1: Structured Trace (DSL Compliant) ---
         trace_lines = [line for line in output.splitlines() if line.strip().startswith("__SPAK_TRACE__")]
         if trace_lines:
-            # Parse the last trace (assumed to be the final result)
-            try:
-                last_trace_str = trace_lines[-1].replace("__SPAK_TRACE__", "")
-                trace_data = json.loads(last_trace_str)
-                
-                if trace_data.get("type") == "Performance":
-                    tflops = float(trace_data.get("tflops", 0.0))
-                    print(f"   [Trace] {trace_data['step_name']}: {tflops:.2f} TFLOPS")
-                    return output, tflops
-            except json.JSONDecodeError:
-                print("   [!] Error decoding JSON trace, falling back to regex.")
+            # Iterate backwards to find the latest Performance trace
+            for line in reversed(trace_lines):
+                try:
+                    trace_str = line.replace("__SPAK_TRACE__", "")
+                    trace_data = json.loads(trace_str)
+                    
+                    if trace_data.get("type") == "Performance":
+                        tflops = float(trace_data.get("tflops", 0.0))
+                        print(f"   [Trace] {trace_data['step_name']}: {tflops:.2f} TFLOPS")
+                        return output, tflops
+                except json.JSONDecodeError:
+                    continue
 
         # --- STRATEGY 2: Legacy Regex (Fallback) ---
         

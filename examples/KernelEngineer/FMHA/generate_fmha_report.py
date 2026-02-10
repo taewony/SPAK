@@ -49,6 +49,10 @@ def run_script(script_path):
         )
         output = result.stdout
         
+        # DEBUG: Print output length
+        # print(f"[DEBUG] Captured {len(output)} chars from {script_path}")
+        # if len(output) < 500: print(output)
+
         # Parse Metrics
         metrics = {"tflops": 0.0, "status": "Unknown", "error": "N/A"}
         
@@ -116,7 +120,7 @@ def generate_report(results):
 
     report += "## 2. Performance & Verification Results\n\n"
     report += "| Step | Description | Status | Max Error | TFLOPS |\n"
-    report += "|---|---|---|---|---|
+    report += "|---|---|---|---|---|\n"
     
     for r in results:
         m = r['metrics']
@@ -151,10 +155,11 @@ def main():
         })
 
     report_content = generate_report(results)
-    with open("Final_FMHA_Report.md", "w", encoding="utf-8") as f:
+    report_path = os.path.join(BASE_DIR, "Final_FMHA_Report.md")
+    with open(report_path, "w", encoding="utf-8") as f:
         f.write(report_content)
     
-    print("\n[+] Report Generated: Final_FMHA_Report.md")
+    print(f"\n[+] Report Generated: {report_path}")
 
 if __name__ == "__main__":
     main()

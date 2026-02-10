@@ -117,9 +117,9 @@ def main():
     
     passed = bool(np.allclose(ref_O, res_O, atol=1e-5))
     if passed:
-        print("✅ Invariant Check Passed: OnlineSoftmax == NativeSoftmax")
+        print("[OK] Invariant Check Passed: OnlineSoftmax == NativeSoftmax")
     else:
-        print("❌ Invariant Check Failed")
+        print("[FAIL] Invariant Check Failed")
 
     # DSL Trace Emission
     import json

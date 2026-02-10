@@ -199,10 +199,10 @@ def run_real_kernel():
     max_error = 0.0
     try:
         torch.testing.assert_close(Out, ref, atol=1e-2, rtol=1e-2)
-        print("✅ Verification: Success!")
+        print("[OK] Verification: Success!")
         passed = True
     except Exception as e:
-        print(f"❌ Verification: Failed! {e}")
+        print(f"[FAIL] Verification: Failed! {e}")
         max_error = (Out - ref).abs().max().item()
 
     # DSL Trace Emission
@@ -228,7 +228,7 @@ if __name__ == "__main__":
         run_real_kernel()
     else:
         print("=== FMHA Step 3: Fused Kernel (Implementation) ===")
-        print("⚠️  CUDA/cuTile not found. Falling back to PROJECTED mode.")
+        print("[WARN] CUDA/cuTile not found. Falling back to PROJECTED mode.")
         print("-" * 60)
         print("Config  | Time (ms) | TFLOPS | Speedup")
         print("128x128 | 4.200     | 45.10  | 1.00x")
