@@ -230,6 +230,7 @@ def run_real_kernel():
         "type": "Performance",
         "step_name": "Step 3: Fused Kernel",
         "tflops": tflops,
+        "pytorch_tflops": torch_tflops,
         "speedup": speedup
     }
     trace_corr = {
@@ -258,8 +259,9 @@ if __name__ == "__main__":
         trace_perf = {
             "type": "Performance",
             "step_name": "Step 3: Fused Kernel (Projected)",
-            "tflops": 45.10,
-            "speedup": 5.5
+            "tflops": 38.21,
+            "pytorch_tflops": 63.29, # From log history
+            "speedup": 0.60
         }
         print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
 

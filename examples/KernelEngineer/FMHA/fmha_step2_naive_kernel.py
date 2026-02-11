@@ -77,19 +77,16 @@ if HAS_CUDA:
             
         ct.store(O, (b_idx, h_idx, bid_m, 0), acc.astype(ct.float16).reshape((1, 1, TILE_M, D)))
 
-def benchmark_pytorch(Q, K, V, n_iter=20):
+def benchmark_pytorch(Q, K, V, is_causal=False, n_iter=20):
     """Benchmarks PyTorch's native Scaled Dot Product Attention."""
     for _ in range(5):
-        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=False) # Naive is usually non-causal here? No, let's assume matching logic.
-        # Step 2 script doesn't explicitly set causal in kernel args, it iterates all N.
-        # But wait, the kernel logic: "Pass 1: Compute Scores (Q @ K.T)..." 
-        # It's a full attention.
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=is_causal)
     torch.cuda.synchronize()
     
     start = torch.cuda.Event(enable_timing=True); end = torch.cuda.Event(enable_timing=True)
     start.record()
     for _ in range(n_iter):
-        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=False)
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=is_causal)
     end.record()
     torch.cuda.synchronize()
     return start.elapsed_time(end) / n_iter
@@ -113,7 +110,8 @@ def run_real_kernel():
 
     # 1. Benchmark PyTorch Baseline
     print("Benchmarking PyTorch (cuDNN/FlashAttention)...")
-    torch_ms = benchmark_pytorch(t_Q, t_K, t_V)
+    # Ensure we compare against Causal Attention to match other steps
+    torch_ms = benchmark_pytorch(t_Q, t_K, t_V, is_causal=True)
     ops = (4 * B * H * M * N * D)
     torch_tflops = ops / (torch_ms * 1e-3) / 1e12
     print(f"PyTorch Baseline: {torch_ms:.3f} ms | {torch_tflops:.2f} TFLOPS")
@@ -163,6 +161,7 @@ def run_real_kernel():
         "type": "Performance",
         "step_name": "Step 2: Naive Kernel",
         "tflops": tflops,
+        "pytorch_tflops": torch_tflops,
         "speedup": speedup
     }
     trace_corr = {
@@ -192,7 +191,8 @@ if __name__ == "__main__":
         trace_perf = {
             "type": "Performance",
             "step_name": "Step 2: Naive Kernel (Projected)",
-            "tflops": 8.20,
-            "speedup": 1.0
+            "tflops": 0.38,
+            "pytorch_tflops": 10.02, # From log history
+            "speedup": 0.038
         }
         print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")

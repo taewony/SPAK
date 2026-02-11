@@ -93,8 +93,9 @@ def main():
         trace_perf = {
             "type": "Performance",
             "step_name": "Step 4: Auto-Tuned (Projected)",
-            "tflops": 62.50,
-            "speedup": 7.62
+            "tflops": 113.77,
+            "pytorch_tflops": 105.45, # From log history
+            "speedup": 1.08
         }
         print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
         return
@@ -182,6 +183,7 @@ def main():
             "type": "Performance",
             "step_name": "Step 4: Auto-Tuned",
             "tflops": final_perf,
+            "pytorch_tflops": torch_tflops,
             "speedup": final_speedup 
         }
         print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
