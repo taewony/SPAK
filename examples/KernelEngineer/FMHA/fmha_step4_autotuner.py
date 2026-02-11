@@ -13,6 +13,26 @@ try:
 except ImportError:
     HAS_CUDA = False
 
+def benchmark_pytorch(Q, K, V, n_iter=20):
+    """
+    Benchmarks PyTorch's native Scaled Dot Product Attention.
+    """
+    # Warmup
+    for _ in range(5):
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=True)
+    torch.cuda.synchronize()
+    
+    start = torch.cuda.Event(enable_timing=True)
+    end = torch.cuda.Event(enable_timing=True)
+    
+    start.record()
+    for _ in range(n_iter):
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=True)
+    end.record()
+    torch.cuda.synchronize()
+    
+    return start.elapsed_time(end) / n_iter
+
 def benchmark_config(Q, K, V, Out, tile_m, tile_n, n_iter=20):
     """
     Runs the FMHA kernel with a specific tile configuration and measures execution time.
@@ -99,6 +119,12 @@ def main():
         V = torch.randn(BATCH, HEADS, SEQ_KV, D, dtype=DTYPE, device='cuda')
         Out = torch.empty((BATCH, HEADS, SEQ_Q, D), dtype=DTYPE, device='cuda')
         
+        # 1. Benchmark PyTorch Baseline
+        print("Benchmarking PyTorch (cuDNN/FlashAttention)...")
+        torch_ms = benchmark_pytorch(Q, K, V)
+        torch_tflops = (4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D) / (torch_ms * 1e-3) / 1e12
+        print(f"PyTorch Baseline: {torch_ms:.3f} ms | {torch_tflops:.2f} TFLOPS")
+
         # Define Search Space (Tile_M, Tile_N)
         search_space = [
             (128, 64),
@@ -109,15 +135,12 @@ def main():
         ]
         
         print("Sweeping search space...")
-        print("-" * 60)
-        print(f"{'Config':<10} | {'Time (ms)':<10} | {'TFLOPS':<8} | {'Speedup':<8}")
-        print("-" * 60)
+        print("-" * 75)
+        print(f"{'Config':<10} | {'Time (ms)':<10} | {'TFLOPS':<8} | {'Speedup (vs PyTorch)':<20}")
+        print("-" * 75)
         
         best_time = float('inf')
         best_config = None
-        
-        # Baseline (first config)
-        baseline_time = None
         
         for tile_m, tile_n in search_space:
             try:
@@ -127,10 +150,8 @@ def main():
                 ops = 4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D
                 tflops = ops / (avg_ms * 1e-3) / 1e12
                 
-                if baseline_time is None:
-                    baseline_time = avg_ms
-                
-                speedup = baseline_time / avg_ms
+                # Compare vs PyTorch
+                speedup = tflops / torch_tflops
                 
                 print(f"{tile_m}x{tile_n:<5} | {avg_ms:.3f}      | {tflops:.2f}   | {speedup:.2f}x")
                 
@@ -141,13 +162,16 @@ def main():
             except Exception as e:
                 print(f"{tile_m}x{tile_n:<5} | FAILED ({e})")
 
-        print("-" * 60)
+        print("-" * 75)
         print(f"Best Config Found: {best_config}")
         
         final_perf = 0.0
+        final_speedup = 0.0
+        
         if best_time != float('inf'):
             final_perf = (4 * BATCH * HEADS * SEQ_Q * SEQ_KV * D) / (best_time * 1e-3) / 1e12
-            print(f"Final Performance: {final_perf:.2f} TFLOPS")
+            final_speedup = final_perf / torch_tflops
+            print(f"Final Performance: {final_perf:.2f} TFLOPS (Speedup: {final_speedup:.2f}x)")
             print("[OK] Verification: Success (Manual Tuner)")
         else:
             print("[FAIL] Verification: Failed (No valid config found)")
@@ -158,7 +182,7 @@ def main():
             "type": "Performance",
             "step_name": "Step 4: Auto-Tuned",
             "tflops": final_perf,
-            "speedup": final_perf / 8.20 # Relative to naive baseline
+            "speedup": final_speedup 
         }
         print(f"__SPAK_TRACE__{json.dumps(trace_perf)}")
 

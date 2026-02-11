@@ -77,10 +77,10 @@ def main():
     ref_C = torch.matmul(t_A, t_B)
     res_C = torch.as_tensor(d_C, device='cuda')
     if torch.allclose(ref_C, res_C, atol=1e-1, rtol=1e-2):
-        print("✅ Correct")
+        print("[OK] Correct")
     else:
         diff = (ref_C - res_C).abs().max().item()
-        print(f"❌ Failed (Max Diff: {diff:.4f})")
+        print(f"[FAIL] Failed (Max Diff: {diff:.4f})")
 
     # Report
     print("-" * 60)

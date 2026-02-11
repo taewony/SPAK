@@ -141,96 +141,151 @@ def run_script_and_extract_perf(script_path):
         return str(e), 0.0
 
 def generate_report(results):
+
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+
     
+
     report = "# SPAK MatMul Kernel Engineering Report\n"
+
     report += f"**Date:** {timestamp}\n"
+
     report += "**Device:** RTX 5070 (Target)\n"
+
     report += f"**Benchmark Size:** {TARGET_SIZE}x{TARGET_SIZE}x{TARGET_SIZE}\n\n"
+
     
+
     report += "## 1. Executive Summary\n"
+
     report += "This report documents the optimization trajectory of a Matrix Multiplication kernel engineered using the SPAK framework. "
+
     report += "The agent iteratively applied optimization techniques—starting from naive tiling to advanced software pipelining and auto-tuning—achieving significant performance gains.\n\n"
 
+
+
     report += "## 2. Methodology\n"
+
     report += "The **SPAK Agent** decomposed the optimization problem into specific architectural \"Levels\":\n"
+
     report += "*   **Level 0 (Baseline):** Hardware-native library (cuBLAS via PyTorch) to establish the theoretical limit.\n"
+
     report += "*   **Level 1 (Tiling):** Basic loop decomposition using `cuda.tile` primitives.\n"
+
     report += "*   **Level 2 (Swizzling):** Reordering block execution to maximize L2 cache hits (Thread Block Swizzle).\n"
+
     report += "*   **Level 3 (Pipelining):** Implementing Double Buffering (Asynchronous Copy) to hide Global Memory latency behind Compute.\n"
+
     report += "*   **Level 4 (Auto-Tuning):** Automated search over the hyperparameter space (Tile Sizes M/N/K, Occupancy) to fit the specific GPU architecture.\n\n"
 
-    report += "## 3. Performance Results\n\n"
-    report += "| Level | Strategy | TFLOPS (Est) | Speedup vs Baseline |\n"
-    report += "|-------|----------|--------------|---------------------|\n"
-    
-    # Calculate baseline (PyTorch)
-    # Search for the most reliable PyTorch baseline from the logs
-    baseline_tflops = 1.0
-    
-    # Priority 1: Step 5 (Auto-Tuner) usually has the most accurate PyTorch measurement
-    for r in results:
-        if "Auto-Tuned" in r['name']:
-            # Parse table line for target size
-            # 4096 | 68.96 | ...
-            for line in r.get('log', '').splitlines():
-                if line.strip().startswith(str(TARGET_SIZE)):
-                    parts = line.split('|')
-                    if len(parts) >= 2:
-                        try:
-                            baseline_tflops = float(parts[1].strip())
-                            break
-                        except:
-                            pass
-            if baseline_tflops > 1.0: break
 
-    # Priority 2: If Step 5 failed, use Level 0 if valid (Not applicable now as Level 0 is virtual) 
+
+    report += "## 3. Performance Results\n\n"
+
+    report += "| Level | Strategy | TFLOPS (Est) | Speedup vs Baseline |\n"
+
+    report += "|-------|----------|--------------|---------------------|\n"
+
     
+
+    # Calculate baseline (PyTorch) from Level 0 result
+
+    baseline_tflops = 1.0
+
     for r in results:
+
+        if "Level 0" in r['name']:
+
+            baseline_tflops = r['tflops']
+
+            break
+
+    
+
+    if baseline_tflops == 0: baseline_tflops = 1.0 # Avoid div by zero
+
+
+
+    for r in results:
+
         # Calculate Speedup
+
         speedup = r['tflops'] / baseline_tflops if baseline_tflops > 0 else 0
-        
-        # Override for Virtual Level 0
-        if r['name'] == "Level 0: Baseline (PyTorch)":
-            report += f"| {r['name']} | {r['desc']} | {baseline_tflops:.2f} | **1.00x** |\n"
-        else:
-            report += f"| {r['name']} | {r['desc']} | {r['tflops']:.2f} | **{speedup:.2f}x** |\n"
+
+        report += f"| {r['name']} | {r['desc']} | {r['tflops']:.2f} | **{speedup:.2f}x** |\n"
+
+
 
     report += """
+
 ## 4. Analysis
+
 *   **Tiling vs. Baseline:** Naive tiling usually achieves 10-30% of peak due to memory stalls.
+
 *   **Swizzling Impact:** Swizzling typically improves performance by 15-20% by reducing DRAM partition camping.
+
 *   **Pipelining Impact:** This is the critical step for Tensor Core GPUs, allowing the SMs to keep crunching FP16/BF16 data without waiting for memory.
+
 *   **Auto-Tuning:** The final tuning adapts the theoretical kernel to the physical reality of the RTX 5070's SM count and cache size, often squeezing out the final 10-20% of performance.
 
+
+
 ## 5. Conclusion
+
 The SPAK framework successfully navigated the optimization space, producing a kernel that competes with or exceeds standard libraries for specific shapes. The transition from **Symbolic Definition (DSL)** to **Optimized Code (Auto-Tuned)** validates the agent's capability in high-performance computing tasks.
+
 """
+
     return report
 
 
+
+
+
 def main():
+
     print("=== SPAK Final Report Generator ===")
+
     results = []
 
+
+
     for bench in BENCHMARKS:
-        print(f"\n--- Testing {bench['name']} ---")
+
         log, tflops = run_script_and_extract_perf(bench['script'])
+
         
-        print(f"   Result: {tflops:.2f} TFLOPS")
+
         results.append({
+
             "name": bench['name'],
+
             "desc": bench['desc'],
+
             "tflops": tflops,
+
             "log": log
+
         })
 
-    # Write Report
+
+
+    # Write Report to LOCAL directory
+
     report_content = generate_report(results)
-    with open("Final_MatMul_Report.md", "w", encoding="utf-8") as f:
+
+    report_path = os.path.join(BASE_DIR, "Final_MatMul_Report.md")
+
+    with open(report_path, "w", encoding="utf-8") as f:
+
         f.write(report_content)
+
     
-    print("\n[+] Report Generated: Final_MatMul_Report.md")
+
+    print(f"\n[+] Report Generated: {report_path}")
+
+
 
 if __name__ == "__main__":
+
     main()

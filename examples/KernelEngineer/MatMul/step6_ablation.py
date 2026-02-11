@@ -150,9 +150,9 @@ def main():
     print("-" * 60)
     gain = (tf_pipe - tf_baseline)
     if gain > 5.0:
-        print(f"✅ Conclusion: Pipelining contributes significantly (+{gain:.1f} TFLOPS).")
+        print(f"[OK] Conclusion: Pipelining contributes significantly (+{gain:.1f} TFLOPS).")
     else:
-        print(f"ℹ️ Conclusion: Impact is minor. Kernel might be Compute-Bound.")
+        print(f"[INFO] Conclusion: Impact is minor. Kernel might be Compute-Bound.")
 
     # DSL Trace Emission
     import json

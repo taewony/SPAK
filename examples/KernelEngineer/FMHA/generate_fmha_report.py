@@ -54,7 +54,7 @@ def run_script(script_path):
         # if len(output) < 500: print(output)
 
         # Parse Metrics
-        metrics = {"tflops": 0.0, "status": "Unknown", "error": "N/A"}
+        metrics = {"tflops": 0.0, "speedup": 0.0, "status": "Unknown", "error": "N/A"}
         
         # --- STRATEGY 1: Structured JSON Trace (DSL Compliant) ---
         trace_lines = [line for line in output.splitlines() if line.strip().startswith("__SPAK_TRACE__")]
@@ -66,6 +66,7 @@ def run_script(script_path):
                 
                 if trace_type == "Performance":
                     metrics["tflops"] = float(trace_json.get("tflops", 0.0))
+                    metrics["speedup"] = float(trace_json.get("speedup", 0.0))
                 elif trace_type == "Correctness":
                     metrics["status"] = "Pass" if trace_json.get("passed") else "Fail"
                     if "max_error" in trace_json:
@@ -119,15 +120,16 @@ def generate_report(results):
     report += "The engineering process followed a strict 'Invariant-First' approach, validating mathematical statefulness before optimizing for throughput.\n\n"
 
     report += "## 2. Performance & Verification Results\n\n"
-    report += "| Step | Description | Status | Max Error | TFLOPS |\n"
-    report += "|---|---|---|---|---|\n"
+    report += "| Step | Description | Status | Max Error | TFLOPS | Speedup |\n"
+    report += "|---|---|---|---|---|---|\n"
     
     for r in results:
         m = r['metrics']
         tflops_str = f"{m['tflops']:.2f}" if m['tflops'] > 0 else "-"
+        speedup_str = f"{m['speedup']:.2f}x" if m['speedup'] > 0 else "-"
         status_icon = "✅" if m['status'] == "Pass" else "❌" if m['status'] == "Fail" else "❓"
         
-        report += f"| {r['name']} | {r['desc']} | {status_icon} {m['status']} | {m['error']} | {tflops_str} |\n"
+        report += f"| {r['name']} | {r['desc']} | {status_icon} {m['status']} | {m['error']} | {tflops_str} | {speedup_str} |\n"
 
     report += """
 ## 3. Analysis

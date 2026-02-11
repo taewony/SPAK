@@ -111,9 +111,9 @@ def main():
     result_cutile = cp.asnumpy(d_C)
 
     if np.allclose(result_cutile, C_ref_np, atol=2e-1, rtol=2e-2):
-        print("✅ Verification: Success!")
+        print("[OK] Verification: Success!")
     else:
-        print("❌ Verification: Failed!")
+        print("[FAIL] Verification: Failed!")
 
     # --------------------------------------------------------
     # Standard Output for Reporter & DSL Trace
