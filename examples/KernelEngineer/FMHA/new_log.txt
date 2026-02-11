@@ -1,50 +1,54 @@
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step1_python_ref.py
 === FMHA Step 1: Python Prototype ===
 Shape: B=1, H=4, Seq=1024x1024, D=64
-Running Standard Attention... Done (0.0525s)
-Running Online Softmax (Tiled)... Done (0.0557s)
+Running Standard Attention... Done (0.0626s)
+Running Online Softmax (Tiled)... Done (0.0519s)
 Verifying Invariant...
 Max Error: 9.05e-08
 [OK] Invariant Check Passed: OnlineSoftmax == NativeSoftmax
 __SPAK_TRACE__{"type": "Correctness", "step_name": "Step 1: Python Prototype", "passed": true, "max_error": 9.048460473601305e-08, "component": "Softmax"}
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step2_naive_kernel.py
 === FMHA Step 2: Naive Kernel (1024x1024) ===
-Warming up...
-Benchmarking...
-------------------------------------------------------------
-Config  | Time (ms) | TFLOPS | Speedup
-64x64 | 96.830     | 0.35  | 1.00x
-------------------------------------------------------------
+Benchmarking PyTorch (cuDNN/FlashAttention)...
+PyTorch Baseline: 3.431 ms | 10.02 TFLOPS
+Warming up Naive Kernel...
+Benchmarking Naive Kernel...
+---------------------------------------------------------------------------
+Config  | Time (ms) | TFLOPS | Speedup (vs PyTorch)
+64x64 | 89.966     | 0.38  | 0.0381x
+---------------------------------------------------------------------------
 [OK] Verification: Success!
-__SPAK_TRACE__{"type": "Performance", "step_name": "Step 2: Naive Kernel", "tflops": 0.3548453130356242, "speedup": 1.0}
-__SPAK_TRACE__{"type": "Correctness", "step_name": "Step 2: Naive Kernel", "passed": true, "max_error": 0.002659320831298828, "component": "Attention"}
+__SPAK_TRACE__{"type": "Performance", "step_name": "Step 2: Naive Kernel", "tflops": 0.38191838541576534, "speedup": 0.03813359905818559}
+__SPAK_TRACE__{"type": "Correctness", "step_name": "Step 2: Naive Kernel", "passed": true, "max_error": 0.0028066635131835938, "component": "Attention"}
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step3_fused_kernel.py
 === FMHA Step 3: Fused Kernel (Implementation) ===
+Benchmarking PyTorch (cuDNN/FlashAttention)...
+PyTorch Baseline: 0.543 ms | 63.29 TFLOPS
 Launching Kernel (Grid: (8, 128, 1))...
-------------------------------------------------------------
-Config  | Time (ms) | TFLOPS | Speedup
-128x128 | 0.904     | 38.03  | 1.00x
-------------------------------------------------------------
+---------------------------------------------------------------------------
+Config  | Time (ms) | TFLOPS | Speedup (vs PyTorch)
+128x128 | 0.899     | 38.21  | 0.6038x
+---------------------------------------------------------------------------
 Verifying...
 [OK] Verification: Success!
-__SPAK_TRACE__{"type": "Performance", "step_name": "Step 3: Fused Kernel", "tflops": 38.029225553203815, "speedup": 4.6377104333175385}
+__SPAK_TRACE__{"type": "Performance", "step_name": "Step 3: Fused Kernel", "tflops": 38.21329033139015, "speedup": 0.6037994803328093}
 __SPAK_TRACE__{"type": "Correctness", "step_name": "Step 3: Fused Kernel", "passed": true, "max_error": 0.0, "component": "Attention"}
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHA$ python fmha_step4_autotuner.py
 === FMHA Step 4: Manual Auto-Tuner ===
 Benchmarking on NVIDIA GeForce RTX 5070...
 Benchmarking PyTorch (cuDNN/FlashAttention)...
-PyTorch Baseline: 0.329 ms | 104.29 TFLOPS
+PyTorch Baseline: 0.326 ms | 105.45 TFLOPS
 Sweeping search space...
 ---------------------------------------------------------------------------
 Config     | Time (ms)  | TFLOPS   | Speedup (vs PyTorch)
 ---------------------------------------------------------------------------
-128x64    | 0.336      | 102.31   | 0.98x
-64x64    | 0.303      | 113.31   | 1.09x
-64x128   | 0.327      | 105.01   | 1.01x
-128x128   | 0.558      | 61.55   | 0.59x
-32x32    | 0.473      | 72.58   | 0.70x
+128x64    | 0.332      | 103.35   | 0.98x
+64x64    | 0.302      | 113.77   | 1.08x
+64x128   | 0.326      | 105.28   | 1.00x
+128x128   | 0.552      | 62.27   | 0.59x
+32x32    | 0.471      | 72.93   | 0.69x
 ---------------------------------------------------------------------------
 Best Config Found: (64, 64)
-Final Performance: 113.31 TFLOPS (Speedup: 1.09x)
+Final Performance: 113.77 TFLOPS (Speedup: 1.08x)
 [OK] Verification: Success (Manual Tuner)
-__SPAK_TRACE__{"type": "Performance", "step_name": "Step 4: Auto-Tuned", "tflops": 113.30932787041473, "speedup": 1.0865273604146322}
+__SPAK_TRACE__{"type": "Performance", "step_name": "Step 4: Auto-Tuned", "tflops": 113.77276524090907, "speedup": 1.0789025314101315}
