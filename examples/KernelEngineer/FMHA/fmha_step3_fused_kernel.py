@@ -133,6 +133,19 @@ if HAS_CUDA:
         acc = acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype)
         ct.store(Out, index=(batch_idx, head_idx, bid_x, 0), tile=acc)
 
+def benchmark_pytorch(Q, K, V, n_iter=20):
+    """Benchmarks PyTorch's native Scaled Dot Product Attention."""
+    for _ in range(5):
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=False)
+    torch.cuda.synchronize()
+    
+    start = torch.cuda.Event(enable_timing=True); end = torch.cuda.Event(enable_timing=True)
+    start.record()
+    for _ in range(n_iter):
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=False)
+    end.record()
+    torch.cuda.synchronize()
+    return start.elapsed_time(end) / n_iter
 
 # ============================================================
 # 2. Wrapper / Main
@@ -158,6 +171,13 @@ def run_real_kernel():
     V = torch.randn(BATCH_SIZE, NUM_HEADS, SEQ_LEN_KV, D_V, dtype=DTYPE, device='cuda')
     Out = torch.empty((BATCH_SIZE, NUM_HEADS, SEQ_LEN_Q, D_V), dtype=DTYPE, device='cuda')
 
+    # 1. Benchmark PyTorch Baseline
+    print("Benchmarking PyTorch (cuDNN/FlashAttention)...")
+    torch_ms = benchmark_pytorch(Q, K, V)
+    ops = 4 * BATCH_SIZE * NUM_HEADS * SEQ_LEN_Q * SEQ_LEN_KV * D_K
+    torch_tflops = ops / (torch_ms * 1e-3) / 1e12
+    print(f"PyTorch Baseline: {torch_ms:.3f} ms | {torch_tflops:.2f} TFLOPS")
+
     qk_scale = 1.0 / math.sqrt(D_K)
     grid = (math.ceil(SEQ_LEN_Q / TILE_M), BATCH_SIZE * NUM_HEADS, 1)
 
@@ -181,15 +201,14 @@ def run_real_kernel():
     torch.cuda.synchronize()
     ms = start.elapsed_time(end) / 20.0
     
-    # TFLOPS: 4 * B * H * M * N * D
-    ops = 4 * BATCH_SIZE * NUM_HEADS * SEQ_LEN_Q * SEQ_LEN_KV * D_K
     tflops = ops / (ms * 1e-3) / 1e12
+    speedup = tflops / torch_tflops
 
     # 3. Print Results in Table Format
-    print("-" * 60)
-    print("Config  | Time (ms) | TFLOPS | Speedup")
-    print(f"{TILE_M}x{TILE_N} | {ms:.3f}     | {tflops:.2f}  | 1.00x")
-    print("-" * 60)
+    print("-" * 75)
+    print("Config  | Time (ms) | TFLOPS | Speedup (vs PyTorch)")
+    print(f"{TILE_M}x{TILE_N} | {ms:.3f}     | {tflops:.2f}  | {speedup:.4f}x")
+    print("-" * 75)
 
     # 4. Verify
     print("Verifying...")
@@ -211,7 +230,7 @@ def run_real_kernel():
         "type": "Performance",
         "step_name": "Step 3: Fused Kernel",
         "tflops": tflops,
-        "speedup": tflops / 8.20 # Assuming 8.20 is baseline
+        "speedup": speedup
     }
     trace_corr = {
         "type": "Correctness",

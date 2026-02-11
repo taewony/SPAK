@@ -77,6 +77,23 @@ if HAS_CUDA:
             
         ct.store(O, (b_idx, h_idx, bid_m, 0), acc.astype(ct.float16).reshape((1, 1, TILE_M, D)))
 
+def benchmark_pytorch(Q, K, V, n_iter=20):
+    """Benchmarks PyTorch's native Scaled Dot Product Attention."""
+    for _ in range(5):
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=False) # Naive is usually non-causal here? No, let's assume matching logic.
+        # Step 2 script doesn't explicitly set causal in kernel args, it iterates all N.
+        # But wait, the kernel logic: "Pass 1: Compute Scores (Q @ K.T)..." 
+        # It's a full attention.
+    torch.cuda.synchronize()
+    
+    start = torch.cuda.Event(enable_timing=True); end = torch.cuda.Event(enable_timing=True)
+    start.record()
+    for _ in range(n_iter):
+        torch.nn.functional.scaled_dot_product_attention(Q, K, V, is_causal=False)
+    end.record()
+    torch.cuda.synchronize()
+    return start.elapsed_time(end) / n_iter
+
 def run_real_kernel():
     print(f"=== FMHA Step 2: Naive Kernel ({M}x{N}) ===")
     
@@ -89,17 +106,29 @@ def run_real_kernel():
     d_S = cp.zeros((B, H, M // TILE_M, N // TILE_N, TILE_M, TILE_N), dtype=cp.float32)
     d_P = cp.zeros_like(d_S)
     
+    # PyTorch Tensors for Baseline
+    t_Q = torch.as_tensor(d_Q, device='cuda').float()
+    t_K = torch.as_tensor(d_K, device='cuda').float()
+    t_V = torch.as_tensor(d_V, device='cuda').float()
+
+    # 1. Benchmark PyTorch Baseline
+    print("Benchmarking PyTorch (cuDNN/FlashAttention)...")
+    torch_ms = benchmark_pytorch(t_Q, t_K, t_V)
+    ops = (4 * B * H * M * N * D)
+    torch_tflops = ops / (torch_ms * 1e-3) / 1e12
+    print(f"PyTorch Baseline: {torch_ms:.3f} ms | {torch_tflops:.2f} TFLOPS")
+
     grid = (M // TILE_M, B * H, 1)
     
     # Warmup
-    print("Warming up...")
+    print("Warming up Naive Kernel...")
     stream = cp.cuda.get_current_stream()
     for _ in range(3):
         ct.launch(stream, grid, naive_attention_kernel, (d_Q, d_K, d_V, d_O, d_S, d_P))
     stream.synchronize()
     
     # Measure
-    print("Benchmarking...")
+    print("Benchmarking Naive Kernel...")
     start = cp.cuda.Event(); end = cp.cuda.Event()
     start.record()
     for _ in range(10):
@@ -108,18 +137,15 @@ def run_real_kernel():
     end.synchronize()
     
     ms = cp.cuda.get_elapsed_time(start, end) / 10.0
-    ops = (4 * B * H * M * N * D)
     tflops = ops / (ms * 1e-3) / 1e12
+    speedup = tflops / torch_tflops
     
-    print("-" * 60)
-    print("Config  | Time (ms) | TFLOPS | Speedup")
-    print(f"{TILE_M}x{TILE_N} | {ms:.3f}     | {tflops:.2f}  | 1.00x")
-    print("-" * 60)
+    print("-" * 75)
+    print("Config  | Time (ms) | TFLOPS | Speedup (vs PyTorch)")
+    print(f"{TILE_M}x{TILE_N} | {ms:.3f}     | {tflops:.2f}  | {speedup:.4f}x")
+    print("-" * 75)
     
     # Correctness (using PyTorch as oracle)
-    t_Q = torch.as_tensor(d_Q, device='cuda').float()
-    t_K = torch.as_tensor(d_K, device='cuda').float()
-    t_V = torch.as_tensor(d_V, device='cuda').float()
     ref_O = torch.nn.functional.scaled_dot_product_attention(t_Q, t_K, t_V, scale=1.0)
     res_O = torch.as_tensor(d_O, device='cuda').float()
     
@@ -137,7 +163,7 @@ def run_real_kernel():
         "type": "Performance",
         "step_name": "Step 2: Naive Kernel",
         "tflops": tflops,
-        "speedup": 1.0  # Baseline
+        "speedup": speedup
     }
     trace_corr = {
         "type": "Correctness",
