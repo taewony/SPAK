@@ -117,16 +117,3 @@ if __name__ == "__main__":
     parser.add_argument("--causal", type=int, default=1)
     args = parser.parse_args()
     benchmark(args)
-    
-    avg_ms = (end - start) * 1000 / iters
-    tflops = (2 * B * H * S * S * D) / (avg_ms * 1e-3) / 1e12
-    print(f"RESULT: TFLOPS={tflops:.2f}, TileM={args.tile_m}, TileN={args.tile_n}, KLat={args.klat}, VLat={args.vlat}")
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--tile_m", type=int, default=64)
-    parser.add_argument("--tile_n", type=int, default=64)
-    parser.add_argument("--klat", type=int, default=2)
-    parser.add_argument("--vlat", type=int, default=4)
-    args = parser.parse_args()
-    benchmark(args)
