@@ -91,9 +91,17 @@ Compound Engineering의 핵심 동력으로, 각 사이클에서 얻은 통찰�
 ---
 
 ## 🛠 Active Task List (Immediate Actions)
-- [x] **Generate V4 Kernel**: Created `fmha_v4_test.py` with GQA and TMA latency support.
-- [x] **Draft Autotuner**: Created `fmha_v4_autotuner.py` to sweep TMA parameters.
-- [ ] **Transfer & Run**: User executes `fmha_v4_autotuner.py` on RTX 5070 PC.
-- [ ] **Bridge Insights**: Integrate execution results into `fmha_system_v4.dsl` as `fact` or `rule`.
-- [ ] **Finalize V4**: Close the loop by updating the "Fidelity" status.
+- [x] **Generate V4 Kernel**: Created `fmha_v4_test.py` with GQA, Causal Masking, and TMA latency support.
+- [x] **Draft Autotuner**: Created `fmha_v4_autotuner.py` to sweep TMA and Causal parameters.
+- [x] **Transfer & Run**: User executed full sweep on RTX 5070 node.
+- [x] **Bridge Insights**: Integrated execution results (133 TFLOPS Causal peak) into `fmha_system_v4.dsl`.
+- [x] **Finalize V4**: Compound loop closed; architectural rules for Blackwell TMA and Tile_M constraints codified.
+
+---
+
+## 🏁 Final Summary: FMHAv4 Compound Engineering
+Our transition from FMHAv3 (Forward-only naive) to FMHAv4 (Hardware-aware, optimized) has proven the **Fidelity** and **Compounding** claims of SPAK:
+1.  **Semantic Growth**: We successfully added GQA, Causal Logic, and TMA Latency axes without breaking the base model.
+2.  **Hardware-Aware Facts**: The system now holds verified rules for the RTX 5070, such as the `1.8x Causal Speedup` and the `V_Lat=5` preference in causal mode.
+3.  **Transferability**: These rules can now be applied to any new kernel targeting the Blackwell architecture within the SPAK framework.
 

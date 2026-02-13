@@ -59,25 +59,33 @@ system FMHA_System_v4 {
             source: "attention.py:L716"
         }
 
-        // --- Verified Facts (RTX 5070 Compound Update) ---
+        // --- Verified Facts (RTX 5070 Final Compound Update) ---
         fact optimal_rtx5070_config {
-            description: "On RTX 5070 (Blackwell), Tile=64x64 with K_Lat=3, V_Lat=5 is optimal."
-            tflops: 65.53
+            description: "On RTX 5070, Tile=64x64 is universally optimal. Non-causal peaks at ~73 TFLOPS, Causal at ~133 TFLOPS."
+            causal_tflops: 133.25
+            non_causal_tflops: 73.26
             confidence: 1.0
             source: "last_engineering_trace.json"
         }
 
+        fact causal_loop_speedup {
+            description: "Causal loop optimization (m_end pruning) provides ~1.8x effective throughput increase."
+            confidence: 1.0
+            source: "last_engineering_trace.json comparison"
+        }
+
         fact negative_pattern_tile_m_128 {
-            description: "Tile_M=128 causes severe performance degradation on RTX 5070 (<30 TFLOPS)."
-            confidence: 0.99
+            description: "Tile_M=128 causes severe performance degradation on RTX 5070 (throughput cut by >50%)."
+            confidence: 1.0
             source: "last_engineering_trace.json"
         }
 
         // --- Abductive Rules (Compound Logic) ---
         rule "Blackwell TMA Pipelining" {
             when: "device == 'NVIDIA GeForce RTX 5070'"
-            recommend: "k_load_latency = 3, v_load_latency = 5"
-            evidence: "65.53 TFLOPS vs 65.46 TFLOPS (standard 2/4)"
+            recommend: "k_load_latency = 2"
+            recommend: "v_load_latency = 5 if causal else 4"
+            evidence: "Optimal configs favor deeper V-load pipelining in causal mode."
         }
 
         rule "Tile Size Heuristic" {

@@ -76,15 +76,6 @@ system FMHA_System_v3 {
                 passed: boolean
                 max_error: float
             }
-            case DesignCheck {
-                invariant_name: string
-                is_satisfied: boolean
-            }
-            case CodePattern {
-                pattern_name: string      // 예: "exp2_approximation"
-                location: string          // 파일명:라인
-                confidence: float
-            }
         }
     }
 
@@ -132,10 +123,6 @@ system FMHA_System_v3 {
     // 6. Build (Final Deliverables)
     // ============================================================
     build {
-        artifact "FMHA_cuTile_DesignSpace.dsl" {
-            type: "KnowledgeExport"
-            content: design_space
-        }
         artifact "Final_FMHA_Report.md" {
             generator: "python generate_fmha_report.py"
         }
