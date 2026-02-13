@@ -29,8 +29,10 @@ def fmha_v4_kernel(
     acc = ct.full((TILE_M, TILE_D), 0.0, dtype=ct.float32)
 
     # Offsets for masking
-    offs_m = bid_x * TILE_M + ct.arange(TILE_M, dtype=ct.int32)[:, None]
-    offs_n_tile = ct.arange(TILE_N, dtype=ct.int32)[None, :]
+    offs_m = bid_x * TILE_M + ct.arange(TILE_M, dtype=ct.int32)
+    offs_m = offs_m[:, None] # [TILE_M, 1]
+    offs_n_tile = ct.arange(TILE_N, dtype=ct.int32)
+    offs_n_tile = offs_n_tile[None, :] # [1, TILE_N]
 
     # Load Q
     q = ct.load(Q, index=(batch_idx, head_idx, bid_x, 0), shape=(1, 1, TILE_M, TILE_D)).reshape((TILE_M, TILE_D))
@@ -51,6 +53,8 @@ def fmha_v4_kernel(
         qk = ct.mma(q, k, qk)
 
         # Fused Causal & Boundary Masking
+        # We only apply mask if we are near the diagonal (for causal) or end of sequence (for EVEN_K)
+        # For simplicity and safety in this bench, we check every tile if CAUSAL or not EVEN_K
         if CAUSAL or not EVEN_K:
             offs_n = j * TILE_N + offs_n_tile
             mask = ct.full((TILE_M, TILE_N), True, dtype=ct.bool_)
@@ -58,7 +62,7 @@ def fmha_v4_kernel(
                 mask = mask & (offs_n < k_seqlen)
             if CAUSAL:
                 mask = mask & (offs_m >= offs_n)
-            qk += ct.where(mask, 0.0, -math.inf)
+            qk = qk + ct.where(mask, 0.0, -math.inf)
 
         m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale_log2)
         p = ct.exp2(qk * qk_scale_log2 - m_ij)
@@ -104,7 +108,8 @@ def benchmark(args):
     end = time.time()
     
     avg_ms = (end - start) * 1000 / iters
-    tflops = (2 * B * H * S * S * D) / (avg_ms * 1e-3) / 1e12
+    # Use standard 4*B*H*S*S*D formula for "Effective TFLOPS" comparison
+    tflops = (4 * B * H * S * S * D) / (avg_ms * 1e-3) / 1e12
     print(f"DEVICE={device_name}")
     print(f"RESULT: TFLOPS={tflops:.2f}, TileM={args.tile_m}, TileN={args.tile_n}, KLat={args.klat}, VLat={args.vlat}, Causal={args.causal}")
 

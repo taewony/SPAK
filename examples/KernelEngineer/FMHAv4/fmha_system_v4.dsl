@@ -17,6 +17,7 @@ system FMHA_System_v4 {
         math_approximation: ["exp2", "exp"]
         mask_fusion: ["fused_qk", "post_qk", "no_mask"]
         accum_dtype: ["f32", "f16"]
+        causal: [true, false]
 
         // New Forward-Pass Nuances (Extracted from v4)
         attention_variant: ["MHA", "GQA", "MQA"]
@@ -58,20 +59,34 @@ system FMHA_System_v4 {
             source: "attention.py:L716"
         }
 
-        // --- Facts ---
-        fact tma_best_practice_latency {
-            description: "For Blackwell/Hopper TMA, K load latency=2 and V load latency=4 is a balanced starting point."
-            confidence: 0.9
-            source: "attention.py:L104, L143"
+        // --- Verified Facts (RTX 5070 Compound Update) ---
+        fact optimal_rtx5070_config {
+            description: "On RTX 5070 (Blackwell), Tile=64x64 with K_Lat=3, V_Lat=5 is optimal."
+            tflops: 65.53
+            confidence: 1.0
+            source: "last_engineering_trace.json"
         }
 
-        fact lse_requirement_for_training {
-            description: "Training mode requires materializing LSE (Log-Sum-Exp) via scatter to global memory."
-            confidence: 1.0
-            source: "attention.py:fmha_fwd_kernel_with_lse"
+        fact negative_pattern_tile_m_128 {
+            description: "Tile_M=128 causes severe performance degradation on RTX 5070 (<30 TFLOPS)."
+            confidence: 0.99
+            source: "last_engineering_trace.json"
         }
 
         // --- Abductive Rules (Compound Logic) ---
+        rule "Blackwell TMA Pipelining" {
+            when: "device == 'NVIDIA GeForce RTX 5070'"
+            recommend: "k_load_latency = 3, v_load_latency = 5"
+            evidence: "65.53 TFLOPS vs 65.46 TFLOPS (standard 2/4)"
+        }
+
+        rule "Tile Size Heuristic" {
+            when: "device == 'NVIDIA GeForce RTX 5070'"
+            recommend: "tile_m = 64"
+            reason: "Experimental data shows Tile_M=128 results in >50% throughput loss (likely due to occupancy/register pressure)."
+            confidence: 0.99
+        }
+
         rule "GQA Mapping" {
             when: "num_heads > num_head_kv"
             apply: "select attention_variant = 'GQA'"
@@ -134,13 +149,14 @@ system FMHA_System_v4 {
     }
 
     engineering_loop FMHA_Forward_Tuner {
-        parameter Tile_M: [64, 128]
-        parameter Tile_N: [64, 128]
-        parameter K_Lat: [2]
-        parameter V_Lat: [4]
+        parameter Tile_M: [64]          // 128 is proven harmful on this device
+        parameter Tile_N: [64, 128]     // 128 yields ~55 TFLOPS - useful for memory-bound tradeoffs
+        parameter K_Lat: [2, 3]         // Both values are viable for Blackwell TMA
+        parameter V_Lat: [4, 5]         // Both values are viable for Blackwell TMA
+        parameter Causal: [0, 1]        // Sweep both non-causal and causal
         
         measure {
-            cmd: "python fmha_v4_test.py --tile_m {{Tile_M}} --tile_n {{Tile_N}} --klat {{K_Lat}} --vlat {{V_Lat}}"
+            cmd: "python fmha_v4_test.py --tile_m {{Tile_M}} --tile_n {{Tile_N}} --klat {{K_Lat}} --vlat {{V_Lat}} --causal {{Causal}}"
             metric: "tflops"
             objective: "maximize"
         }

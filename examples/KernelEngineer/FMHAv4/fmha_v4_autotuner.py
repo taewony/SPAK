@@ -21,7 +21,7 @@ def main():
     tile_ns = [64, 128]
     klats = [2, 3]
     vlats = [4, 5]
-    causal_options = [1] # Focusing on causal as requested
+    causal_options = [0, 1] # Sweep both
     
     history = []
     
