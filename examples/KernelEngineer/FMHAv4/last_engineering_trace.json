@@ -4,10 +4,10 @@
     "best_config": {
         "tile_m": 64,
         "tile_n": 64,
-        "k_lat": 3,
+        "k_lat": 2,
         "v_lat": 5,
         "causal": 1,
-        "tflops": 65.53,
+        "tflops": 133.25,
         "device": "NVIDIA GeForce RTX 5070"
     },
     "full_history": [
@@ -16,8 +16,152 @@
             "tile_n": 64,
             "k_lat": 2,
             "v_lat": 4,
+            "causal": 0,
+            "tflops": 73.26,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 73.09,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 73.0,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 73.11,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 63.91,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 63.75,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 63.84,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 63.74,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 36.08,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 36.15,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 36.08,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 36.09,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 35.16,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 35.18,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 0,
+            "tflops": 35.16,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 0,
+            "tflops": 35.19,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 4,
             "causal": 1,
-            "tflops": 65.46,
+            "tflops": 133.09,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -26,7 +170,7 @@
             "k_lat": 2,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 65.45,
+            "tflops": 133.25,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -35,7 +179,7 @@
             "k_lat": 3,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 65.34,
+            "tflops": 132.78,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -44,7 +188,7 @@
             "k_lat": 3,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 65.53,
+            "tflops": 133.02,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -53,7 +197,7 @@
             "k_lat": 2,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 50.44,
+            "tflops": 111.79,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -62,7 +206,7 @@
             "k_lat": 2,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 55.02,
+            "tflops": 112.02,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -71,7 +215,7 @@
             "k_lat": 3,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 55.0,
+            "tflops": 111.93,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -80,7 +224,7 @@
             "k_lat": 3,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 55.08,
+            "tflops": 111.9,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -89,7 +233,7 @@
             "k_lat": 2,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 25.47,
+            "tflops": 51.84,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -98,7 +242,7 @@
             "k_lat": 2,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 25.48,
+            "tflops": 51.83,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -107,7 +251,7 @@
             "k_lat": 3,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 25.48,
+            "tflops": 51.81,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -116,7 +260,7 @@
             "k_lat": 3,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 25.5,
+            "tflops": 51.79,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -125,7 +269,7 @@
             "k_lat": 2,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 23.49,
+            "tflops": 47.76,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -134,7 +278,7 @@
             "k_lat": 2,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 23.48,
+            "tflops": 47.76,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -143,7 +287,7 @@
             "k_lat": 3,
             "v_lat": 4,
             "causal": 1,
-            "tflops": 23.48,
+            "tflops": 47.73,
             "device": "NVIDIA GeForce RTX 5070"
         },
         {
@@ -152,7 +296,7 @@
             "k_lat": 3,
             "v_lat": 5,
             "causal": 1,
-            "tflops": 23.48,
+            "tflops": 47.76,
             "device": "NVIDIA GeForce RTX 5070"
         }
     ],
