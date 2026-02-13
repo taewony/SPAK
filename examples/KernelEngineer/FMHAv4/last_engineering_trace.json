@@ -1,0 +1,161 @@
+{
+    "type": "EngineeringSweep",
+    "device": "NVIDIA GeForce RTX 5070",
+    "best_config": {
+        "tile_m": 64,
+        "tile_n": 64,
+        "k_lat": 3,
+        "v_lat": 5,
+        "causal": 1,
+        "tflops": 65.53,
+        "device": "NVIDIA GeForce RTX 5070"
+    },
+    "full_history": [
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 65.46,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 65.45,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 65.34,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 65.53,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 50.44,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 55.02,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 55.0,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 64,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 55.08,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 25.47,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 25.48,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 25.48,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 64,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 25.5,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 23.49,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 2,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 23.48,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 4,
+            "causal": 1,
+            "tflops": 23.48,
+            "device": "NVIDIA GeForce RTX 5070"
+        },
+        {
+            "tile_m": 128,
+            "tile_n": 128,
+            "k_lat": 3,
+            "v_lat": 5,
+            "causal": 1,
+            "tflops": 23.48,
+            "device": "NVIDIA GeForce RTX 5070"
+        }
+    ],
+    "source": "fmha_v4_autotuner.py",
+    "timestamp": "2026-02-13"
+}
