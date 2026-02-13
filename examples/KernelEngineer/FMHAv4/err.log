@@ -1,0 +1,49 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHAv4$ python fmha_v4_autotuner.py
+Config               | TFLOPS
+-----------------------------------
+Traceback (most recent call last):
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
+    i += infer_types_for_op(context, block, i)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
+    _replace_call_or_const(block, i)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
+    result = op_implementations[callee](*arg_list)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1588, in getattr_impl
+    return loosely_typed_const(getattr(ty.py_mod, attr_name))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 611, in loosely_typed_const
+    ty = typeof_pyval(value)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/typing_support.py", line 206, in typeof_pyval
+    raise TypeError(f'Python value {val} of type {type(val)} is not supported.')
+TypeError: Python value <built-in function log> of type <class 'builtin_function_or_method'> is not supported.
+
+
+
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHAv4$ python fmha_v4_test.py
+Traceback (most recent call last):
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
+    i += infer_types_for_op(context, block, i)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
+    _replace_call_or_const(block, i)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
+    result = op_implementations[callee](*arg_list)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1588, in getattr_impl
+    return loosely_typed_const(getattr(ty.py_mod, attr_name))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 611, in loosely_typed_const
+    ty = typeof_pyval(value)
+         ^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/typing_support.py", line 206, in typeof_pyval
+    raise TypeError(f'Python value {val} of type {type(val)} is not supported.')
+TypeError: Python value <built-in function log> of type <class 'builtin_function_or_method'> is not supported.
