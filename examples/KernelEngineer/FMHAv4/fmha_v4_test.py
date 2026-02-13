@@ -8,7 +8,7 @@ import time
 @ct.kernel(occupancy=2)
 def fmha_v4_kernel(
     Q, K, V, Out,
-    qk_scale: float,
+    qk_scale_log2: float,  # Pass pre-calculated scale
     TILE_D: ct.Constant[int],
     H: ct.Constant[int],
     TILE_M: ct.Constant[int],
@@ -22,8 +22,6 @@ def fmha_v4_kernel(
     batch_idx, head_idx = bid_y // H, bid_y % H
     off_kv_h = head_idx // QUERY_GROUP_SIZE
     
-    qk_scale = qk_scale * (1.0 / math.log(2)) # Corrected for exp2
-
     # Accumulators
     m_i = ct.full((TILE_M, 1), -math.inf, dtype=ct.float32)
     l_i = ct.full((TILE_M, 1), 0.0, dtype=ct.float32)
@@ -48,8 +46,8 @@ def fmha_v4_kernel(
             mask = ct.where(offs_n < k_seqlen, 0.0, -math.inf)
             qk += mask
 
-        m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale)
-        p = ct.exp2(qk * qk_scale - m_ij)
+        m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale_log2)
+        p = ct.exp2(qk * qk_scale_log2 - m_ij)
         l_ij = ct.sum(p, axis=-1, keepdims=True)
         alpha = ct.exp2(m_i - m_ij)
         
@@ -72,20 +70,21 @@ def benchmark(args):
     v = torch.randn(B, H_KV, S, D, device='cuda', dtype=torch.float16)
     o = torch.zeros_like(q)
     
-    scale = 1.0 / math.sqrt(D)
+    # PRE-CALCULATE SCALE FOR EXP2
+    qk_scale_log2 = (1.0 / math.sqrt(D)) * (1.0 / math.log(2))
     grid = (S // args.tile_m, B * H, 1)
     
     # Warmup
     for _ in range(10):
         ct.launch(torch.cuda.current_stream(), grid, fmha_v4_kernel, 
-                 (q, k, v, o, scale, D, H, args.tile_m, args.tile_n, 4, args.klat, args.vlat, True))
+                 (q, k, v, o, qk_scale_log2, D, H, args.tile_m, args.tile_n, 4, args.klat, args.vlat, True))
     
     torch.cuda.synchronize()
     start = time.time()
     iters = 100
     for _ in range(iters):
         ct.launch(torch.cuda.current_stream(), grid, fmha_v4_kernel, 
-                 (q, k, v, o, scale, D, H, args.tile_m, args.tile_n, 4, args.klat, args.vlat, True))
+                 (q, k, v, o, qk_scale_log2, D, H, args.tile_m, args.tile_n, 4, args.klat, args.vlat, True))
     torch.cuda.synchronize()
     end = time.time()
     
