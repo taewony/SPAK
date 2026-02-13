@@ -4,7 +4,14 @@
 start: system_def
 
 system_def: "system" NAME "{" system_body "}"
-system_body: (model_block | trace_block | knowledge_block | loop_block | build_block)*
+system_body: (model_block | trace_block | knowledge_block | loop_block | build_block | design_block | tuning_block)*
+
+// --- 0. Design & Tuning Spaces ---
+design_block: "design_space" "{" design_stmt* "}"
+design_stmt: NAME ":" value_list | NAME ":" STRING
+
+tuning_block: "tuning_space" "{" tuning_stmt* "}"
+tuning_stmt: NAME ":" value_list | NAME ":" "range" "[" NUMBER "," NUMBER "]"
 
 // --- 1. Model (Data Schema) ---
 model_block: "model" "{" model_stmt* "}"

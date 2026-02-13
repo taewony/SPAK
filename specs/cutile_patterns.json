@@ -1,0 +1,71 @@
+{
+  "patterns": [
+    {
+      "id": "occupancy_target",
+      "regex": "@ct\.kernel\(occupancy=(\d+)\)",
+      "target": "design_space.occupancy",
+      "type": "Design",
+      "description": "Target occupancy for the kernel to hide latency."
+    },
+    {
+      "id": "load_latency",
+      "regex": "ct\.load\(.*?latency=(\d+).*?\)",
+      "target": "tuning_space.load_latency",
+      "type": "Tuning",
+      "description": "Software-defined latency hint for memory loads."
+    },
+    {
+      "id": "math_approx_exp2",
+      "regex": "ct\.exp2\(",
+      "target": "design_space.math_approximation",
+      "value": "exp2",
+      "type": "Design",
+      "description": "Use of base-2 exponential for performance."
+    },
+    {
+      "id": "online_softmax",
+      "regex": "ct\.max\(.*?\).*?ct\.exp2\(.*?ct\.sum\(",
+      "target": "design_space.softmax_scheme",
+      "value": "online",
+      "type": "Design",
+      "description": "Detection of Online Softmax pattern (max + exp + sum)."
+    },
+    {
+      "id": "fused_attention",
+      "regex": "ct\.kernel.*?fmha",
+      "target": "design_space.fusion_level",
+      "value": "fused_qk_pv",
+      "type": "Design",
+      "description": "Detection of fused attention kernels."
+    },
+    {
+      "id": "lse_storage",
+      "regex": "ct\.scatter\(.*?lse.*?\)",
+      "target": "design_space.lse_storage",
+      "value": "flat_1d",
+      "type": "Design",
+      "description": "Detection of Log-Sum-Exp storage strategy."
+    },
+    {
+      "id": "tiling_m",
+      "regex": "tile_m\s*=\s*(\d+)",
+      "target": "tuning_space.tile_m",
+      "type": "Tuning",
+      "description": "Tiling size for the M dimension."
+    },
+    {
+      "id": "tiling_n",
+      "regex": "tile_n\s*=\s*(\d+)",
+      "target": "tuning_space.tile_n",
+      "type": "Tuning",
+      "description": "Tiling size for the N dimension."
+    },
+    {
+      "id": "tiling_d",
+      "regex": "tile_d\s*=\s*(\d+)",
+      "target": "tuning_space.tile_d",
+      "type": "Tuning",
+      "description": "Tiling size for the D (head_dim) dimension."
+    }
+  ]
+}

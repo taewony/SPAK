@@ -1,0 +1,6 @@
+{"category": "design_axis", "content": "Added 'attention_variant' with MHA/GQA/MQA support based on QUERY_GROUP_SIZE usage.", "source": "attention.py:L64"}
+{"category": "design_axis", "content": "Added 'kernel_mode' to distinguish between inference (fast) and training (LSE saving) forward passes.", "source": "attention.py:L40, L161"}
+{"category": "design_axis", "content": "Added 'memory_robustness' (EVEN_K flag) for dynamic K-sequence masking.", "source": "attention.py:L116"}
+{"category": "knowledge_fact", "content": "Identified TMA load latency hints: K=2, V=4.", "source": "attention.py:L104, L143"}
+{"category": "knowledge_rule", "content": "GQA Mapping rule formalized: off_kv_h = head_idx // (num_heads // num_head_kv).", "source": "attention.py:L64"}
+{"category": "knowledge_invariant", "content": "GQA Safety invariant: num_heads must be divisible by num_head_kv.", "source": "attention.py:L716"}
