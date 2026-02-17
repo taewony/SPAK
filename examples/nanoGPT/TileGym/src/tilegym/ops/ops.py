@@ -1,0 +1,799 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# SPDX-License-Identifier: MIT
+
+"""
+TileGym operations interface - unified interface for all operations.
+
+This module provides operation interfaces that automatically dispatch to the appropriate
+backend implementation based on the current backend setting.
+"""
+
+from typing import Any
+from typing import List
+from typing import Optional
+from typing import Tuple
+
+import torch
+
+from tilegym.backend import dispatch
+from tilegym.backend import get_current_backend
+
+# ============================================================================
+# NN Operations
+# ============================================================================
+
+
+@dispatch(
+    "get_apply_rope_func",
+)
+def get_apply_rope_func(model: str = "llama"):
+    """
+    Returns a callable that applies Rotary Position Embedding (RoPE) for a given model variant.
+
+    Args:
+        model: Model name that determines the RoPE layout transformation. Supported: 'llama', 'qwen2', 'deepseek'
+
+    Returns:
+        Callable implementing RoPE application with signature similar to `apply_rope_base`
+    """
+    raise NotImplementedError(f"get_apply_rope_func is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "apply_rope_base",
+)
+def apply_rope_base(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    cos: torch.Tensor,
+    sin: torch.Tensor,
+    position_ids: Optional[torch.Tensor] = None,
+    unsqueeze_dim: int = 1,
+    use_tma: bool = False,
+):
+    """
+    Applies Rotary Position Embedding (RoPE) to query and key tensors.
+
+    Args:
+        q: Query tensor of shape (B, H_q, S, D)
+        k: Key tensor of shape (B, H_kv, S, D)
+        cos: Cosine tensor of shape (1, S, D) or (B, S, D)
+        sin: Sine tensor with the same shape as `cos`
+        position_ids: Optional - Position IDs tensor, default None
+        unsqueeze_dim: Optional - Dimension to unsqueeze, default 1
+        use_tma: Whether to use TMA optimized path when available
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: Query and key tensor pair with RoPE applied
+    """
+    raise NotImplementedError(f"apply_rope_base is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "get_swiglu_module",
+)
+def get_swiglu_module():
+    """
+    Returns the SwiGLU MLP module class.
+
+    The returned module computes: down_proj(SiLU(gate_proj(x)) * up_proj(x)).
+
+    Returns:
+        nn.Module subclass implementing the SwiGLU MLP
+    """
+    raise NotImplementedError(f"get_swiglu_module is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "get_swiglu",
+)
+def get_swiglu():
+    """
+    Returns a functional SwiGLU implementation for elementwise SiLU*mul fusion.
+
+    The function expects two tensors `a` and `b` of the same shape and computes
+    SiLU(a) * b.
+
+    Expected input shapes:
+        a: (batch_size, seq_len, intermediate_size)
+        b: (batch_size, seq_len, intermediate_size)
+    """
+    raise NotImplementedError(f"get_swiglu is not implemented for {get_current_backend()}")
+
+
+def get_fused_swiglu_module():
+    """
+    Returns the fused SwiGLU module class.
+
+    This module uses a partial fused kernel for the entire SwiGLU operation:
+    output = activation(input @ W1_act^T) ⊙ (input @ W1_noact^T) @ W2^T
+
+    This eliminates ALL PyTorch linear operations and intermediate tensor materializations,
+    providing better performance than get_swiglu_module().
+
+    Note: This doesn't need backend dispatch - the PartiallyFusedSwiGLUMLP class automatically
+    dispatches to the correct backend kernel internally.
+
+    Returns:
+        PartiallyFusedSwiGLUMLP class
+    """
+    from tilegym.ops.fused_mlp import PartiallyFusedSwiGLUMLP
+
+    return PartiallyFusedSwiGLUMLP
+
+
+@dispatch(
+    "rms_norm",
+)
+def rms_norm(
+    input: torch.Tensor,
+    normalized_shape: Any,
+    weight: torch.Tensor,
+    eps: float,
+    bias: Optional[torch.Tensor] = None,
+    static_persistent: bool = False,
+    **kwargs: Any,
+):
+    """
+    Returns the Root-Mean-Squared Norm of input along dimension N.
+
+    Args:
+        input: Tensor of shape (M, N)
+        normalized_shape: Unused
+        weight: Tensor of shape (N,)
+        eps: small scaler to be added to variance calculation prior to division.
+        bias: Bias tensor of shape (N,), default is None
+        static_persistent: Whether to use static persistent kernel, default is False
+        **kwargs: Additional arguments for backend-specific configurations
+    """
+    raise NotImplementedError(f"rms_norm is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "get_rms_norm_module",
+)
+def get_rms_norm_module(model: str = "llama"):
+    """
+    Returns the RMSNorm module class.
+    """
+    raise NotImplementedError(f"get_rms_norm_module is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "silu_and_mul",
+)
+def silu_and_mul(
+    input: torch.Tensor,
+    out: Optional[torch.Tensor] = None,
+    **kwargs: Any,
+):
+    """
+    Fused SiLU and multiply operation.
+
+    Implements: SiLU(input[..., :H]) * input[..., H:].
+
+    Args:
+        input: Tensor with last-dimension size 2*H
+        out: Optional preallocated output tensor, if specified kernel will update in-place
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        torch.Tensor with shape input[..., :H]
+    """
+    raise NotImplementedError(f"silu_and_mul is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "dropout",
+)
+def dropout(
+    x: torch.Tensor,
+    seed: int,
+    p: float = 0.5,
+    training: bool = True,
+    inplace: bool = False,
+    **kwargs: Any,
+):
+    """
+    Dropout operation with stateless random generation from a given seed.
+
+    Args:
+        x: Input tensor
+        seed: Integer seed used to generate dropout mask in the kernel
+        p: Drop probability, default is 0.5
+        training: Apply dropout if True, otherwise return input
+        inplace: If True, perform the operation in-place
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Tensor of the same shape as `x` with dropout applied
+    """
+    raise NotImplementedError(f"dropout is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "softmax",
+)
+def softmax(
+    x: torch.Tensor,
+    use_tma: bool = False,
+    **kwargs: Any,
+):
+    """
+    Performs Softmax on a 2D tensor (M, N) along the N axis.
+
+    Args:
+        x: Input tensor of shape (M, N). Softmax is computed over the last dimension (N)
+        use_tma: Whether to use TMA (Tensor Memory Accelerator) implementation
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        torch.Tensor of shape (M, N) containing softmax probabilities
+    """
+    raise NotImplementedError(f"softmax is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "layer_norm_legacy",
+)
+def layer_norm_legacy(
+    x: torch.Tensor,
+    normalized_shape: Any,
+    weight: torch.Tensor,
+    bias: torch.Tensor,
+    eps: float,
+    weight_shift: float = 0.0,
+    **kwargs: Any,
+):
+    """
+    Legacy LayerNorm of input along dimension N.
+
+    Args:
+        x: Input tensor shape (M, N)
+        normalized_shape: Unused
+        weight: Tensor of shape (N,)
+        bias: Tensor of shape (N,)
+        eps: Numerical stability epsilon
+        weight_shift: Float value to be added to the weight
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Normalized tensor with same shape as `x`
+    """
+    raise NotImplementedError(f"layer_norm_legacy is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "persistent_layer_norm",
+)
+def persistent_layer_norm(
+    input: torch.Tensor,
+    normalized_shape: Any,
+    weight: Optional[torch.Tensor],
+    bias: Optional[torch.Tensor],
+    eps: float,
+    mean: Optional[torch.Tensor] = None,
+    rstd: Optional[torch.Tensor] = None,
+    **kwargs: Any,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, int, int]:
+    """
+    Persistent LayerNorm with TMA support.
+
+    This is an optimized implementation using TMA descriptors and autotune.
+
+    Args:
+        input: Input tensor of shape (N, D)
+        normalized_shape: Unused (for API compatibility)
+        weight: Weight tensor of shape (D,)
+        bias: Bias tensor of shape (D,)
+        eps: Epsilon for numerical stability
+        mean: Optional pre-computed mean tensor
+        rstd: Optional pre-computed reciprocal std tensor
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Tuple of (output, mean, rstd, BLOCK_D, num_warps)
+    """
+    raise NotImplementedError(f"persistent_layer_norm is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "fmha",
+)
+def fmha(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    scaling: Optional[float] = None,
+    is_causal: bool = True,
+    **kwargs: Any,
+):
+    """
+    Fused Multi-Head Attention (prefill) operation.
+
+    This is the main FMHA kernel for prefill phase, corresponding to:
+    - cutile: tile_fmha in tilegym.ops.cutile.attention
+
+    Args:
+        q: Query tensor of shape (B, H, S, D)
+        k: Key tensor of shape (B, H, S, D)
+        v: Value tensor of shape (B, H, S, D)
+        scaling: Scale factor for attention scores (default: 1/sqrt(D))
+        is_causal: Whether to apply causal masking
+        **kwargs: Additional arguments, including:
+            - has_backward (bool): Whether backward pass is needed (default: False)
+            - kernel_configs (dict): Backend-specific kernel configurations
+
+    Returns:
+        Output tensor of shape (B, H, S, D)
+    """
+    raise NotImplementedError(f"fmha is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "fmha_decode",
+)
+def fmha_decode(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    sm_scale: Optional[float],
+    kv_len_per_split: Optional[int] = None,
+    **kwargs: Any,
+):
+    """
+    Grouped Query Attention decoding for a single-token query.
+
+    Args:
+        q: Query tensor of shape (B, H_q, 1, D)
+        k: Key tensor of shape (B, H_kv, S_kv, D)
+        v: Value tensor of shape (B, H_kv, S_kv, D)
+        sm_scale: Scale factor for attention computation
+        kv_len_per_split: Optional KV length per split for parallelization
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Output tensor of shape (B, H_q, 1, D)
+    """
+    raise NotImplementedError(f"fmha_decode is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "mla",
+)
+def mla(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    qpe: torch.Tensor,
+    kpe: torch.Tensor,
+    is_causal: bool,
+    scaling: Optional[float] = None,
+    **kwargs: Any,
+):
+    """
+    Multi-Latent Attention (MLA) prefill operation.
+
+    This is the main MLA kernel for prefill phase, corresponding to:
+    - cutile: tile_mla in tilegym.ops.cutile.mla
+
+    Args:
+        q: Query tensor of shape (B, H, S, D)
+        k: Key tensor of shape (B, H, S, D)
+        v: Value tensor of shape (B, H, S, D)
+        qpe: Query positional embedding of shape (B, H, S, D_PE)
+        kpe: Key positional embedding of shape (B, 1, S, D_PE)
+        is_causal: Whether to apply causal masking
+        scaling: Scale factor for attention scores (default: 1/sqrt(D + D_PE))
+        **kwargs: Additional arguments, including kernel_configs if needed
+
+    Returns:
+        Output tensor of shape (B, H, S, D)
+    """
+    raise NotImplementedError(f"mla is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "mla_decoding",
+)
+def mla_decoding(
+    q: torch.Tensor,
+    qpe: torch.Tensor,
+    kv: torch.Tensor,
+    kpe: torch.Tensor,
+    sm_scale: Optional[float] = None,
+    transpose: bool = True,
+    **kwargs: Any,
+):
+    """
+    MLA decoding kernel for a single-step query attending to KV cache.
+
+    Args:
+        q: Query tensor of shape (B, H, D) for single-token decoding
+        qpe: Query positional embedding tensor of shape (B, H, D_PE)
+        kv: Key/Value cache tensor shaped as required by the backend kernel
+        kpe: Key positional embedding tensor compatible with KV layout
+        sm_scale: Optional softmax scaling factor
+        transpose: Whether to transpose internal layouts to match kernels
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]:
+            o: (B, H, D)
+            l: (B, H)
+    """
+    raise NotImplementedError(f"mla_decoding is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "mla_decoding_split_kv",
+)
+def mla_decoding_split_kv(
+    q: torch.Tensor,
+    qpe: torch.Tensor,
+    kv: torch.Tensor,
+    kpe: torch.Tensor,
+    sm_scale: Optional[float] = None,
+    kv_len_per_split: Optional[int] = None,
+    **kwargs: Any,
+):
+    """
+    MLA decoding with split-KV parallel reduction.
+
+    Args:
+        q: Query tensor of shape (B, H, D)
+        qpe: Query positional embedding tensor of shape (B, H, D_PE)
+        kv: Key/Value cache tensor of shape (B, S_kv, D)
+        kpe: Key positional embedding tensor of shape (B, S_kv, D_PE)
+        sm_scale: Optional softmax scaling factor
+        kv_len_per_split: Optional per-split KV length to control parallelism
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Output tensor of shape (B, H, D)
+    """
+    raise NotImplementedError(f"mla_decoding_split_kv is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "splitk_reduce",
+)
+def splitk_reduce(
+    attn_splitk_out: torch.Tensor,
+    lse_splitk_out: torch.Tensor,
+    attn_out: torch.Tensor,
+    S_kv: int,
+    **kwargs: Any,
+):
+    """
+    Reduce the intermediate attention results and lse results into the final output for attention decode.
+
+    Args:
+        attn_splitk_out: Intermediate attention results [B, H, NUM_KV_SPLITS, D]
+        lse_splitk_out: Intermediate log-sum-exp stats [B, H, NUM_KV_SPLITS]
+        attn_out: Output tensor [B, H, D]
+        S_kv: KV sequence length for boundary handling
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        The finalized `attn_out` tensor [B, H, D]
+    """
+    raise NotImplementedError(f"splitk_reduce is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "mhc_gemm_rms_scale",
+)
+def mhc_gemm_rms_scale(
+    x: torch.Tensor,
+    w: torch.Tensor,
+    n: int,
+    alpha_pre: float,
+    alpha_post: float,
+    alpha_res: float,
+    bias: torch.Tensor,
+    **kwargs: Any,
+):
+    """
+    GEMM + RMS reduce + scale/bias/sigmoid for mHC.
+
+    Args:
+        x: Input matrix X (M, K)
+        w: Weight matrix W (K, N)
+        n: Expansion factor
+        alpha_pre: Scalar for pre mixing
+        alpha_post: Scalar for post mixing
+        alpha_res: Scalar for residual mixing
+        bias: Bias vector of shape (N,)
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: (Y, R)
+    """
+    raise NotImplementedError(f"mhc_gemm_rms_scale is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "mhc_apply_residual",
+)
+def mhc_apply_residual(
+    x: torch.Tensor,
+    f_out: torch.Tensor,
+    y: torch.Tensor,
+    n: int,
+    **kwargs: Any,
+):
+    """
+    Apply H_res and H_post to residual stream.
+
+    Args:
+        x: Input tensor X with shape (B, nC)
+        f_out: Output tensor from block with shape (B, C)
+        y: Coefficients tensor with shape (B, n^2 + 2n)
+        n: Expansion factor
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        torch.Tensor: Output tensor with shape (B, nC)
+    """
+    raise NotImplementedError(f"mhc_apply_residual is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "mhc_sinkhorn",
+)
+def mhc_sinkhorn(
+    y: torch.Tensor,
+    n: int,
+    **kwargs: Any,
+):
+    """
+    Sinkhorn-Knopp normalization for residual block (in-place on Y).
+
+    Args:
+        y: Input/output matrix Y (M, N), modified in-place
+        n: Expansion factor
+        **kwargs: Additional arguments for backend-specific configurations
+
+    Returns:
+        torch.Tensor: Output matrix (M, N)
+    """
+    raise NotImplementedError(f"mhc_sinkhorn is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "gemma_attention",
+)
+def gemma_attention(
+    q,
+    k,
+    v,
+    scaling=None,
+    window_size=0,
+    soft_cap=None,
+    is_causal=True,
+    **kwargs,
+):
+    raise NotImplementedError(f"gemma_attention is not implemented for {get_current_backend()}")
+
+
+@dispatch(
+    "gemma_attention_decode",
+)
+def gemma_attention_decode(
+    q,
+    k,
+    v,
+    scaling=None,
+    window_size=0,
+    soft_cap=None,
+    **kwargs,
+):
+    """
+    Gemma-specific attention decode kernel optimized for seq_len_q=1.
+
+    Uses Split-K parallelization for efficient processing of long KV sequences.
+
+    Args:
+        q: Query tensor [B, H, 1, D]
+        k: Key tensor [B, H_kv, S, D]
+        v: Value tensor [B, H_kv, S, D]
+        scaling: Attention scaling (default: 1/sqrt(d))
+        window_size: Sliding window size (0 for global attention)
+        soft_cap: Soft cap value (None for no soft cap)
+
+    Returns:
+        Output tensor [B, H, 1, D]
+    """
+    raise NotImplementedError(f"gemma_attention_decode is not implemented for {get_current_backend()}")
+
+
+# ============================================================================
+# Linear Algebra Operations
+# ============================================================================
+
+
+@dispatch(
+    "matmul",
+)
+def matmul(
+    a: torch.Tensor,
+    b: torch.Tensor,
+    trans_a: Optional[bool] = None,
+    trans_b: Optional[bool] = None,
+    static_persistent: Optional[bool] = True,
+    use_tma: Optional[bool] = True,
+    **kwargs: Any,
+):
+    """
+    Matrix multiplication operation that automatically selects implementation based on current backend
+
+    Args:
+        a: Input matrix A
+        b: Input matrix B
+        trans_a: Whether to transpose matrix A (None uses backend default)
+        trans_b: Whether to transpose matrix B (None uses backend default)
+        static_persistent: Whether to use static persistent mode (default: True)
+        use_tma: Whether to use TMA (default: True)
+        **kwargs: Additional arguments, including kernel_configs if needed
+    Returns:
+        torch.Tensor: Matrix multiplication result
+    """
+    raise NotImplementedError(f"Matmul is not implemented for this backend: {get_current_backend()}")
+
+
+@dispatch(
+    "group_gemm",
+)
+def group_gemm(
+    group_A: List[torch.Tensor],
+    group_B: List[torch.Tensor],
+    static_persistent: Optional[bool] = True,
+    use_tma: Optional[bool] = True,
+    **kwargs: Any,
+):
+    """
+    Group GEMM operation that automatically selects implementation based on current backend
+
+    Performs multiple matrix multiplications in batch mode, potentially with better performance
+    than running individual multiplications.
+
+    Args:
+        group_A: List of input matrices A
+        group_B: List of input matrices B
+        static_persistent: Whether to use static persistent mode (default: True)
+        use_tma: Whether to use TMA (default: True)
+        **kwargs: Additional arguments, including kernel_configs if needed with keys:
+            - BLOCK_M: Tile size for M dimension
+            - BLOCK_N: Tile size for N dimension
+            - BLOCK_K: Tile size for K dimension
+            - num_ctas: Number of CTAs per SM
+    Returns:
+        List[torch.Tensor]: Results of matrix multiplications
+    """
+    raise NotImplementedError(f"Group GEMM is not implemented for this backend: {get_current_backend()}")
+
+
+@dispatch(
+    "attention_sink",
+)
+def attention_sink(
+    query: torch.Tensor,
+    key: torch.Tensor,
+    value: torch.Tensor,
+    sinks: torch.Tensor,
+    sm_scale: float = 0.125,
+    sliding_window: int | None = None,
+    start_q: torch.LongTensor = 0,
+    **kwargs: Any,
+):
+    """
+    Attention with sink tokens operation for efficient KV-cache inference.
+
+    This implements FlashAttention v2 with attention sink support, which maintains
+    a set of "sink" tokens that accumulate attention mass to stabilize long-context
+    generation. Supports optional sliding window (banded) attention.
+
+    Args:
+        query: Query tensor of shape (B, S_q, H_kv, G, D) where:
+            - B: batch size
+            - S_q: number of query tokens
+            - H_kv: number of key-value heads
+            - G: number of query groups per KV head (for GQA)
+            - D: head dimension
+        key: Key tensor of shape (B, S_kv, H_kv, D)
+        value: Value tensor of shape (B, S_kv, H_kv, D)
+        sinks: Attention sink logits of shape (H_kv * G,), representing the
+            pre-softmax attention scores for sink tokens per head
+        sm_scale: Softmax scale factor, typically 1/sqrt(D) (default: 0.125)
+        sliding_window: If specified, applies banded attention where each query
+            only attends to keys within this window size (default: None for full attention)
+        start_q: Starting position offset for queries in the KV sequence,
+            used for KV-cache scenarios where queries correspond to later positions
+        **kwargs: Additional backend-specific arguments
+
+    Returns:
+        Output tensor of shape (B, S_q, H_kv * G * D)
+    """
+    raise NotImplementedError(f"Attention sink is not implemented for this backend: {get_current_backend()}")
+
+
+@dispatch(
+    "attention_sink_decode",
+)
+def attention_sink_decode(
+    query: torch.Tensor,
+    key: torch.Tensor,
+    value: torch.Tensor,
+    sinks: torch.Tensor,
+    sm_scale: float = 0.125,
+    sliding_window: int | None = None,
+    start_q: torch.LongTensor = 0,
+    kv_len_per_split: int | None = None,
+    **kwargs: Any,
+):
+    """
+    Attention with sink tokens using split-KV algorithm for decode phase.
+
+    This implementation splits the KV cache into multiple chunks and processes
+    them in parallel, then reduces the partial results. This is more efficient
+    for long KV caches during decode where we have a single query token.
+
+    The sink token contribution is incorporated into the first split's LSE,
+    making it compatible with the standard splitk_reduce.
+
+    The number of splits is dynamically determined based on GPU SM count to
+    maximize parallelism and SM utilization.
+
+    Args:
+        query: Query tensor of shape (B, 1, H_kv, G, D) where:
+            - B: batch size
+            - 1: single query token (decode)
+            - H_kv: number of key-value heads
+            - G: number of query groups per KV head (for GQA)
+            - D: head dimension
+        key: Key tensor of shape (B, S_kv, H_kv, D)
+        value: Value tensor of shape (B, S_kv, H_kv, D)
+        sinks: Attention sink logits of shape (H_kv * G,), representing the
+            pre-softmax attention scores for sink tokens per head
+        sm_scale: Softmax scale factor, typically 1/sqrt(D) (default: 0.125)
+        sliding_window: If specified, applies banded attention where each query
+            only attends to keys within this window size (default: None for full attention)
+        start_q: Starting position offset for queries in the KV sequence,
+            used for KV-cache scenarios where queries correspond to later positions
+        kv_len_per_split: Optional, KV length per split (power of 2, >= BLOCK_N).
+            If None, automatically determined based on GPU SM count.
+        **kwargs: Additional backend-specific arguments
+
+    Returns:
+        Output tensor of shape (B, 1, H_kv * G * D)
+    """
+    raise NotImplementedError(f"Attention sink decode is not implemented for this backend: {get_current_backend()}")
+
+
+@dispatch(
+    "bmm",
+)
+def bmm(
+    a: torch.Tensor,
+    b: torch.Tensor,
+    transpose_a: Optional[bool] = None,
+    transpose_b: Optional[bool] = None,
+    static_persistent: Optional[bool] = True,
+    **kwargs: Any,
+):
+    """
+    Batch matrix multiplication operation that automatically selects implementation based on current backend
+
+    Args:
+        a: Input matrix A
+        b: Input matrix B
+        transpose_a: Whether to transpose matrix A (None uses backend default)
+        transpose_b: Whether to transpose matrix B (None uses backend default)
+        static_persistent: Whether to use static persistent mode (default: True)
+        **kwargs: Additional arguments, including kernel_configs if needed
+    Returns:
+        torch.Tensor: Matrix multiplication result
+    """
+    raise NotImplementedError(f"BMM is not implemented for this backend: {get_current_backend()}")
