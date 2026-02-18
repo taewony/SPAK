@@ -60,11 +60,14 @@ Compound Engineering의 핵심 동력으로, 각 사이클에서 얻은 통찰�
 
 #### 5.3 DSL Schema Evolution
 - [x] Extend `system_model` to support `design_space` and `tuning_space` in `grammar.lark`.
-- [x] Created `fmha_system_v3.dsl` with separated design/tuning spaces and semantic layer.
-- [ ] **FMHAv4 (Forward-Deep-Dive)**: 
-    - [ ] **Axis Extraction**: Lift `GQA` mapping logic and `latency` hints.
-    - [ ] **Context Logic**: Formalize the switch between `fmha_kernel` and `fmha_fwd_kernel_with_lse`.
-    - [ ] **Robustness**: Encode `EVEN_K` as a design choice for "Fast vs. Safe" kernels.
+- [x] Created `fmha_system_v4.dsl` with hardware-verified rules for RTX 5070.
+
+### Phase 7: Knowledge Transfer to MicroGPT (NEW)
+**Objective**: Demonstrate that FMHAv4 insights accelerate the development of a full transformer model.
+- [x] **DSL Initialization**: Created `microgpt_system_v1.dsl` inheriting Blackwell TMA and Tiling rules.
+- [ ] **Kernel Generation**: Implement Tiled Linear and RMSNorm kernels based on `microgpt.py` logic.
+- [ ] **System Integration**: Replace the scalar `Value` autograd with a tensor-based cuTile training loop.
+- [ ] **Fidelity Proof**: Achieve convergence on `names.txt` while maintaining the 1.1x speedup advantage on the attention blocks.
 
 ---
 

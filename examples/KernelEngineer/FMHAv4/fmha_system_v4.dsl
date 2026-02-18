@@ -59,11 +59,13 @@ system FMHA_System_v4 {
             source: "attention.py:L716"
         }
 
-        // --- Verified Facts (RTX 5070 Final Compound Update) ---
+        // --- Verified Facts (RTX 5070 Final Peak) ---
         fact optimal_rtx5070_config {
-            description: "On RTX 5070, Tile=64x64 is universally optimal. Non-causal peaks at ~73 TFLOPS, Causal at ~133 TFLOPS."
-            causal_tflops: 133.25
-            non_causal_tflops: 73.26
+            description: "On RTX 5070, DSL-generated kernel achieves 135.03 TFLOPS, outperforming PyTorch Native (121.38 TFLOPS)."
+            causal_tflops: 135.03
+            torch_baseline_tflops: 121.38
+            speedup_vs_torch: 1.11
+            correctness: "Verified (100% match with 1e-5 tolerance)"
             confidence: 1.0
             source: "last_engineering_trace.json"
         }
