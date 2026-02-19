@@ -8,7 +8,9 @@ import time
 
 @ct.kernel(occupancy=2)
 def microgpt_attention_kernel(
-    Q, K, V, Out, qk_scale_log2: float,
+    Q, K, V, Out, 
+    qk_scale_log2: float,
+    neg_inf: float, # Pass NEG_INF as an argument
     TILE_D: ct.Constant[int], H: ct.Constant[int],
     TILE_M: ct.Constant[int], TILE_N: ct.Constant[int],
     K_LAT: ct.Constant[int], V_LAT: ct.Constant[int]
@@ -16,10 +18,7 @@ def microgpt_attention_kernel(
     bid_x, bid_y = ct.bid(0), ct.bid(1)
     batch_idx, head_idx = bid_y // H, bid_y % H
     
-    # Use float('inf') to avoid TypeInfer errors
-    NEG_INF = -float('inf')
-    
-    m_i = ct.full((TILE_M, 1), NEG_INF, dtype=ct.float32)
+    m_i = ct.full((TILE_M, 1), neg_inf, dtype=ct.float32)
     l_i = ct.full((TILE_M, 1), 0.0, dtype=ct.float32)
     acc = ct.full((TILE_M, TILE_D), 0.0, dtype=ct.float32)
 
@@ -39,7 +38,7 @@ def microgpt_attention_kernel(
 
         offs_n = j * TILE_N + offs_n_tile
         mask = offs_m >= offs_n
-        qk = qk + ct.where(mask, 0.0, NEG_INF)
+        qk = qk + ct.where(mask, 0.0, neg_inf)
 
         m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale_log2)
         p = ct.exp2(qk * qk_scale_log2 - m_ij)
@@ -76,7 +75,6 @@ def microgpt_rmsnorm_kernel(X, Y, W, TILE_SIZE_M: ct.Constant[int], TILE_SIZE_N:
 def run_rmsnorm_op(x, weight):
     M, N = x.reshape(-1, x.shape[-1]).shape
     y = torch.empty_like(x)
-    # Use small TILE_SIZE_M=4 for stability with small batches
     grid = (min(80, ct.cdiv(M, 4)),)
     ct.launch(torch.cuda.current_stream(), grid, microgpt_rmsnorm_kernel, 
              (x.view(-1, N), y.view(-1, N), weight, 4, N, 1e-5))
@@ -100,7 +98,6 @@ class Block(nn.Module):
 
     def forward(self, x):
         B, T, C = x.shape
-        # Attention path
         x_norm = run_rmsnorm_op(x, self.ln1)
         q = self.wq(x_norm).view(B, T, self.n_head, -1).transpose(1, 2)
         k = self.wk(x_norm).view(B, T, self.n_head, -1).transpose(1, 2)
@@ -109,18 +106,17 @@ class Block(nn.Module):
         out = torch.empty_like(q)
         head_dim = q.size(-1)
         scale_log2 = (1.0 / math.sqrt(head_dim)) * (1.0 / math.log(2))
+        neg_inf = -float('inf')
         
-        # Use TILE_M=16 to match block_size, ensuring grid is at least 1
         tile_m = 16
         grid = (max(1, ct.cdiv(T, tile_m)), B * self.n_head, 1)
         
         ct.launch(torch.cuda.current_stream(), grid, microgpt_attention_kernel,
-                 (q, k, v, out, scale_log2, head_dim, self.n_head, tile_m, 16, 2, 5))
+                 (q, k, v, out, scale_log2, neg_inf, head_dim, self.n_head, tile_m, 16, 2, 5))
         
         attn_out = out.transpose(1, 2).reshape(B, T, -1)
         x = x + self.wo(attn_out)
         
-        # MLP path
         x_norm = run_rmsnorm_op(x, self.ln2)
         mlp_h = torch.relu(self.fc1(x_norm))
         x = x + self.fc2(mlp_h)
