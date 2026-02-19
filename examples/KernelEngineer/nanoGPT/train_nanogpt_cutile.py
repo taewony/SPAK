@@ -19,11 +19,18 @@ n_embd = 384
 dropout = 0.0
 bias = False
 learning_rate = 1e-3
-max_iters = 500
-eval_interval = 100
+max_iters = 1000
+eval_interval = 200
 eval_iters = 20
 device = 'cuda'
 dtype = 'float16' # Use float16 for cuTile performance testing
+
+# learning rate decay settings
+decay_lr = True
+warmup_iters = 100
+lr_decay_iters = 1000
+min_lr = 1e-4
+
 # -----------------------------------------------------------------------------
 
 os.makedirs(out_dir, exist_ok=True)
@@ -79,16 +86,32 @@ def estimate_loss():
     model.train()
     return out
 
+# learning rate decay scheduler (cosine with warmup)
+def get_lr(it):
+    if it < warmup_iters:
+        return learning_rate * it / warmup_iters
+    if it > lr_decay_iters:
+        return min_lr
+    decay_ratio = (it - warmup_iters) / (lr_decay_iters - warmup_iters)
+    assert 0 <= decay_ratio <= 1
+    coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio))
+    return min_lr + coeff * (learning_rate - min_lr)
+
 # Training Loop
 print(f"Starting NanoGPT cuTile Training on {dataset}...")
 t0 = time.time()
 history = []
 
 for iter_num in range(max_iters):
+    # determine and set the learning rate for this iteration
+    lr = get_lr(iter_num) if decay_lr else learning_rate
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+
     # Eval
     if iter_num % eval_interval == 0:
         losses = estimate_loss()
-        print(f"step {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+        print(f"step {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}, lr {lr:.4e}")
         history.append({
             "type": "Convergence",
             "step": iter_num,
@@ -102,6 +125,11 @@ for iter_num in range(max_iters):
         _, loss = model(X, Y)
     
     scaler.scale(loss).backward()
+    
+    # gradient clipping
+    scaler.unscale_(optimizer)
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+    
     scaler.step(optimizer)
     scaler.update()
     optimizer.zero_grad(set_to_none=True)
