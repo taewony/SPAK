@@ -6,10 +6,34 @@
         "val_loss": 4.280459403991699
     },
     {
+        "type": "Performance",
+        "step": 0,
+        "loss": 4.276462554931641,
+        "step_time_ms": 1284.275770187378
+    },
+    {
+        "type": "Performance",
+        "step": 100,
+        "loss": 2.8068695068359375,
+        "step_time_ms": 5.445358753204346
+    },
+    {
         "type": "Convergence",
         "step": 200,
         "train_loss": 2.7185757160186768,
         "val_loss": 2.7053933143615723
+    },
+    {
+        "type": "Performance",
+        "step": 200,
+        "loss": 2.699446439743042,
+        "step_time_ms": 7.720062732696533
+    },
+    {
+        "type": "Performance",
+        "step": 300,
+        "loss": 2.7535459995269775,
+        "step_time_ms": 5.952024459838867
     },
     {
         "type": "Convergence",
@@ -18,15 +42,51 @@
         "val_loss": 2.783388614654541
     },
     {
+        "type": "Performance",
+        "step": 400,
+        "loss": 2.7316887378692627,
+        "step_time_ms": 7.421383857727051
+    },
+    {
+        "type": "Performance",
+        "step": 500,
+        "loss": 2.6984407901763916,
+        "step_time_ms": 4.890439510345459
+    },
+    {
         "type": "Convergence",
         "step": 600,
         "train_loss": 2.710427761077881,
         "val_loss": 2.7183961868286133
     },
     {
+        "type": "Performance",
+        "step": 600,
+        "loss": 2.726391553878784,
+        "step_time_ms": 7.231206893920898
+    },
+    {
+        "type": "Performance",
+        "step": 700,
+        "loss": 2.6684036254882812,
+        "step_time_ms": 5.764007568359375
+    },
+    {
         "type": "Convergence",
         "step": 800,
         "train_loss": 2.683223247528076,
         "val_loss": 2.6784191131591797
+    },
+    {
+        "type": "Performance",
+        "step": 800,
+        "loss": 2.618750810623169,
+        "step_time_ms": 6.926908493041992
+    },
+    {
+        "type": "Performance",
+        "step": 900,
+        "loss": 2.6384575366973877,
+        "step_time_ms": 5.873813629150391
     }
 ]
