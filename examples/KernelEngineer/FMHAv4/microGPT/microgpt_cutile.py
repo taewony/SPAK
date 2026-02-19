@@ -4,7 +4,8 @@ import cuda.tile as ct
 import math
 import time
 
-# --- Inherited from FMHAv4: Optimized Attention Kernel ---
+# --- Optimized Kernels ---
+
 @ct.kernel(occupancy=2)
 def microgpt_attention_kernel(
     Q, K, V, Out, qk_scale_log2: float,
@@ -15,7 +16,10 @@ def microgpt_attention_kernel(
     bid_x, bid_y = ct.bid(0), ct.bid(1)
     batch_idx, head_idx = bid_y // H, bid_y % H
     
-    m_i = ct.full((TILE_M, 1), -math.inf, dtype=ct.float32)
+    # Use float('inf') to avoid TypeInfer errors
+    NEG_INF = -float('inf')
+    
+    m_i = ct.full((TILE_M, 1), NEG_INF, dtype=ct.float32)
     l_i = ct.full((TILE_M, 1), 0.0, dtype=ct.float32)
     acc = ct.full((TILE_M, TILE_D), 0.0, dtype=ct.float32)
 
@@ -35,7 +39,7 @@ def microgpt_attention_kernel(
 
         offs_n = j * TILE_N + offs_n_tile
         mask = offs_m >= offs_n
-        qk = qk + ct.where(mask, 0.0, -math.inf)
+        qk = qk + ct.where(mask, 0.0, NEG_INF)
 
         m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale_log2)
         p = ct.exp2(qk * qk_scale_log2 - m_ij)
@@ -51,7 +55,6 @@ def microgpt_attention_kernel(
     acc = ct.truediv(acc, l_i)
     ct.store(Out, index=(batch_idx, head_idx, bid_x, 0), tile=acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype))
 
-# --- Inherited from rms_norm.py: Persistent RMSNorm ---
 @ct.kernel
 def microgpt_rmsnorm_kernel(X, Y, W, TILE_SIZE_M: ct.Constant[int], TILE_SIZE_N: ct.Constant[int], eps: float):
     bid = ct.bid(0)
@@ -68,7 +71,19 @@ def microgpt_rmsnorm_kernel(X, Y, W, TILE_SIZE_M: ct.Constant[int], TILE_SIZE_N:
         y = (x_f32 * rstd) * ct.astype(w, ct.float32)
         ct.store(Y, index=(current_bid, 0), tile=ct.astype(y, X.dtype))
 
-# --- GPT Block as a proper nn.Module ---
+# --- Helper for cuTile Launches ---
+
+def run_rmsnorm_op(x, weight):
+    M, N = x.reshape(-1, x.shape[-1]).shape
+    y = torch.empty_like(x)
+    # Use small TILE_SIZE_M=4 for stability with small batches
+    grid = (min(80, ct.cdiv(M, 4)),)
+    ct.launch(torch.cuda.current_stream(), grid, microgpt_rmsnorm_kernel, 
+             (x.view(-1, N), y.view(-1, N), weight, 4, N, 1e-5))
+    return y
+
+# --- GPT Modules ---
+
 class Block(nn.Module):
     def __init__(self, n_embd, n_head):
         super().__init__()
@@ -86,34 +101,30 @@ class Block(nn.Module):
     def forward(self, x):
         B, T, C = x.shape
         # Attention path
-        x_norm = self._run_rmsnorm(x, self.ln1)
+        x_norm = run_rmsnorm_op(x, self.ln1)
         q = self.wq(x_norm).view(B, T, self.n_head, -1).transpose(1, 2)
         k = self.wk(x_norm).view(B, T, self.n_head, -1).transpose(1, 2)
         v = self.wv(x_norm).view(B, T, self.n_head, -1).transpose(1, 2)
         
         out = torch.empty_like(q)
-        scale_log2 = (1.0 / math.sqrt(q.size(-1))) * (1.0 / math.log(2))
-        grid = (T // 64 if T >= 64 else 1, B * self.n_head, 1)
+        head_dim = q.size(-1)
+        scale_log2 = (1.0 / math.sqrt(head_dim)) * (1.0 / math.log(2))
+        
+        # Use TILE_M=16 to match block_size, ensuring grid is at least 1
+        tile_m = 16
+        grid = (max(1, ct.cdiv(T, tile_m)), B * self.n_head, 1)
+        
         ct.launch(torch.cuda.current_stream(), grid, microgpt_attention_kernel,
-                 (q, k, v, out, scale_log2, q.size(-1), self.n_head, 64, 64, 2, 5))
+                 (q, k, v, out, scale_log2, head_dim, self.n_head, tile_m, 16, 2, 5))
         
         attn_out = out.transpose(1, 2).reshape(B, T, -1)
         x = x + self.wo(attn_out)
         
         # MLP path
-        x_norm = self._run_rmsnorm(x, self.ln2)
+        x_norm = run_rmsnorm_op(x, self.ln2)
         mlp_h = torch.relu(self.fc1(x_norm))
         x = x + self.fc2(mlp_h)
         return x
-
-    def _run_rmsnorm(self, x, weight):
-        M, N = x.reshape(-1, x.shape[-1]).shape
-        y = torch.empty_like(x)
-        grid = (min(80, (M + 3) // 4),)
-        # PASS RAW VALUES - ct.launch handles the Constant wrapping
-        ct.launch(torch.cuda.current_stream(), grid, microgpt_rmsnorm_kernel, 
-                 (x.view(-1, N), y.view(-1, N), weight, 4, N, 1e-5))
-        return y
 
 class MicroGPT(nn.Module):
     def __init__(self, vocab_size, n_embd, n_head, n_layer, block_size):
@@ -128,16 +139,8 @@ class MicroGPT(nn.Module):
         B, T = idx.shape
         x = self.wte(idx) + self.wpe(torch.arange(T, device=idx.device))
         x = self.blocks(x)
-        x = self._run_rmsnorm(x, self.ln_f)
-        return self.lm_head(idx=x) # Pass by keyword if needed, or just x
-
-    def _run_rmsnorm(self, x, weight):
-        M, N = x.reshape(-1, x.shape[-1]).shape
-        y = torch.empty_like(x)
-        grid = (min(80, (M + 3) // 4),)
-        ct.launch(torch.cuda.current_stream(), grid, microgpt_rmsnorm_kernel, 
-                 (x.view(-1, N), y.view(-1, N), weight, 4, N, 1e-5))
-        return y
+        x = run_rmsnorm_op(x, self.ln_f)
+        return self.lm_head(x)
 
 if __name__ == "__main__":
     device = 'cuda'
