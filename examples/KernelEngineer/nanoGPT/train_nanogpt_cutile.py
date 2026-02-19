@@ -42,7 +42,7 @@ ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torc
 ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype)
 
 # Data loader
-data_dir = os.path.join('nanoGPT', 'data', dataset)
+data_dir = os.path.join(os.path.dirname(__file__), 'data', dataset)
 train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
 val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
 

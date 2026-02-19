@@ -7,7 +7,7 @@ from model import GPT as GPT_Original, GPTConfig as Config_Original
 from nanogpt_cutile import GPT as GPT_CuTile, GPTConfig as Config_CuTile
 
 # -----------------------------------------------------------------------------
-ckpt_path = 'out_nanogpt/ckpt.pt'
+ckpt_path = os.path.join(os.path.dirname(__file__), 'out_nanogpt', 'ckpt.pt')
 device = 'cuda'
 dtype = 'float16'
 # -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ model_orig.load_state_dict(state_dict)
 model_cutile.load_state_dict(state_dict)
 
 # 데이터 인코딩 설정
-meta_path = os.path.join('nanoGPT', 'data', 'shakespeare_char', 'meta.pkl')
+meta_path = os.path.join(os.path.dirname(__file__), 'data', 'shakespeare_char', 'meta.pkl')
 with open(meta_path, 'rb') as f:
     meta = pickle.load(f)
 stoi, itos = meta['stoi'], meta['itos']
