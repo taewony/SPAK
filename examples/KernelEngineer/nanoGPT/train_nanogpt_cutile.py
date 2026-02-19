@@ -18,18 +18,18 @@ n_head = 6
 n_embd = 384
 dropout = 0.0
 bias = False
-learning_rate = 1e-3
-max_iters = 1000
-eval_interval = 200
-eval_iters = 20
+learning_rate = 6e-4 # Match train.py
+max_iters = 5000 # Enough to see real convergence
+eval_interval = 500
+eval_iters = 100
 device = 'cuda'
-dtype = 'float16' # Use float16 for cuTile performance testing
+dtype = 'float16' 
 
 # learning rate decay settings
 decay_lr = True
 warmup_iters = 100
-lr_decay_iters = 1000
-min_lr = 1e-4
+lr_decay_iters = 5000
+min_lr = 6e-5 # learning_rate / 10
 
 # -----------------------------------------------------------------------------
 
