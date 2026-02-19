@@ -134,11 +134,17 @@ for iter_num in range(max_iters):
     scaler.update()
     optimizer.zero_grad(set_to_none=True)
 
-    if iter_num % 10 == 0:
+    if iter_num % 100 == 0:
         t1 = time.time()
-        dt = (t1 - t0) * 1000 / 10 if iter_num > 0 else (t1 - t0) * 1000
+        dt = (t1 - t0) * 1000 / 100 if iter_num > 0 else (t1 - t0) * 1000
         t0 = t1
         print(f"iter {iter_num}: loss {loss.item():.4f}, time {dt:.2f}ms")
+        history.append({
+            "type": "Performance",
+            "step": iter_num,
+            "loss": loss.item(),
+            "step_time_ms": dt
+        })
 
 # Save Trace
 with open("nanogpt_train_trace.json", "w") as f:

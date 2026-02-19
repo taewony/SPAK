@@ -126,7 +126,7 @@ class CausalSelfAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.head_dim = config.n_embd // config.n_head
-        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -float('inf')}
+        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -1e20}
 
     def forward(self, x):
         B, T, C = x.size()
@@ -195,7 +195,7 @@ class Block(nn.Module):
         grid = (min(80, M_padded // tile_m),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
                  (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
-        return y_padded[:M, :N].view(orig_shape)
+        return y_padded[:M, :N].contiguous().view(orig_shape)
 
 class GPT(nn.Module):
     def __init__(self, config):
@@ -257,7 +257,7 @@ class GPT(nn.Module):
         grid = (min(80, M_padded // tile_m),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
                  (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
-        return y_padded[:M, :N].view(orig_shape)
+        return y_padded[:M, :N].contiguous().view(orig_shape)
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
