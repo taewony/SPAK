@@ -1,0 +1,17 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT$ python train_microgpt_cutile.py
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/train_microgpt_cutile.py", line 31, in <module>
+    model = MicroGPT(vocab_size, n_embd, n_head, n_layer, block_size).to(device).half()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/microgpt_cutile.py", line 89, in __init__
+    nn.ModuleDict({
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/container.py", line 545, in __init__
+    self.update(modules)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/container.py", line 617, in update
+    self[key] = module
+    ~~~~^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/container.py", line 552, in __setitem__
+    self.add_module(key, module)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 650, in add_module
+    raise TypeError(f"{torch.typename(module)} is not a Module subclass")
+TypeError: torch.FloatTensor is not a Module subclassx

@@ -84,8 +84,7 @@ perf_trace = {
     "total_time_s": total_time,
     "speedup_vs_baseline": 5.2 / (avg_step) if avg_step > 0 else 0 # 5.2ms is baseline estimate
 }
-print(f"
-__SPAK_TRACE__{json.dumps(perf_trace)}")
+print(f"__SPAK_TRACE__{json.dumps(perf_trace)}")
 
 # Save history for reflection
 with open("microgpt_train_trace.json", "w") as f:
