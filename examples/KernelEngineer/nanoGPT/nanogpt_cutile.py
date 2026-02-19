@@ -9,6 +9,41 @@ import cuda.tile as ct
 def next_pow2(n):
     return 2**(n - 1).bit_length()
 
+class LayerNorm(nn.Module):
+    """ LayerNorm but with an optional bias. PyTorch doesn't support simply bias=False """
+    def __init__(self, ndim, bias):
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(ndim))
+        self.bias = nn.Parameter(torch.zeros(ndim)) if bias else None
+
+    def forward(self, x):
+        return _run_layernorm_static(x, self.weight, self.bias)
+
+def _run_layernorm_static(x, weight, bias):
+    orig_shape = x.shape
+    x_flat = x.view(-1, x.size(-1))
+    M, N = x_flat.shape
+    
+    tile_m = 4
+    tile_n = next_pow2(N)
+    M_padded = math.ceil(M / tile_m) * tile_m
+    
+    # Pad input, weight, bias to tile_n and M_padded
+    x_padded = F.pad(x_flat, (0, tile_n - N, 0, M_padded - M))
+    w_padded = F.pad(weight, (0, tile_n - N))
+    # Handle optional bias
+    if bias is not None:
+        b_padded = F.pad(bias, (0, tile_n - N))
+    else:
+        b_padded = torch.zeros(tile_n, dtype=x.dtype, device=x.device)
+    
+    y_padded = torch.empty((M_padded, tile_n), dtype=x.dtype, device=x.device)
+    
+    grid = (min(80, M_padded // tile_m),)
+    ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
+             (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
+    return y_padded[:M, :N].contiguous().view(orig_shape)
+
 # ============================================================
 # 1. OPTIMIZED KERNELS
 # ============================================================
@@ -41,11 +76,12 @@ def nanogpt_attention_kernel(
         qk = ct.mma(q, k, qk)
 
         offs_n = j * TILE_N + offs_n_tile
-        mask = offs_m >= offs_n
-        qk = qk + ct.where(mask, 0.0, neg_inf)
+        # Mask both causal and sequence length bounds
+        mask = (offs_m >= offs_n) & (offs_n < k_seqlen)
+        qk = qk + ct.where(mask, 0.0, -math.inf)
 
+        # Numerical stability: multiply scale after max to match FMHAv4 and avoid overflow
         m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale_log2)
-        m_ij = max(m_ij, neg_inf) 
         
         p = ct.exp2(qk * qk_scale_log2 - m_ij)
         l_ij = ct.sum(p, axis=-1, keepdims=True)
@@ -126,7 +162,7 @@ class CausalSelfAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.head_dim = config.n_embd // config.n_head
-        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -1e20}
+        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -float('inf')}
 
     def forward(self, x):
         B, T, C = x.size()
@@ -160,42 +196,21 @@ class MLP(nn.Module):
 
     def forward(self, x):
         x = self.c_fc(x)
-        x = F.gelu(x, approximate='tanh')
+        x = F.gelu(x) # Match model.py exactly
         return self.dropout(self.c_proj(x))
 
 class Block(nn.Module):
     def __init__(self, config):
         super().__init__()
-        self.ln_1 = nn.LayerNorm(config.n_embd)
+        self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
         self.attn = CausalSelfAttention(config)
-        self.ln_2 = nn.LayerNorm(config.n_embd)
+        self.ln_2 = LayerNorm(config.n_embd, bias=config.bias)
         self.mlp = MLP(config)
 
     def forward(self, x):
-        x = x + self.attn(self._run_layernorm(x, self.ln_1))
-        x = x + self.mlp(self._run_layernorm(x, self.ln_2))
+        x = x + self.attn(self.ln_1(x))
+        x = x + self.mlp(self.ln_2(x))
         return x
-
-    def _run_layernorm(self, x, ln_mod):
-        orig_shape = x.shape
-        x_flat = x.view(-1, x.size(-1))
-        M, N = x_flat.shape
-        
-        tile_m = 4
-        tile_n = next_pow2(N)
-        M_padded = math.ceil(M / tile_m) * tile_m
-        
-        # Pad input, weight, bias to tile_n and M_padded
-        x_padded = F.pad(x_flat, (0, tile_n - N, 0, M_padded - M))
-        w_padded = F.pad(ln_mod.weight, (0, tile_n - N))
-        b_padded = F.pad(ln_mod.bias, (0, tile_n - N))
-        
-        y_padded = torch.empty((M_padded, tile_n), dtype=x.dtype, device=x.device)
-        
-        grid = (min(80, M_padded // tile_m),)
-        ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
-        return y_padded[:M, :N].contiguous().view(orig_shape)
 
 class GPT(nn.Module):
     def __init__(self, config):
@@ -206,7 +221,7 @@ class GPT(nn.Module):
             wpe = nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
             h = nn.ModuleList([Block(config) for _ in range(config.n_layer)]),
-            ln_f = nn.LayerNorm(config.n_embd),
+            ln_f = LayerNorm(config.n_embd, bias=config.bias),
         ))
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
         self.transformer.wte.weight = self.lm_head.weight 
@@ -231,33 +246,12 @@ class GPT(nn.Module):
         x = self.transformer.drop(tok_emb + pos_emb)
         for block in self.transformer.h:
             x = block(x)
-        x = self._run_layernorm(x, self.transformer.ln_f)
+        x = self.transformer.ln_f(x)
         logits = self.lm_head(x)
         loss = None
         if targets is not None:
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         return logits, loss
-
-    def _run_layernorm(self, x, ln_mod):
-        orig_shape = x.shape
-        x_flat = x.view(-1, x.size(-1))
-        M, N = x_flat.shape
-        
-        tile_m = 4
-        tile_n = next_pow2(N)
-        M_padded = math.ceil(M / tile_m) * tile_m
-        
-        # Pad input, weight, bias to tile_n and M_padded
-        x_padded = F.pad(x_flat, (0, tile_n - N, 0, M_padded - M))
-        w_padded = F.pad(ln_mod.weight, (0, tile_n - N))
-        b_padded = F.pad(ln_mod.bias, (0, tile_n - N))
-        
-        y_padded = torch.empty((M_padded, tile_n), dtype=x.dtype, device=x.device)
-        
-        grid = (min(80, M_padded // tile_m),)
-        ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
-        return y_padded[:M, :N].contiguous().view(orig_shape)
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
