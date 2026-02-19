@@ -9,20 +9,22 @@ import sys
 # --- Dynamic TileGym Path Handling ---
 tilegym_src = os.path.join(os.path.dirname(__file__), 'TileGym', 'src')
 if os.path.exists(tilegym_src):
-    sys.path.append(tilegym_src)
-    print(f"[INFO] Added {tilegym_src} to sys.path.")
+    # Use insert(0) to override any installed tilegym versions
+    sys.path.insert(0, tilegym_src)
+    print(f"[INFO] Added {tilegym_src} to the front of sys.path.")
 
 # Direct Import from verified sub-packages
 try:
     from tilegym.ops.cutile import attention as attention_kernel
-    from tilegym.ops.cutile import layer_norm_legacy as layernorm_kernel
-    # Wrap them into the expected functional interface if they differ from dispatch
+    from tilegym.ops.cutile import layer_norm_legacy as layernorm_module
+    
     def fmha(q, k, v, is_causal=True, scaling=None, **kwargs):
         # Using the direct kernel interface
         return attention_kernel.tile_fmha(q, k, v, scaling=scaling, is_causal=is_causal, **kwargs)
     
     def layer_norm_legacy(x, weight, bias, eps, **kwargs):
-        return layernorm_kernel.layer_norm_legacy(x, None, weight, bias, eps, **kwargs)
+        # The function is named the same as the module
+        return layernorm_module.layer_norm_legacy(x, None, weight, bias, eps, **kwargs)
     
     print("[INFO] Successfully activated cuTile high-performance backend.")
 except Exception as e:
