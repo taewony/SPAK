@@ -44,7 +44,7 @@ with open(meta_path, 'rb') as f:
 stoi, itos = meta['stoi'], meta['itos']
 decode = lambda l: ''.join([itos[i] for i in l])
 
-start_ids = [stoi['']]
+start_ids = [stoi[' ']]
 x = torch.tensor(start_ids, dtype=torch.long, device=device)[None, ...]
 
 print(f"--- Comparison: implementation vs implementation (Same Weights) ---")
