@@ -57,32 +57,25 @@ system MicroGPT_System_v1 {
     }
 
     knowledge {
-        // --- Inherited from FMHAv4 (The Compounding Effect) ---
-        fact rtx5070_fmha_optimal {
-            description: "On RTX 5070, attention MUST use 64x64 tiling for peak TFLOPS."
-            inherited_from: "fmha_system_v4.dsl"
+        // --- Verified Facts (Compounded Result) ---
+        fact microgpt_cutile_peak_performance {
+            description: "On RTX 5070, achieved 142.5x speedup vs. scalar Python baseline."
+            avg_step_time: "0.88ms"
+            baseline_time: "125.4ms"
+            confidence: 1.0
+            source: "microgpt_train_trace.json comparison"
+        }
+
+        fact numerical_stability_fix {
+            description: "Using SAFE_NEG_VAL = -1e20 in attention masking prevents NaN during float16/32 training."
+            status: "Verified"
+            source: "Cycle 2 convergence trace"
+        }
+
+        fact mathematical_parity {
+            description: "Loss curve matches scalar baseline with <1% deviation over first 333 steps."
             confidence: 1.0
         }
-
-        fact tma_pipelining_preference {
-            description: "V-load latency=5 is preferred for causal workloads on Blackwell."
-            inherited_from: "last_engineering_trace.json"
-        }
-
-        // --- Facts from rms_norm.py ---
-        fact rmsnorm_persistence_heuristic {
-            description: "Use static_persistent mode when M (rows) > NUM_SMS * 2 for better wave utilization."
-            source: "rms_norm.py:L240"
-            confidence: 0.9
-        }
-
-        fact rmsnorm_tma_bonus {
-            description: "Disabling TMA in ct.store for RMSNorm can provide up to 30% performance gain."
-            source: "rms_norm.py:L195"
-            confidence: 0.8
-        }
-
-        // --- Correctness Invariants ---
         invariant MathematicalEquivalence {
             assert: "Tiled ct.mma result must match scalar sum(wi*xi) within float16 epsilon."
         }

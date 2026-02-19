@@ -1,3 +1,6 @@
+from Windows PC ip = 203.234.10.84
+to W17 401호 강의자 PC ip = 172.21.97.105
+
 linux@localhost:~/taewony/SPAK$ ifconfig
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 172.21.97.105  netmask 255.255.240.0  broadcast 172.21.111.255

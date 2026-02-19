@@ -90,3 +90,29 @@ print(f"__SPAK_TRACE__{json.dumps(perf_trace)}")
 # Save history for reflection
 with open("microgpt_train_trace.json", "w") as f:
     json.dump(history, f, indent=4)
+
+# --- 4. Inference (Identical to microgpt.py) ---
+temperature = 0.5
+idx_to_char = {i: ch for ch, i in char_to_idx.items()}
+print("\n--- inference (new, hallucinated names) ---")
+
+model.eval() # Switch to evaluation mode
+for sample_idx in range(20):
+    idx = torch.tensor([[BOS]], device=device) # Start with BOS
+    sample = []
+    for pos_id in range(block_size):
+        with torch.no_grad():
+            logits = model(idx[:, -block_size:]) # Respect block size
+        # Focus on the last token's logits
+        last_logits = logits[0, -1, :] / temperature
+        probs = torch.softmax(last_logits, dim=-1)
+        
+        # Sample from the distribution
+        next_token = torch.multinomial(probs, num_samples=1).item()
+        
+        if next_token == BOS:
+            break
+        sample.append(idx_to_char[next_token])
+        idx = torch.cat((idx, torch.tensor([[next_token]], device=device)), dim=1)
+        
+    print(f"sample {sample_idx+1:2d}: {''.join(sample)}")

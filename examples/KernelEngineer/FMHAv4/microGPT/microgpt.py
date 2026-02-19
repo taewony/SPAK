@@ -149,9 +149,13 @@ m = [0.0] * len(params) # first moment buffer
 v = [0.0] * len(params) # second moment buffer
 
 # Repeat in sequence
-num_steps = 1000 # number of training steps
-for step in range(num_steps):
+num_steps = 333 # Match cuTile version
+history = []
+import time
+import json
 
+for step in range(num_steps):
+    t0 = time.time()
     # Take single document, tokenize it, surround it with BOS special token on both sides
     doc = docs[step % len(docs)]
     tokens = [BOS] + [uchars.index(ch) for ch in doc] + [BOS]
@@ -181,7 +185,12 @@ for step in range(num_steps):
         p.data -= lr_t * m_hat / (v_hat ** 0.5 + eps_adam)
         p.grad = 0
 
+    step_time = (time.time() - t0) * 1000
     print(f"step {step+1:4d} / {num_steps:4d} | loss {loss.data:.4f}", end='\r')
+    history.append({"type": "Convergence", "step": step, "loss": loss.data, "step_time_ms": step_time})
+
+with open("microgpt_baseline_trace.json", "w") as f:
+    json.dump(history, f, indent=4)
 
 # Inference: may the model babble back to us
 temperature = 0.5 # in (0, 1], control the "creativity" of generated text, low to high

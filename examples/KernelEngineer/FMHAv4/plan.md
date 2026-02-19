@@ -62,16 +62,23 @@ Compound Engineering의 핵심 동력으로, 각 사이클에서 얻은 통찰�
 - [x] Extend `system_model` to support `design_space` and `tuning_space` in `grammar.lark`.
 - [x] Created `fmha_system_v4.dsl` with hardware-verified rules for RTX 5070.
 
-### Phase 7: Knowledge Transfer to MicroGPT (NEW)
-**Objective**: Demonstrate that FMHAv4 insights accelerate the development of a full transformer model.
-- [x] **DSL Initialization**: Created `microgpt_system_v1.dsl` inheriting Blackwell TMA and Tiling rules.
-- [ ] **Kernel Generation**: Implement Tiled Linear and RMSNorm kernels based on `microgpt.py` logic.
-- [ ] **System Integration**: Replace the scalar `Value` autograd with a tensor-based cuTile training loop.
-- [ ] **Fidelity Proof**: Achieve convergence on `names.txt` while maintaining the 1.1x speedup advantage on the attention blocks.
+### Phase 7: Knowledge Transfer to MicroGPT (COMPLETED)
+... (omitted) ...
+
+### Phase 8: Production-Grade NanoGPT (ACTIVE)
+**Objective**: Evolve the cognitive model to handle production-level GPT-2 architectures (768 dim, LayerNorm, GELU).
+- [x] **DSL Initialization**: Created `NanoGPT_System_v2.dsl` with production invariants.
+- [x] **Kernel Implementation**: Developed `nanogpt_cutile.py` using `TileGym` modular ops.
+- [ ] **Data Preparation**: Run `data/shakespeare_char/prepare.py` to generate tokens.
+- [ ] **Experimental Validation**: Execute `train_nanogpt_cutile.py` to verify convergence and MFU (Model FLOPs Utilization).
+- [ ] **Baseline Comparison**: Compare `SPAK+cuTile` against PyTorch `compile` mode.
 
 ---
 
-## 🎓 Academic Submission Strategy
+## 🛠 Active Task List (Immediate Actions)
+- [x] **Generate NanoGPT cuTile**: Created `nanogpt_cutile.py` with weight-tying and modular ops.
+- [ ] **Draft Training Harness**: Create `train_nanogpt_cutile.py` based on `nanoGPT/train.py`.
+- [ ] **Distributed Sweep**: User runs training on RTX 5070 node using `shakespeare_char`.
 ... (omitted for brevity) ...
 
 ---
