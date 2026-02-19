@@ -116,5 +116,4 @@ for iter_num in range(max_iters):
 with open("nanogpt_train_trace.json", "w") as f:
     json.dump(history, f, indent=4)
 
-print("
-Training Complete. Trace saved to nanogpt_train_trace.json")
+print("Training Complete. Trace saved to nanogpt_train_trace.json")
