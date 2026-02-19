@@ -99,10 +99,7 @@ def nanogpt_layernorm_kernel(
         rstd = ct.rsqrt(var + eps)
         
         y = (centered * rstd) * ct.astype(w, ct.float32) + ct.astype(b, ct.float32)
-        # Fix: Extract the valid portion to avoid overwriting next rows due to TILE_SIZE_N > N
-        # We must use ct.extract because y[:, :N] syntax is not supported in cuTile kernels.
-        y_valid = ct.extract(y, (0, 0), shape=(TILE_SIZE_M, N))
-        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y_valid, X.dtype))
+        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y, X.dtype))
 
 # ============================================================
 # 2. GPT-2 ARCHITECTURE
@@ -180,16 +177,25 @@ class Block(nn.Module):
         return x
 
     def _run_layernorm(self, x, ln_mod):
-        M, N = x.view(-1, x.size(-1)).shape
-        tile_m = 4
-        M_padded = math.ceil(M / tile_m) * tile_m
-        y_padded = torch.empty((M_padded, N), dtype=x.dtype, device=x.device)
+        orig_shape = x.shape
+        x_flat = x.view(-1, x.size(-1))
+        M, N = x_flat.shape
         
+        tile_m = 4
         tile_n = next_pow2(N)
+        M_padded = math.ceil(M / tile_m) * tile_m
+        
+        # Pad input, weight, bias to tile_n and M_padded
+        x_padded = F.pad(x_flat, (0, tile_n - N, 0, M_padded - M))
+        w_padded = F.pad(ln_mod.weight, (0, tile_n - N))
+        b_padded = F.pad(ln_mod.bias, (0, tile_n - N))
+        
+        y_padded = torch.empty((M_padded, tile_n), dtype=x.dtype, device=x.device)
+        
         grid = (min(80, M_padded // tile_m),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x.view(-1, N), y_padded, ln_mod.weight, ln_mod.bias, N, tile_m, tile_n, 1e-5))
-        return y_padded[:M, :].view_as(x)
+                 (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
+        return y_padded[:M, :N].view(orig_shape)
 
 class GPT(nn.Module):
     def __init__(self, config):
@@ -233,16 +239,25 @@ class GPT(nn.Module):
         return logits, loss
 
     def _run_layernorm(self, x, ln_mod):
-        M, N = x.view(-1, x.size(-1)).shape
-        tile_m = 4
-        M_padded = math.ceil(M / tile_m) * tile_m
-        y_padded = torch.empty((M_padded, N), dtype=x.dtype, device=x.device)
+        orig_shape = x.shape
+        x_flat = x.view(-1, x.size(-1))
+        M, N = x_flat.shape
         
+        tile_m = 4
         tile_n = next_pow2(N)
+        M_padded = math.ceil(M / tile_m) * tile_m
+        
+        # Pad input, weight, bias to tile_n and M_padded
+        x_padded = F.pad(x_flat, (0, tile_n - N, 0, M_padded - M))
+        w_padded = F.pad(ln_mod.weight, (0, tile_n - N))
+        b_padded = F.pad(ln_mod.bias, (0, tile_n - N))
+        
+        y_padded = torch.empty((M_padded, tile_n), dtype=x.dtype, device=x.device)
+        
         grid = (min(80, M_padded // tile_m),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x.view(-1, N), y_padded, ln_mod.weight, ln_mod.bias, N, tile_m, tile_n, 1e-5))
-        return y_padded[:M, :].view_as(x)
+                 (x_padded, y_padded, w_padded, b_padded, N, tile_m, tile_n, 1e-5))
+        return y_padded[:M, :N].view(orig_shape)
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
