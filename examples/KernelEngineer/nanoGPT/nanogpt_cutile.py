@@ -183,7 +183,7 @@ class CausalSelfAttention(nn.Module):
                  (q, k, v, out_padded, scale_log2, self.config_delta["neg_inf"], 
                   self.head_dim, self.n_head, tile_m, self.config_delta["tile_n"], 2, 5))
 
-        out = out_padded[:, :, :T, :]
+        out = out_padded[:, :, :T, :].contiguous()
         y = out.transpose(1, 2).contiguous().view(B, T, C)
         return self.resid_dropout(self.c_proj(y))
 
@@ -247,10 +247,14 @@ class GPT(nn.Module):
         for block in self.transformer.h:
             x = block(x)
         x = self.transformer.ln_f(x)
-        logits = self.lm_head(x)
-        loss = None
+        
         if targets is not None:
+            logits = self.lm_head(x)
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
+        else:
+            # inference-time mini-optimization: only forward the lm_head on the very last position
+            logits = self.lm_head(x[:, [-1], :]) # note: using list [-1] to preserve the time dim
+            loss = None
         return logits, loss
 
     @torch.no_grad()
@@ -258,6 +262,7 @@ class GPT(nn.Module):
         for _ in range(max_new_tokens):
             idx_cond = idx if idx.size(1) <= self.config.block_size else idx[:, -self.config.block_size:]
             logits, _ = self(idx_cond)
+            # logits is (B, 1, V) due to optimization in forward()
             logits = logits[:, -1, :] / temperature
             if top_k is not None:
                 v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
