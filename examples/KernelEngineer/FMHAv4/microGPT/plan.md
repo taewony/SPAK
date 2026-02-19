@@ -6,11 +6,13 @@ Transform Karpathy's `microgpt.py` (atomic scalar autograd) into a high-performa
 ## 🏗 Engineering Strategy
 
 ### 1. Semantic Lifting & Inheritance
-- **Attention**: Inherit the "Blackwell-Optimal" configuration (64x64 tiles, TMA latency hints K:2/V:5) from FMHAv4.
-- **Normalization**: Integrate the persistent `RMSNorm` kernel from NVIDIA `TileGym`, applying the "Rows > 2*SMS" persistence heuristic.
-- **MLP**: Vectorize scalar loops into `ct.mma` (Tiled MatMul) operations.
+... (omitted) ...
 
-### 2. Dual-Loop Cognitive Goals
+### 2. Sanity Verification (Pre-Sync)
+- **Logical Parity**: Every new cuTile kernel/block must pass `microgpt_sanity_check.py` against a PyTorch reference.
+- **Initialization Check**: Verify `.to(device)` and `.half()` parameter registration on the Conceptual Node.
+
+### 3. Dual-Loop Cognitive Goals
 - **Outer Loop (Architect)**: Evolve `microgpt_system_v1.dsl` to hold the "Transferred Knowledge" from FMHA to a full model context.
 - **Inner Loop (Engineer)**: Verify convergence on `names.txt` and measure "Apple-to-Apple" speedup against the scalar baseline.
 
@@ -24,8 +26,10 @@ Transform Karpathy's `microgpt.py` (atomic scalar autograd) into a high-performa
 - [x] **Training Harness**: Developed `train_microgpt_cutile.py` matching Karpathy's hyperparams and data loading.
 
 ### Phase 2: Distributed Execution (ACTIVE)
-- [ ] **Baseline Sweep**: Run original `microgpt.py` to establish exact CPU ms/step.
-- [ ] **Tiled Sweep**: Run `train_microgpt_cutile.py` on the RTX 5070 node.
+- [x] **Initialization Check**: Passed on Conceptual Node (Windows PC).
+- [ ] **Baseline Sweep**: Run original `microgpt.py` to establish CPU ms/step.
+- [ ] **Parity Check**: Run `microgpt_sanity_check.py` on RTX 5070 Node.
+- [ ] **Tiled Training**: Run `train_microgpt_cutile.py` on the RTX 5070 Node.
 - [ ] **Trace Synchronization**: Ingest `microgpt_train_trace.json`.
 
 ### Phase 3: Knowledge Crystallization

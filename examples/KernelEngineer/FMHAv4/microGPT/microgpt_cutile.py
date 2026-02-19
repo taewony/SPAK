@@ -53,7 +53,7 @@ def microgpt_attention_kernel(
 
 # --- Inherited from rms_norm.py: Persistent RMSNorm ---
 @ct.kernel
-def microgpt_rmsnorm_kernel(X, Y, W, TILE_SIZE_M: ct.Constant[int], TILE_SIZE_N: ct.Constant[int], eps: ct.Constant[float]):
+def microgpt_rmsnorm_kernel(X, Y, W, TILE_SIZE_M: ct.Constant[int], TILE_SIZE_N: ct.Constant[int], eps: float):
     bid = ct.bid(0)
     M, N = X.shape[0], X.shape[1]
     upper_bound = ct.cdiv(M, TILE_SIZE_M)
@@ -109,10 +109,10 @@ class Block(nn.Module):
     def _run_rmsnorm(self, x, weight):
         M, N = x.reshape(-1, x.shape[-1]).shape
         y = torch.empty_like(x)
-        # Small TILE_M=4 for RMSNorm stability
         grid = (min(80, (M + 3) // 4),)
+        # PASS RAW VALUES - ct.launch handles the Constant wrapping
         ct.launch(torch.cuda.current_stream(), grid, microgpt_rmsnorm_kernel, 
-                 (x.view(-1, N), y.view(-1, N), weight, 4, ct.Constant(N), 1e-5))
+                 (x.view(-1, N), y.view(-1, N), weight, 4, N, 1e-5))
         return y
 
 class MicroGPT(nn.Module):
@@ -129,14 +129,14 @@ class MicroGPT(nn.Module):
         x = self.wte(idx) + self.wpe(torch.arange(T, device=idx.device))
         x = self.blocks(x)
         x = self._run_rmsnorm(x, self.ln_f)
-        return self.lm_head(x)
+        return self.lm_head(idx=x) # Pass by keyword if needed, or just x
 
     def _run_rmsnorm(self, x, weight):
         M, N = x.reshape(-1, x.shape[-1]).shape
         y = torch.empty_like(x)
         grid = (min(80, (M + 3) // 4),)
         ct.launch(torch.cuda.current_stream(), grid, microgpt_rmsnorm_kernel, 
-                 (x.view(-1, N), y.view(-1, N), weight, 4, ct.Constant(N), 1e-5))
+                 (x.view(-1, N), y.view(-1, N), weight, 4, N, 1e-5))
         return y
 
 if __name__ == "__main__":
