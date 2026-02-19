@@ -2,601 +2,6001 @@
     {
         "type": "Convergence",
         "step": 0,
-        "loss": NaN,
-        "step_time_ms": 810.4126453399658
+        "loss": 3.3306663036346436,
+        "step_time_ms": 707.2091102600098
     },
     {
         "type": "Convergence",
         "step": 1,
-        "loss": NaN,
-        "step_time_ms": 2.256155014038086
+        "loss": 3.477503776550293,
+        "step_time_ms": 1.6663074493408203
     },
     {
         "type": "Convergence",
         "step": 2,
-        "loss": NaN,
-        "step_time_ms": 1.180887222290039
+        "loss": 3.5832042694091797,
+        "step_time_ms": 1.4071464538574219
     },
     {
         "type": "Convergence",
         "step": 3,
-        "loss": NaN,
-        "step_time_ms": 1.0311603546142578
+        "loss": 3.2330658435821533,
+        "step_time_ms": 1.4109611511230469
     },
     {
         "type": "Convergence",
         "step": 4,
-        "loss": NaN,
-        "step_time_ms": 0.9260177612304688
+        "loss": 3.1865172386169434,
+        "step_time_ms": 1.341104507446289
     },
     {
         "type": "Convergence",
         "step": 5,
-        "loss": NaN,
-        "step_time_ms": 1.0161399841308594
+        "loss": 3.301055908203125,
+        "step_time_ms": 0.8788108825683594
     },
     {
         "type": "Convergence",
         "step": 6,
-        "loss": NaN,
-        "step_time_ms": 0.9357929229736328
+        "loss": 3.2184321880340576,
+        "step_time_ms": 1.1889934539794922
     },
     {
         "type": "Convergence",
         "step": 7,
-        "loss": NaN,
-        "step_time_ms": 0.8716583251953125
+        "loss": 3.2300925254821777,
+        "step_time_ms": 0.9379386901855469
     },
     {
         "type": "Convergence",
         "step": 8,
-        "loss": NaN,
-        "step_time_ms": 0.9121894836425781
+        "loss": 3.1415514945983887,
+        "step_time_ms": 0.8375644683837891
     },
     {
         "type": "Convergence",
         "step": 9,
-        "loss": NaN,
-        "step_time_ms": 0.9191036224365234
+        "loss": 3.37092924118042,
+        "step_time_ms": 0.7927417755126953
     },
     {
         "type": "Convergence",
         "step": 10,
-        "loss": NaN,
-        "step_time_ms": 0.8828639984130859
+        "loss": 3.234431028366089,
+        "step_time_ms": 0.8275508880615234
     },
     {
         "type": "Convergence",
         "step": 11,
-        "loss": NaN,
-        "step_time_ms": 0.9324550628662109
+        "loss": 3.3299763202667236,
+        "step_time_ms": 0.9958744049072266
     },
     {
         "type": "Convergence",
         "step": 12,
-        "loss": NaN,
-        "step_time_ms": 1.0275840759277344
+        "loss": 3.011258602142334,
+        "step_time_ms": 0.9777545928955078
     },
     {
         "type": "Convergence",
         "step": 13,
-        "loss": NaN,
-        "step_time_ms": 1.0676383972167969
+        "loss": 3.4176487922668457,
+        "step_time_ms": 0.9751319885253906
     },
     {
         "type": "Convergence",
         "step": 14,
-        "loss": NaN,
-        "step_time_ms": 0.9088516235351562
+        "loss": 3.299375534057617,
+        "step_time_ms": 1.329660415649414
     },
     {
         "type": "Convergence",
         "step": 15,
-        "loss": NaN,
-        "step_time_ms": 1.1096000671386719
+        "loss": 3.020763874053955,
+        "step_time_ms": 1.1506080627441406
     },
     {
         "type": "Convergence",
         "step": 16,
-        "loss": NaN,
-        "step_time_ms": 0.8563995361328125
+        "loss": 3.0162112712860107,
+        "step_time_ms": 0.92315673828125
     },
     {
         "type": "Convergence",
         "step": 17,
-        "loss": NaN,
-        "step_time_ms": 0.7731914520263672
+        "loss": 3.106595516204834,
+        "step_time_ms": 1.222372055053711
     },
     {
         "type": "Convergence",
         "step": 18,
-        "loss": NaN,
-        "step_time_ms": 0.7290840148925781
+        "loss": 3.5015008449554443,
+        "step_time_ms": 0.8592605590820312
     },
     {
         "type": "Convergence",
         "step": 19,
-        "loss": NaN,
-        "step_time_ms": 0.8461475372314453
+        "loss": 2.88982892036438,
+        "step_time_ms": 1.2271404266357422
     },
     {
         "type": "Convergence",
         "step": 20,
-        "loss": NaN,
-        "step_time_ms": 0.7834434509277344
+        "loss": 3.3509769439697266,
+        "step_time_ms": 1.1377334594726562
     },
     {
         "type": "Convergence",
         "step": 21,
-        "loss": NaN,
-        "step_time_ms": 0.774383544921875
+        "loss": 2.840226411819458,
+        "step_time_ms": 1.2941360473632812
     },
     {
         "type": "Convergence",
         "step": 22,
-        "loss": NaN,
-        "step_time_ms": 0.7636547088623047
+        "loss": 2.8645942211151123,
+        "step_time_ms": 1.1556148529052734
     },
     {
         "type": "Convergence",
         "step": 23,
-        "loss": NaN,
-        "step_time_ms": 0.7619857788085938
+        "loss": 2.7572779655456543,
+        "step_time_ms": 0.9000301361083984
     },
     {
         "type": "Convergence",
         "step": 24,
-        "loss": NaN,
-        "step_time_ms": 0.7522106170654297
+        "loss": 3.1333837509155273,
+        "step_time_ms": 1.188039779663086
     },
     {
         "type": "Convergence",
         "step": 25,
-        "loss": NaN,
-        "step_time_ms": 0.7538795471191406
+        "loss": 3.0926201343536377,
+        "step_time_ms": 0.7455348968505859
     },
     {
         "type": "Convergence",
         "step": 26,
-        "loss": NaN,
-        "step_time_ms": 0.75531005859375
+        "loss": 3.0597872734069824,
+        "step_time_ms": 0.7307529449462891
     },
     {
         "type": "Convergence",
         "step": 27,
-        "loss": NaN,
-        "step_time_ms": 0.7448196411132812
+        "loss": 3.4485721588134766,
+        "step_time_ms": 0.9024143218994141
     },
     {
         "type": "Convergence",
         "step": 28,
-        "loss": NaN,
-        "step_time_ms": 0.7922649383544922
+        "loss": 2.8647046089172363,
+        "step_time_ms": 1.1625289916992188
     },
     {
         "type": "Convergence",
         "step": 29,
-        "loss": NaN,
-        "step_time_ms": 0.797271728515625
+        "loss": 3.002178430557251,
+        "step_time_ms": 0.8132457733154297
     },
     {
         "type": "Convergence",
         "step": 30,
-        "loss": NaN,
-        "step_time_ms": 0.8373260498046875
+        "loss": 3.225038766860962,
+        "step_time_ms": 1.5482902526855469
     },
     {
         "type": "Convergence",
         "step": 31,
-        "loss": NaN,
-        "step_time_ms": 0.7796287536621094
+        "loss": 3.105534553527832,
+        "step_time_ms": 1.2507438659667969
     },
     {
         "type": "Convergence",
         "step": 32,
-        "loss": NaN,
-        "step_time_ms": 0.8242130279541016
+        "loss": 3.058016538619995,
+        "step_time_ms": 1.165151596069336
     },
     {
         "type": "Convergence",
         "step": 33,
-        "loss": NaN,
-        "step_time_ms": 0.7529258728027344
+        "loss": 2.8110122680664062,
+        "step_time_ms": 0.8862018585205078
     },
     {
         "type": "Convergence",
         "step": 34,
-        "loss": NaN,
-        "step_time_ms": 0.7402896881103516
+        "loss": 2.8302829265594482,
+        "step_time_ms": 0.9500980377197266
     },
     {
         "type": "Convergence",
         "step": 35,
-        "loss": NaN,
-        "step_time_ms": 0.7281303405761719
+        "loss": 3.1026363372802734,
+        "step_time_ms": 1.210927963256836
     },
     {
         "type": "Convergence",
         "step": 36,
-        "loss": NaN,
-        "step_time_ms": 0.7450580596923828
+        "loss": 2.656240940093994,
+        "step_time_ms": 0.8876323699951172
     },
     {
         "type": "Convergence",
         "step": 37,
-        "loss": NaN,
-        "step_time_ms": 0.7450580596923828
+        "loss": 3.323033094406128,
+        "step_time_ms": 1.1227130889892578
     },
     {
         "type": "Convergence",
         "step": 38,
-        "loss": NaN,
-        "step_time_ms": 0.8313655853271484
+        "loss": 2.69840669631958,
+        "step_time_ms": 0.7071495056152344
     },
     {
         "type": "Convergence",
         "step": 39,
-        "loss": NaN,
-        "step_time_ms": 0.8170604705810547
+        "loss": 3.3586997985839844,
+        "step_time_ms": 0.7281303405761719
     },
     {
         "type": "Convergence",
         "step": 40,
-        "loss": NaN,
-        "step_time_ms": 0.7593631744384766
+        "loss": 3.138662099838257,
+        "step_time_ms": 0.7116794586181641
     },
     {
         "type": "Convergence",
         "step": 41,
-        "loss": NaN,
-        "step_time_ms": 0.8397102355957031
+        "loss": 2.7095465660095215,
+        "step_time_ms": 0.8771419525146484
     },
     {
         "type": "Convergence",
         "step": 42,
-        "loss": NaN,
-        "step_time_ms": 0.766754150390625
+        "loss": 2.915092706680298,
+        "step_time_ms": 1.1973381042480469
     },
     {
         "type": "Convergence",
         "step": 43,
-        "loss": NaN,
-        "step_time_ms": 0.7390975952148438
+        "loss": 3.0146634578704834,
+        "step_time_ms": 0.7510185241699219
     },
     {
         "type": "Convergence",
         "step": 44,
-        "loss": NaN,
-        "step_time_ms": 0.7395744323730469
+        "loss": 2.4771366119384766,
+        "step_time_ms": 0.7393360137939453
     },
     {
         "type": "Convergence",
         "step": 45,
-        "loss": NaN,
-        "step_time_ms": 0.7729530334472656
+        "loss": 3.171133518218994,
+        "step_time_ms": 0.8838176727294922
     },
     {
         "type": "Convergence",
         "step": 46,
-        "loss": NaN,
-        "step_time_ms": 0.7331371307373047
+        "loss": 2.728577136993408,
+        "step_time_ms": 1.1713504791259766
     },
     {
         "type": "Convergence",
         "step": 47,
-        "loss": NaN,
-        "step_time_ms": 1.3115406036376953
+        "loss": 2.8678033351898193,
+        "step_time_ms": 1.0426044464111328
     },
     {
         "type": "Convergence",
         "step": 48,
-        "loss": NaN,
-        "step_time_ms": 0.9143352508544922
+        "loss": 2.9321908950805664,
+        "step_time_ms": 1.1637210845947266
     },
     {
         "type": "Convergence",
         "step": 49,
-        "loss": NaN,
-        "step_time_ms": 0.8726119995117188
+        "loss": 2.7482893466949463,
+        "step_time_ms": 1.0793209075927734
     },
     {
         "type": "Convergence",
         "step": 50,
-        "loss": NaN,
-        "step_time_ms": 0.8034706115722656
+        "loss": 3.2108757495880127,
+        "step_time_ms": 1.3227462768554688
     },
     {
         "type": "Convergence",
         "step": 51,
-        "loss": NaN,
-        "step_time_ms": 0.7877349853515625
+        "loss": 2.983713150024414,
+        "step_time_ms": 0.9357929229736328
     },
     {
         "type": "Convergence",
         "step": 52,
-        "loss": NaN,
-        "step_time_ms": 0.751495361328125
+        "loss": 3.1917202472686768,
+        "step_time_ms": 0.8261203765869141
     },
     {
         "type": "Convergence",
         "step": 53,
-        "loss": NaN,
-        "step_time_ms": 0.7748603820800781
+        "loss": 2.5233285427093506,
+        "step_time_ms": 0.7936954498291016
     },
     {
         "type": "Convergence",
         "step": 54,
-        "loss": NaN,
-        "step_time_ms": 0.7379055023193359
+        "loss": 2.894230842590332,
+        "step_time_ms": 0.7965564727783203
     },
     {
         "type": "Convergence",
         "step": 55,
-        "loss": NaN,
-        "step_time_ms": 0.7498264312744141
+        "loss": 2.731534004211426,
+        "step_time_ms": 0.8249282836914062
     },
     {
         "type": "Convergence",
         "step": 56,
-        "loss": NaN,
-        "step_time_ms": 0.7359981536865234
+        "loss": 2.393831491470337,
+        "step_time_ms": 0.7870197296142578
     },
     {
         "type": "Convergence",
         "step": 57,
-        "loss": NaN,
-        "step_time_ms": 0.7443428039550781
+        "loss": 2.9299566745758057,
+        "step_time_ms": 0.8256435394287109
     },
     {
         "type": "Convergence",
         "step": 58,
-        "loss": NaN,
-        "step_time_ms": 0.7565021514892578
+        "loss": 2.853285074234009,
+        "step_time_ms": 0.9150505065917969
     },
     {
         "type": "Convergence",
         "step": 59,
-        "loss": NaN,
-        "step_time_ms": 0.7503032684326172
+        "loss": 2.999683141708374,
+        "step_time_ms": 0.9009838104248047
     },
     {
         "type": "Convergence",
         "step": 60,
-        "loss": NaN,
-        "step_time_ms": 0.7505416870117188
+        "loss": 3.0345258712768555,
+        "step_time_ms": 0.8301734924316406
     },
     {
         "type": "Convergence",
         "step": 61,
-        "loss": NaN,
-        "step_time_ms": 0.7791519165039062
+        "loss": 2.979536533355713,
+        "step_time_ms": 0.9098052978515625
     },
     {
         "type": "Convergence",
         "step": 62,
-        "loss": NaN,
-        "step_time_ms": 0.7941722869873047
+        "loss": 3.018744468688965,
+        "step_time_ms": 1.4071464538574219
     },
     {
         "type": "Convergence",
         "step": 63,
-        "loss": NaN,
-        "step_time_ms": 0.7519721984863281
+        "loss": 2.978804349899292,
+        "step_time_ms": 1.6617774963378906
     },
     {
         "type": "Convergence",
         "step": 64,
-        "loss": NaN,
-        "step_time_ms": 0.9329319000244141
+        "loss": 2.6081864833831787,
+        "step_time_ms": 0.9505748748779297
     },
     {
         "type": "Convergence",
         "step": 65,
-        "loss": NaN,
-        "step_time_ms": 1.0981559753417969
+        "loss": 2.875983476638794,
+        "step_time_ms": 0.8184909820556641
     },
     {
         "type": "Convergence",
         "step": 66,
-        "loss": NaN,
-        "step_time_ms": 0.8432865142822266
+        "loss": 2.8666534423828125,
+        "step_time_ms": 0.8499622344970703
     },
     {
         "type": "Convergence",
         "step": 67,
-        "loss": NaN,
-        "step_time_ms": 0.7722377777099609
+        "loss": 2.7806177139282227,
+        "step_time_ms": 0.7994174957275391
     },
     {
         "type": "Convergence",
         "step": 68,
-        "loss": NaN,
-        "step_time_ms": 0.7596015930175781
+        "loss": 2.4908294677734375,
+        "step_time_ms": 0.8053779602050781
     },
     {
         "type": "Convergence",
         "step": 69,
-        "loss": NaN,
-        "step_time_ms": 0.7443428039550781
+        "loss": 3.0448222160339355,
+        "step_time_ms": 0.7796287536621094
     },
     {
         "type": "Convergence",
         "step": 70,
-        "loss": NaN,
-        "step_time_ms": 0.7431507110595703
+        "loss": 3.218630075454712,
+        "step_time_ms": 0.8218288421630859
     },
     {
         "type": "Convergence",
         "step": 71,
-        "loss": NaN,
-        "step_time_ms": 0.812530517578125
+        "loss": 2.6399145126342773,
+        "step_time_ms": 0.8087158203125
     },
     {
         "type": "Convergence",
         "step": 72,
-        "loss": NaN,
-        "step_time_ms": 0.7581710815429688
+        "loss": 2.945915460586548,
+        "step_time_ms": 0.7991790771484375
     },
     {
         "type": "Convergence",
         "step": 73,
-        "loss": NaN,
-        "step_time_ms": 0.7402896881103516
+        "loss": 2.1625616550445557,
+        "step_time_ms": 0.7939338684082031
     },
     {
         "type": "Convergence",
         "step": 74,
-        "loss": NaN,
-        "step_time_ms": 0.759124755859375
+        "loss": 2.533892869949341,
+        "step_time_ms": 0.7991790771484375
     },
     {
         "type": "Convergence",
         "step": 75,
-        "loss": NaN,
-        "step_time_ms": 0.7762908935546875
+        "loss": 2.851844310760498,
+        "step_time_ms": 0.7886886596679688
     },
     {
         "type": "Convergence",
         "step": 76,
-        "loss": NaN,
-        "step_time_ms": 0.7560253143310547
+        "loss": 2.7515735626220703,
+        "step_time_ms": 0.7798671722412109
     },
     {
         "type": "Convergence",
         "step": 77,
-        "loss": NaN,
-        "step_time_ms": 0.7398128509521484
+        "loss": 2.872854471206665,
+        "step_time_ms": 0.9870529174804688
     },
     {
         "type": "Convergence",
         "step": 78,
-        "loss": NaN,
-        "step_time_ms": 0.7495880126953125
+        "loss": 2.5249624252319336,
+        "step_time_ms": 0.8759498596191406
     },
     {
         "type": "Convergence",
         "step": 79,
-        "loss": NaN,
-        "step_time_ms": 0.751495361328125
+        "loss": 2.7075085639953613,
+        "step_time_ms": 0.8444786071777344
     },
     {
         "type": "Convergence",
         "step": 80,
-        "loss": NaN,
-        "step_time_ms": 0.8602142333984375
+        "loss": 2.66579532623291,
+        "step_time_ms": 0.9608268737792969
     },
     {
         "type": "Convergence",
         "step": 81,
-        "loss": NaN,
-        "step_time_ms": 0.7913112640380859
+        "loss": 3.4497077465057373,
+        "step_time_ms": 0.8904933929443359
     },
     {
         "type": "Convergence",
         "step": 82,
-        "loss": NaN,
-        "step_time_ms": 1.1203289031982422
+        "loss": 2.749291181564331,
+        "step_time_ms": 0.8728504180908203
     },
     {
         "type": "Convergence",
         "step": 83,
-        "loss": NaN,
-        "step_time_ms": 1.2121200561523438
+        "loss": 2.6696689128875732,
+        "step_time_ms": 0.8304119110107422
     },
     {
         "type": "Convergence",
         "step": 84,
-        "loss": NaN,
-        "step_time_ms": 0.8423328399658203
+        "loss": 2.709033250808716,
+        "step_time_ms": 0.8015632629394531
     },
     {
         "type": "Convergence",
         "step": 85,
-        "loss": NaN,
-        "step_time_ms": 0.7724761962890625
+        "loss": 2.657517433166504,
+        "step_time_ms": 0.7953643798828125
     },
     {
         "type": "Convergence",
         "step": 86,
-        "loss": NaN,
-        "step_time_ms": 0.7541179656982422
+        "loss": 2.8905508518218994,
+        "step_time_ms": 0.8013248443603516
     },
     {
         "type": "Convergence",
         "step": 87,
-        "loss": NaN,
-        "step_time_ms": 0.7624626159667969
+        "loss": 2.88551664352417,
+        "step_time_ms": 0.8335113525390625
     },
     {
         "type": "Convergence",
         "step": 88,
-        "loss": NaN,
-        "step_time_ms": 0.789642333984375
+        "loss": 2.981748580932617,
+        "step_time_ms": 0.7922649383544922
     },
     {
         "type": "Convergence",
         "step": 89,
-        "loss": NaN,
-        "step_time_ms": 0.7488727569580078
+        "loss": 2.4971694946289062,
+        "step_time_ms": 0.7920265197753906
     },
     {
         "type": "Convergence",
         "step": 90,
-        "loss": NaN,
-        "step_time_ms": 0.7386207580566406
+        "loss": 2.628911018371582,
+        "step_time_ms": 0.8018016815185547
     },
     {
         "type": "Convergence",
         "step": 91,
-        "loss": NaN,
-        "step_time_ms": 0.7665157318115234
+        "loss": 3.512099504470825,
+        "step_time_ms": 0.8640289306640625
     },
     {
         "type": "Convergence",
         "step": 92,
-        "loss": NaN,
-        "step_time_ms": 0.78582763671875
+        "loss": 2.6863391399383545,
+        "step_time_ms": 0.7970333099365234
     },
     {
         "type": "Convergence",
         "step": 93,
-        "loss": NaN,
-        "step_time_ms": 0.7388591766357422
+        "loss": 3.135348081588745,
+        "step_time_ms": 0.8039474487304688
     },
     {
         "type": "Convergence",
         "step": 94,
-        "loss": NaN,
-        "step_time_ms": 0.7445812225341797
+        "loss": 2.6382668018341064,
+        "step_time_ms": 0.8862018585205078
     },
     {
         "type": "Convergence",
         "step": 95,
-        "loss": NaN,
-        "step_time_ms": 0.8165836334228516
+        "loss": 2.606090784072876,
+        "step_time_ms": 0.8497238159179688
     },
     {
         "type": "Convergence",
         "step": 96,
-        "loss": NaN,
-        "step_time_ms": 0.7755756378173828
+        "loss": 2.388481855392456,
+        "step_time_ms": 0.7989406585693359
     },
     {
         "type": "Convergence",
         "step": 97,
-        "loss": NaN,
-        "step_time_ms": 0.8203983306884766
+        "loss": 3.205573320388794,
+        "step_time_ms": 0.9465217590332031
     },
     {
         "type": "Convergence",
         "step": 98,
-        "loss": NaN,
-        "step_time_ms": 0.9138584136962891
+        "loss": 2.485797643661499,
+        "step_time_ms": 1.1103153228759766
     },
     {
         "type": "Convergence",
         "step": 99,
-        "loss": NaN,
-        "step_time_ms": 1.1966228485107422
+        "loss": 3.347515344619751,
+        "step_time_ms": 1.3797283172607422
+    },
+    {
+        "type": "Convergence",
+        "step": 100,
+        "loss": 2.626640796661377,
+        "step_time_ms": 1.2061595916748047
+    },
+    {
+        "type": "Convergence",
+        "step": 101,
+        "loss": 2.2271859645843506,
+        "step_time_ms": 0.9124279022216797
+    },
+    {
+        "type": "Convergence",
+        "step": 102,
+        "loss": 2.955326557159424,
+        "step_time_ms": 0.8437633514404297
+    },
+    {
+        "type": "Convergence",
+        "step": 103,
+        "loss": 2.928819417953491,
+        "step_time_ms": 0.7913112640380859
+    },
+    {
+        "type": "Convergence",
+        "step": 104,
+        "loss": 2.586698055267334,
+        "step_time_ms": 0.7956027984619141
+    },
+    {
+        "type": "Convergence",
+        "step": 105,
+        "loss": 2.4076828956604004,
+        "step_time_ms": 0.8821487426757812
+    },
+    {
+        "type": "Convergence",
+        "step": 106,
+        "loss": 2.9025447368621826,
+        "step_time_ms": 0.8156299591064453
+    },
+    {
+        "type": "Convergence",
+        "step": 107,
+        "loss": 2.2156832218170166,
+        "step_time_ms": 0.7536411285400391
+    },
+    {
+        "type": "Convergence",
+        "step": 108,
+        "loss": 2.0751662254333496,
+        "step_time_ms": 0.8594989776611328
+    },
+    {
+        "type": "Convergence",
+        "step": 109,
+        "loss": 2.75970458984375,
+        "step_time_ms": 0.865936279296875
+    },
+    {
+        "type": "Convergence",
+        "step": 110,
+        "loss": 2.7158772945404053,
+        "step_time_ms": 0.8223056793212891
+    },
+    {
+        "type": "Convergence",
+        "step": 111,
+        "loss": 2.3827526569366455,
+        "step_time_ms": 0.8447170257568359
+    },
+    {
+        "type": "Convergence",
+        "step": 112,
+        "loss": 2.805522918701172,
+        "step_time_ms": 0.7958412170410156
+    },
+    {
+        "type": "Convergence",
+        "step": 113,
+        "loss": 2.0812618732452393,
+        "step_time_ms": 0.8642673492431641
+    },
+    {
+        "type": "Convergence",
+        "step": 114,
+        "loss": 2.1033992767333984,
+        "step_time_ms": 0.9682178497314453
+    },
+    {
+        "type": "Convergence",
+        "step": 115,
+        "loss": 2.866753101348877,
+        "step_time_ms": 0.8270740509033203
+    },
+    {
+        "type": "Convergence",
+        "step": 116,
+        "loss": 2.5443613529205322,
+        "step_time_ms": 0.7913112640380859
+    },
+    {
+        "type": "Convergence",
+        "step": 117,
+        "loss": 2.3438591957092285,
+        "step_time_ms": 0.7922649383544922
+    },
+    {
+        "type": "Convergence",
+        "step": 118,
+        "loss": 2.5060157775878906,
+        "step_time_ms": 0.7834434509277344
+    },
+    {
+        "type": "Convergence",
+        "step": 119,
+        "loss": 2.7987380027770996,
+        "step_time_ms": 0.8268356323242188
+    },
+    {
+        "type": "Convergence",
+        "step": 120,
+        "loss": 2.8523800373077393,
+        "step_time_ms": 0.7901191711425781
+    },
+    {
+        "type": "Convergence",
+        "step": 121,
+        "loss": 2.3233489990234375,
+        "step_time_ms": 1.3027191162109375
+    },
+    {
+        "type": "Convergence",
+        "step": 122,
+        "loss": 3.424267053604126,
+        "step_time_ms": 1.300811767578125
+    },
+    {
+        "type": "Convergence",
+        "step": 123,
+        "loss": 2.6256351470947266,
+        "step_time_ms": 1.6057491302490234
+    },
+    {
+        "type": "Convergence",
+        "step": 124,
+        "loss": 3.338879346847534,
+        "step_time_ms": 1.5316009521484375
+    },
+    {
+        "type": "Convergence",
+        "step": 125,
+        "loss": 2.581578254699707,
+        "step_time_ms": 1.1899471282958984
+    },
+    {
+        "type": "Convergence",
+        "step": 126,
+        "loss": 3.069721221923828,
+        "step_time_ms": 0.7576942443847656
+    },
+    {
+        "type": "Convergence",
+        "step": 127,
+        "loss": 2.587625026702881,
+        "step_time_ms": 0.8983612060546875
+    },
+    {
+        "type": "Convergence",
+        "step": 128,
+        "loss": 2.314187526702881,
+        "step_time_ms": 0.9982585906982422
+    },
+    {
+        "type": "Convergence",
+        "step": 129,
+        "loss": 3.0348145961761475,
+        "step_time_ms": 1.2826919555664062
+    },
+    {
+        "type": "Convergence",
+        "step": 130,
+        "loss": 3.3663923740386963,
+        "step_time_ms": 1.2066364288330078
+    },
+    {
+        "type": "Convergence",
+        "step": 131,
+        "loss": 2.2710659503936768,
+        "step_time_ms": 0.9305477142333984
+    },
+    {
+        "type": "Convergence",
+        "step": 132,
+        "loss": 2.7640788555145264,
+        "step_time_ms": 1.2295246124267578
+    },
+    {
+        "type": "Convergence",
+        "step": 133,
+        "loss": 2.9389350414276123,
+        "step_time_ms": 0.8866786956787109
+    },
+    {
+        "type": "Convergence",
+        "step": 134,
+        "loss": 3.130103349685669,
+        "step_time_ms": 1.1508464813232422
+    },
+    {
+        "type": "Convergence",
+        "step": 135,
+        "loss": 3.0833804607391357,
+        "step_time_ms": 1.0652542114257812
+    },
+    {
+        "type": "Convergence",
+        "step": 136,
+        "loss": 2.4090452194213867,
+        "step_time_ms": 0.8969306945800781
+    },
+    {
+        "type": "Convergence",
+        "step": 137,
+        "loss": 2.696758985519409,
+        "step_time_ms": 0.8432865142822266
+    },
+    {
+        "type": "Convergence",
+        "step": 138,
+        "loss": 2.753291606903076,
+        "step_time_ms": 0.8258819580078125
+    },
+    {
+        "type": "Convergence",
+        "step": 139,
+        "loss": 2.2659614086151123,
+        "step_time_ms": 0.7846355438232422
+    },
+    {
+        "type": "Convergence",
+        "step": 140,
+        "loss": 3.5894060134887695,
+        "step_time_ms": 0.7886886596679688
+    },
+    {
+        "type": "Convergence",
+        "step": 141,
+        "loss": 2.6624789237976074,
+        "step_time_ms": 0.7889270782470703
+    },
+    {
+        "type": "Convergence",
+        "step": 142,
+        "loss": 3.458526372909546,
+        "step_time_ms": 0.8664131164550781
+    },
+    {
+        "type": "Convergence",
+        "step": 143,
+        "loss": 2.4825546741485596,
+        "step_time_ms": 0.9615421295166016
+    },
+    {
+        "type": "Convergence",
+        "step": 144,
+        "loss": 2.7683603763580322,
+        "step_time_ms": 1.2993812561035156
+    },
+    {
+        "type": "Convergence",
+        "step": 145,
+        "loss": 2.8104827404022217,
+        "step_time_ms": 1.1870861053466797
+    },
+    {
+        "type": "Convergence",
+        "step": 146,
+        "loss": 2.2525036334991455,
+        "step_time_ms": 0.8709430694580078
+    },
+    {
+        "type": "Convergence",
+        "step": 147,
+        "loss": 2.7872118949890137,
+        "step_time_ms": 1.2052059173583984
+    },
+    {
+        "type": "Convergence",
+        "step": 148,
+        "loss": 2.2620251178741455,
+        "step_time_ms": 0.8742809295654297
+    },
+    {
+        "type": "Convergence",
+        "step": 149,
+        "loss": 2.8176581859588623,
+        "step_time_ms": 1.2040138244628906
+    },
+    {
+        "type": "Convergence",
+        "step": 150,
+        "loss": 2.9041714668273926,
+        "step_time_ms": 0.9562969207763672
+    },
+    {
+        "type": "Convergence",
+        "step": 151,
+        "loss": 3.1076011657714844,
+        "step_time_ms": 0.8974075317382812
+    },
+    {
+        "type": "Convergence",
+        "step": 152,
+        "loss": 3.1559901237487793,
+        "step_time_ms": 1.0285377502441406
+    },
+    {
+        "type": "Convergence",
+        "step": 153,
+        "loss": 3.287987232208252,
+        "step_time_ms": 0.8935928344726562
+    },
+    {
+        "type": "Convergence",
+        "step": 154,
+        "loss": 2.8660213947296143,
+        "step_time_ms": 0.7991790771484375
+    },
+    {
+        "type": "Convergence",
+        "step": 155,
+        "loss": 2.9970810413360596,
+        "step_time_ms": 0.8182525634765625
+    },
+    {
+        "type": "Convergence",
+        "step": 156,
+        "loss": 3.725609302520752,
+        "step_time_ms": 0.8070468902587891
+    },
+    {
+        "type": "Convergence",
+        "step": 157,
+        "loss": 1.8963743448257446,
+        "step_time_ms": 1.0378360748291016
+    },
+    {
+        "type": "Convergence",
+        "step": 158,
+        "loss": 3.4801573753356934,
+        "step_time_ms": 1.04522705078125
+    },
+    {
+        "type": "Convergence",
+        "step": 159,
+        "loss": 2.1077561378479004,
+        "step_time_ms": 0.8606910705566406
+    },
+    {
+        "type": "Convergence",
+        "step": 160,
+        "loss": 2.04325795173645,
+        "step_time_ms": 0.8072853088378906
+    },
+    {
+        "type": "Convergence",
+        "step": 161,
+        "loss": 2.6806297302246094,
+        "step_time_ms": 0.7839202880859375
+    },
+    {
+        "type": "Convergence",
+        "step": 162,
+        "loss": 3.043881416320801,
+        "step_time_ms": 0.8444786071777344
+    },
+    {
+        "type": "Convergence",
+        "step": 163,
+        "loss": 2.5752007961273193,
+        "step_time_ms": 0.8242130279541016
+    },
+    {
+        "type": "Convergence",
+        "step": 164,
+        "loss": 2.7941789627075195,
+        "step_time_ms": 0.7927417755126953
+    },
+    {
+        "type": "Convergence",
+        "step": 165,
+        "loss": 3.043734312057495,
+        "step_time_ms": 0.7646083831787109
+    },
+    {
+        "type": "Convergence",
+        "step": 166,
+        "loss": 2.1663460731506348,
+        "step_time_ms": 0.9300708770751953
+    },
+    {
+        "type": "Convergence",
+        "step": 167,
+        "loss": 2.8064498901367188,
+        "step_time_ms": 1.2974739074707031
+    },
+    {
+        "type": "Convergence",
+        "step": 168,
+        "loss": 3.286428928375244,
+        "step_time_ms": 1.1916160583496094
+    },
+    {
+        "type": "Convergence",
+        "step": 169,
+        "loss": 2.987718343734741,
+        "step_time_ms": 0.7448196411132812
+    },
+    {
+        "type": "Convergence",
+        "step": 170,
+        "loss": 3.0870864391326904,
+        "step_time_ms": 0.8766651153564453
+    },
+    {
+        "type": "Convergence",
+        "step": 171,
+        "loss": 2.243931293487549,
+        "step_time_ms": 0.8878707885742188
+    },
+    {
+        "type": "Convergence",
+        "step": 172,
+        "loss": 2.2495975494384766,
+        "step_time_ms": 0.8976459503173828
+    },
+    {
+        "type": "Convergence",
+        "step": 173,
+        "loss": 3.0410945415496826,
+        "step_time_ms": 1.2371540069580078
+    },
+    {
+        "type": "Convergence",
+        "step": 174,
+        "loss": 2.643439769744873,
+        "step_time_ms": 1.0998249053955078
+    },
+    {
+        "type": "Convergence",
+        "step": 175,
+        "loss": 2.8735861778259277,
+        "step_time_ms": 1.312255859375
+    },
+    {
+        "type": "Convergence",
+        "step": 176,
+        "loss": 3.4584431648254395,
+        "step_time_ms": 1.2662410736083984
+    },
+    {
+        "type": "Convergence",
+        "step": 177,
+        "loss": 2.540712833404541,
+        "step_time_ms": 0.8757114410400391
+    },
+    {
+        "type": "Convergence",
+        "step": 178,
+        "loss": 1.978224277496338,
+        "step_time_ms": 1.0342597961425781
+    },
+    {
+        "type": "Convergence",
+        "step": 179,
+        "loss": 2.6579251289367676,
+        "step_time_ms": 0.8785724639892578
+    },
+    {
+        "type": "Convergence",
+        "step": 180,
+        "loss": 2.3810527324676514,
+        "step_time_ms": 0.8320808410644531
+    },
+    {
+        "type": "Convergence",
+        "step": 181,
+        "loss": 2.239445447921753,
+        "step_time_ms": 0.84686279296875
+    },
+    {
+        "type": "Convergence",
+        "step": 182,
+        "loss": 2.415480852127075,
+        "step_time_ms": 0.8218288421630859
+    },
+    {
+        "type": "Convergence",
+        "step": 183,
+        "loss": 3.549497604370117,
+        "step_time_ms": 0.8900165557861328
+    },
+    {
+        "type": "Convergence",
+        "step": 184,
+        "loss": 2.604276180267334,
+        "step_time_ms": 0.7796287536621094
+    },
+    {
+        "type": "Convergence",
+        "step": 185,
+        "loss": 3.159935235977173,
+        "step_time_ms": 0.8058547973632812
+    },
+    {
+        "type": "Convergence",
+        "step": 186,
+        "loss": 2.6488277912139893,
+        "step_time_ms": 0.8003711700439453
+    },
+    {
+        "type": "Convergence",
+        "step": 187,
+        "loss": 2.544435501098633,
+        "step_time_ms": 0.7867813110351562
+    },
+    {
+        "type": "Convergence",
+        "step": 188,
+        "loss": 2.2538552284240723,
+        "step_time_ms": 1.3473033905029297
+    },
+    {
+        "type": "Convergence",
+        "step": 189,
+        "loss": 2.6974077224731445,
+        "step_time_ms": 1.3146400451660156
+    },
+    {
+        "type": "Convergence",
+        "step": 190,
+        "loss": 1.849750280380249,
+        "step_time_ms": 1.165151596069336
+    },
+    {
+        "type": "Convergence",
+        "step": 191,
+        "loss": 2.8287291526794434,
+        "step_time_ms": 0.8907318115234375
+    },
+    {
+        "type": "Convergence",
+        "step": 192,
+        "loss": 2.2965495586395264,
+        "step_time_ms": 0.8466243743896484
+    },
+    {
+        "type": "Convergence",
+        "step": 193,
+        "loss": 2.916656255722046,
+        "step_time_ms": 1.5769004821777344
+    },
+    {
+        "type": "Convergence",
+        "step": 194,
+        "loss": 2.803734540939331,
+        "step_time_ms": 1.5094280242919922
+    },
+    {
+        "type": "Convergence",
+        "step": 195,
+        "loss": 2.561825752258301,
+        "step_time_ms": 1.2822151184082031
+    },
+    {
+        "type": "Convergence",
+        "step": 196,
+        "loss": 2.4864418506622314,
+        "step_time_ms": 1.1434555053710938
+    },
+    {
+        "type": "Convergence",
+        "step": 197,
+        "loss": 3.3262107372283936,
+        "step_time_ms": 0.8821487426757812
+    },
+    {
+        "type": "Convergence",
+        "step": 198,
+        "loss": 2.27911376953125,
+        "step_time_ms": 1.1568069458007812
+    },
+    {
+        "type": "Convergence",
+        "step": 199,
+        "loss": 2.479581832885742,
+        "step_time_ms": 0.8966922760009766
+    },
+    {
+        "type": "Convergence",
+        "step": 200,
+        "loss": 2.2634897232055664,
+        "step_time_ms": 1.2598037719726562
+    },
+    {
+        "type": "Convergence",
+        "step": 201,
+        "loss": 2.2764275074005127,
+        "step_time_ms": 0.965118408203125
+    },
+    {
+        "type": "Convergence",
+        "step": 202,
+        "loss": 2.3173577785491943,
+        "step_time_ms": 1.369476318359375
+    },
+    {
+        "type": "Convergence",
+        "step": 203,
+        "loss": 2.247241735458374,
+        "step_time_ms": 1.1951923370361328
+    },
+    {
+        "type": "Convergence",
+        "step": 204,
+        "loss": 2.954214334487915,
+        "step_time_ms": 0.8404254913330078
+    },
+    {
+        "type": "Convergence",
+        "step": 205,
+        "loss": 2.6727828979492188,
+        "step_time_ms": 0.9660720825195312
+    },
+    {
+        "type": "Convergence",
+        "step": 206,
+        "loss": 2.5867977142333984,
+        "step_time_ms": 1.264810562133789
+    },
+    {
+        "type": "Convergence",
+        "step": 207,
+        "loss": 2.938169479370117,
+        "step_time_ms": 0.8904933929443359
+    },
+    {
+        "type": "Convergence",
+        "step": 208,
+        "loss": 2.4368534088134766,
+        "step_time_ms": 1.1627674102783203
+    },
+    {
+        "type": "Convergence",
+        "step": 209,
+        "loss": 2.5386533737182617,
+        "step_time_ms": 0.8728504180908203
+    },
+    {
+        "type": "Convergence",
+        "step": 210,
+        "loss": 2.432283878326416,
+        "step_time_ms": 1.1947154998779297
+    },
+    {
+        "type": "Convergence",
+        "step": 211,
+        "loss": 2.5529465675354004,
+        "step_time_ms": 0.8907318115234375
+    },
+    {
+        "type": "Convergence",
+        "step": 212,
+        "loss": 3.8528220653533936,
+        "step_time_ms": 0.8742809295654297
+    },
+    {
+        "type": "Convergence",
+        "step": 213,
+        "loss": 2.217158794403076,
+        "step_time_ms": 0.8044242858886719
+    },
+    {
+        "type": "Convergence",
+        "step": 214,
+        "loss": 2.5452470779418945,
+        "step_time_ms": 0.7929801940917969
+    },
+    {
+        "type": "Convergence",
+        "step": 215,
+        "loss": 2.45742130279541,
+        "step_time_ms": 0.8447170257568359
+    },
+    {
+        "type": "Convergence",
+        "step": 216,
+        "loss": 2.2923500537872314,
+        "step_time_ms": 0.9200572967529297
+    },
+    {
+        "type": "Convergence",
+        "step": 217,
+        "loss": 2.7418670654296875,
+        "step_time_ms": 0.8416175842285156
+    },
+    {
+        "type": "Convergence",
+        "step": 218,
+        "loss": 2.482804536819458,
+        "step_time_ms": 0.7839202880859375
+    },
+    {
+        "type": "Convergence",
+        "step": 219,
+        "loss": 2.447096347808838,
+        "step_time_ms": 0.8974075317382812
+    },
+    {
+        "type": "Convergence",
+        "step": 220,
+        "loss": 2.870816230773926,
+        "step_time_ms": 0.9257793426513672
+    },
+    {
+        "type": "Convergence",
+        "step": 221,
+        "loss": 2.584716320037842,
+        "step_time_ms": 0.9248256683349609
+    },
+    {
+        "type": "Convergence",
+        "step": 222,
+        "loss": 2.6816182136535645,
+        "step_time_ms": 1.1904239654541016
+    },
+    {
+        "type": "Convergence",
+        "step": 223,
+        "loss": 2.1989645957946777,
+        "step_time_ms": 0.7436275482177734
+    },
+    {
+        "type": "Convergence",
+        "step": 224,
+        "loss": 2.4062886238098145,
+        "step_time_ms": 0.7581710815429688
+    },
+    {
+        "type": "Convergence",
+        "step": 225,
+        "loss": 2.292365312576294,
+        "step_time_ms": 0.8606910705566406
+    },
+    {
+        "type": "Convergence",
+        "step": 226,
+        "loss": 2.517503261566162,
+        "step_time_ms": 1.1234283447265625
+    },
+    {
+        "type": "Convergence",
+        "step": 227,
+        "loss": 2.966346502304077,
+        "step_time_ms": 0.7328987121582031
+    },
+    {
+        "type": "Convergence",
+        "step": 228,
+        "loss": 3.361893892288208,
+        "step_time_ms": 0.8931159973144531
+    },
+    {
+        "type": "Convergence",
+        "step": 229,
+        "loss": 2.209066867828369,
+        "step_time_ms": 1.2857913970947266
+    },
+    {
+        "type": "Convergence",
+        "step": 230,
+        "loss": 2.925940990447998,
+        "step_time_ms": 1.4019012451171875
+    },
+    {
+        "type": "Convergence",
+        "step": 231,
+        "loss": 2.5135014057159424,
+        "step_time_ms": 1.0213851928710938
+    },
+    {
+        "type": "Convergence",
+        "step": 232,
+        "loss": 2.136357307434082,
+        "step_time_ms": 0.8752346038818359
+    },
+    {
+        "type": "Convergence",
+        "step": 233,
+        "loss": 3.0763819217681885,
+        "step_time_ms": 0.8599758148193359
+    },
+    {
+        "type": "Convergence",
+        "step": 234,
+        "loss": 2.395085573196411,
+        "step_time_ms": 1.0068416595458984
+    },
+    {
+        "type": "Convergence",
+        "step": 235,
+        "loss": 3.789811372756958,
+        "step_time_ms": 1.2967586517333984
+    },
+    {
+        "type": "Convergence",
+        "step": 236,
+        "loss": 2.6340129375457764,
+        "step_time_ms": 1.157522201538086
+    },
+    {
+        "type": "Convergence",
+        "step": 237,
+        "loss": 2.667369842529297,
+        "step_time_ms": 0.8854866027832031
+    },
+    {
+        "type": "Convergence",
+        "step": 238,
+        "loss": 2.4315783977508545,
+        "step_time_ms": 1.2049674987792969
+    },
+    {
+        "type": "Convergence",
+        "step": 239,
+        "loss": 3.4609322547912598,
+        "step_time_ms": 0.7381439208984375
+    },
+    {
+        "type": "Convergence",
+        "step": 240,
+        "loss": 3.006038188934326,
+        "step_time_ms": 0.8475780487060547
+    },
+    {
+        "type": "Convergence",
+        "step": 241,
+        "loss": 2.635218620300293,
+        "step_time_ms": 0.9009838104248047
+    },
+    {
+        "type": "Convergence",
+        "step": 242,
+        "loss": 2.402045965194702,
+        "step_time_ms": 0.8249282836914062
+    },
+    {
+        "type": "Convergence",
+        "step": 243,
+        "loss": 2.7388546466827393,
+        "step_time_ms": 0.8745193481445312
+    },
+    {
+        "type": "Convergence",
+        "step": 244,
+        "loss": 2.167203426361084,
+        "step_time_ms": 0.7963180541992188
+    },
+    {
+        "type": "Convergence",
+        "step": 245,
+        "loss": 2.817150592803955,
+        "step_time_ms": 0.9899139404296875
+    },
+    {
+        "type": "Convergence",
+        "step": 246,
+        "loss": 2.6946475505828857,
+        "step_time_ms": 0.9510517120361328
+    },
+    {
+        "type": "Convergence",
+        "step": 247,
+        "loss": 2.7573230266571045,
+        "step_time_ms": 1.127004623413086
+    },
+    {
+        "type": "Convergence",
+        "step": 248,
+        "loss": 1.9678860902786255,
+        "step_time_ms": 0.8637905120849609
+    },
+    {
+        "type": "Convergence",
+        "step": 249,
+        "loss": 2.514263153076172,
+        "step_time_ms": 0.8835792541503906
+    },
+    {
+        "type": "Convergence",
+        "step": 250,
+        "loss": 1.8354111909866333,
+        "step_time_ms": 0.8072853088378906
+    },
+    {
+        "type": "Convergence",
+        "step": 251,
+        "loss": 2.366987943649292,
+        "step_time_ms": 0.8513927459716797
+    },
+    {
+        "type": "Convergence",
+        "step": 252,
+        "loss": 3.1435866355895996,
+        "step_time_ms": 0.7956027984619141
+    },
+    {
+        "type": "Convergence",
+        "step": 253,
+        "loss": 2.3020825386047363,
+        "step_time_ms": 0.8347034454345703
+    },
+    {
+        "type": "Convergence",
+        "step": 254,
+        "loss": 2.120204448699951,
+        "step_time_ms": 0.7874965667724609
+    },
+    {
+        "type": "Convergence",
+        "step": 255,
+        "loss": 4.181234359741211,
+        "step_time_ms": 0.8673667907714844
+    },
+    {
+        "type": "Convergence",
+        "step": 256,
+        "loss": 2.4918999671936035,
+        "step_time_ms": 0.7758140563964844
+    },
+    {
+        "type": "Convergence",
+        "step": 257,
+        "loss": 2.355816602706909,
+        "step_time_ms": 0.8015632629394531
+    },
+    {
+        "type": "Convergence",
+        "step": 258,
+        "loss": 2.157787799835205,
+        "step_time_ms": 0.8475780487060547
+    },
+    {
+        "type": "Convergence",
+        "step": 259,
+        "loss": 2.0129618644714355,
+        "step_time_ms": 0.7834434509277344
+    },
+    {
+        "type": "Convergence",
+        "step": 260,
+        "loss": 3.318286895751953,
+        "step_time_ms": 0.8001327514648438
+    },
+    {
+        "type": "Convergence",
+        "step": 261,
+        "loss": 2.357734441757202,
+        "step_time_ms": 0.8251667022705078
+    },
+    {
+        "type": "Convergence",
+        "step": 262,
+        "loss": 2.78377366065979,
+        "step_time_ms": 0.9365081787109375
+    },
+    {
+        "type": "Convergence",
+        "step": 263,
+        "loss": 2.8711702823638916,
+        "step_time_ms": 1.0399818420410156
+    },
+    {
+        "type": "Convergence",
+        "step": 264,
+        "loss": 2.1342599391937256,
+        "step_time_ms": 0.8308887481689453
+    },
+    {
+        "type": "Convergence",
+        "step": 265,
+        "loss": 2.779086112976074,
+        "step_time_ms": 0.7238388061523438
+    },
+    {
+        "type": "Convergence",
+        "step": 266,
+        "loss": 2.0018422603607178,
+        "step_time_ms": 0.8809566497802734
+    },
+    {
+        "type": "Convergence",
+        "step": 267,
+        "loss": 2.1788902282714844,
+        "step_time_ms": 0.8525848388671875
+    },
+    {
+        "type": "Convergence",
+        "step": 268,
+        "loss": 2.298396587371826,
+        "step_time_ms": 0.9469985961914062
+    },
+    {
+        "type": "Convergence",
+        "step": 269,
+        "loss": 2.7875046730041504,
+        "step_time_ms": 0.8206367492675781
+    },
+    {
+        "type": "Convergence",
+        "step": 270,
+        "loss": 2.4977757930755615,
+        "step_time_ms": 0.7989406585693359
+    },
+    {
+        "type": "Convergence",
+        "step": 271,
+        "loss": 1.8370956182479858,
+        "step_time_ms": 1.3790130615234375
+    },
+    {
+        "type": "Convergence",
+        "step": 272,
+        "loss": 2.922963857650757,
+        "step_time_ms": 1.2900829315185547
+    },
+    {
+        "type": "Convergence",
+        "step": 273,
+        "loss": 2.5831031799316406,
+        "step_time_ms": 1.1827945709228516
+    },
+    {
+        "type": "Convergence",
+        "step": 274,
+        "loss": 2.134899377822876,
+        "step_time_ms": 0.8907318115234375
+    },
+    {
+        "type": "Convergence",
+        "step": 275,
+        "loss": 3.364386796951294,
+        "step_time_ms": 1.241922378540039
+    },
+    {
+        "type": "Convergence",
+        "step": 276,
+        "loss": 3.074162721633911,
+        "step_time_ms": 0.90789794921875
+    },
+    {
+        "type": "Convergence",
+        "step": 277,
+        "loss": 2.2853283882141113,
+        "step_time_ms": 1.0859966278076172
+    },
+    {
+        "type": "Convergence",
+        "step": 278,
+        "loss": 2.7697336673736572,
+        "step_time_ms": 0.9336471557617188
+    },
+    {
+        "type": "Convergence",
+        "step": 279,
+        "loss": 1.8261765241622925,
+        "step_time_ms": 0.8897781372070312
+    },
+    {
+        "type": "Convergence",
+        "step": 280,
+        "loss": 3.2969324588775635,
+        "step_time_ms": 0.8554458618164062
+    },
+    {
+        "type": "Convergence",
+        "step": 281,
+        "loss": 2.1001930236816406,
+        "step_time_ms": 0.8342266082763672
+    },
+    {
+        "type": "Convergence",
+        "step": 282,
+        "loss": 2.636772394180298,
+        "step_time_ms": 0.7946491241455078
+    },
+    {
+        "type": "Convergence",
+        "step": 283,
+        "loss": 2.8543732166290283,
+        "step_time_ms": 0.7874965667724609
+    },
+    {
+        "type": "Convergence",
+        "step": 284,
+        "loss": 3.1284713745117188,
+        "step_time_ms": 0.7956027984619141
+    },
+    {
+        "type": "Convergence",
+        "step": 285,
+        "loss": 2.056447982788086,
+        "step_time_ms": 0.7848739624023438
+    },
+    {
+        "type": "Convergence",
+        "step": 286,
+        "loss": 2.3853647708892822,
+        "step_time_ms": 0.835418701171875
+    },
+    {
+        "type": "Convergence",
+        "step": 287,
+        "loss": 2.893932580947876,
+        "step_time_ms": 0.8101463317871094
+    },
+    {
+        "type": "Convergence",
+        "step": 288,
+        "loss": 2.410067319869995,
+        "step_time_ms": 0.8394718170166016
+    },
+    {
+        "type": "Convergence",
+        "step": 289,
+        "loss": 2.3345699310302734,
+        "step_time_ms": 0.7750988006591797
+    },
+    {
+        "type": "Convergence",
+        "step": 290,
+        "loss": 3.217741012573242,
+        "step_time_ms": 0.7882118225097656
+    },
+    {
+        "type": "Convergence",
+        "step": 291,
+        "loss": 2.8250980377197266,
+        "step_time_ms": 0.820159912109375
+    },
+    {
+        "type": "Convergence",
+        "step": 292,
+        "loss": 2.0202858448028564,
+        "step_time_ms": 0.7967948913574219
+    },
+    {
+        "type": "Convergence",
+        "step": 293,
+        "loss": 2.521718740463257,
+        "step_time_ms": 0.9534358978271484
+    },
+    {
+        "type": "Convergence",
+        "step": 294,
+        "loss": 2.451606273651123,
+        "step_time_ms": 1.1410713195800781
+    },
+    {
+        "type": "Convergence",
+        "step": 295,
+        "loss": 2.2885851860046387,
+        "step_time_ms": 1.2412071228027344
+    },
+    {
+        "type": "Convergence",
+        "step": 296,
+        "loss": 2.5086135864257812,
+        "step_time_ms": 1.1477470397949219
+    },
+    {
+        "type": "Convergence",
+        "step": 297,
+        "loss": 3.060702085494995,
+        "step_time_ms": 0.8800029754638672
+    },
+    {
+        "type": "Convergence",
+        "step": 298,
+        "loss": 2.2711262702941895,
+        "step_time_ms": 1.1625289916992188
+    },
+    {
+        "type": "Convergence",
+        "step": 299,
+        "loss": 2.0275073051452637,
+        "step_time_ms": 0.9257793426513672
+    },
+    {
+        "type": "Convergence",
+        "step": 300,
+        "loss": 2.5843513011932373,
+        "step_time_ms": 1.1267662048339844
+    },
+    {
+        "type": "Convergence",
+        "step": 301,
+        "loss": 2.6296653747558594,
+        "step_time_ms": 0.8859634399414062
+    },
+    {
+        "type": "Convergence",
+        "step": 302,
+        "loss": 2.6963183879852295,
+        "step_time_ms": 1.1818408966064453
+    },
+    {
+        "type": "Convergence",
+        "step": 303,
+        "loss": 2.447145700454712,
+        "step_time_ms": 0.7207393646240234
+    },
+    {
+        "type": "Convergence",
+        "step": 304,
+        "loss": 3.098881959915161,
+        "step_time_ms": 0.7207393646240234
+    },
+    {
+        "type": "Convergence",
+        "step": 305,
+        "loss": 2.813478469848633,
+        "step_time_ms": 0.8790493011474609
+    },
+    {
+        "type": "Convergence",
+        "step": 306,
+        "loss": 1.7966012954711914,
+        "step_time_ms": 1.1639595031738281
+    },
+    {
+        "type": "Convergence",
+        "step": 307,
+        "loss": 2.9488461017608643,
+        "step_time_ms": 0.8914470672607422
+    },
+    {
+        "type": "Convergence",
+        "step": 308,
+        "loss": 2.2546331882476807,
+        "step_time_ms": 1.0211467742919922
+    },
+    {
+        "type": "Convergence",
+        "step": 309,
+        "loss": 2.6617825031280518,
+        "step_time_ms": 0.9469985961914062
+    },
+    {
+        "type": "Convergence",
+        "step": 310,
+        "loss": 3.1963276863098145,
+        "step_time_ms": 1.0135173797607422
+    },
+    {
+        "type": "Convergence",
+        "step": 311,
+        "loss": 1.9157965183258057,
+        "step_time_ms": 1.3186931610107422
+    },
+    {
+        "type": "Convergence",
+        "step": 312,
+        "loss": 1.9834356307983398,
+        "step_time_ms": 1.1677742004394531
+    },
+    {
+        "type": "Convergence",
+        "step": 313,
+        "loss": 2.7090766429901123,
+        "step_time_ms": 0.9291172027587891
+    },
+    {
+        "type": "Convergence",
+        "step": 314,
+        "loss": 2.893376588821411,
+        "step_time_ms": 1.1739730834960938
+    },
+    {
+        "type": "Convergence",
+        "step": 315,
+        "loss": 1.9579218626022339,
+        "step_time_ms": 0.8971691131591797
+    },
+    {
+        "type": "Convergence",
+        "step": 316,
+        "loss": 2.1249191761016846,
+        "step_time_ms": 1.241922378540039
+    },
+    {
+        "type": "Convergence",
+        "step": 317,
+        "loss": 2.1424617767333984,
+        "step_time_ms": 0.8916854858398438
+    },
+    {
+        "type": "Convergence",
+        "step": 318,
+        "loss": 1.9358338117599487,
+        "step_time_ms": 1.1641979217529297
+    },
+    {
+        "type": "Convergence",
+        "step": 319,
+        "loss": 2.3370184898376465,
+        "step_time_ms": 0.8575916290283203
+    },
+    {
+        "type": "Convergence",
+        "step": 320,
+        "loss": 2.894644260406494,
+        "step_time_ms": 1.1658668518066406
+    },
+    {
+        "type": "Convergence",
+        "step": 321,
+        "loss": 2.585744857788086,
+        "step_time_ms": 1.0008811950683594
+    },
+    {
+        "type": "Convergence",
+        "step": 322,
+        "loss": 3.13077974319458,
+        "step_time_ms": 1.0831356048583984
+    },
+    {
+        "type": "Convergence",
+        "step": 323,
+        "loss": 3.302290439605713,
+        "step_time_ms": 1.3570785522460938
+    },
+    {
+        "type": "Convergence",
+        "step": 324,
+        "loss": 2.752234697341919,
+        "step_time_ms": 1.1963844299316406
+    },
+    {
+        "type": "Convergence",
+        "step": 325,
+        "loss": 2.1473500728607178,
+        "step_time_ms": 0.8943080902099609
+    },
+    {
+        "type": "Convergence",
+        "step": 326,
+        "loss": 2.407630205154419,
+        "step_time_ms": 1.2137889862060547
+    },
+    {
+        "type": "Convergence",
+        "step": 327,
+        "loss": 1.973976969718933,
+        "step_time_ms": 0.7243156433105469
+    },
+    {
+        "type": "Convergence",
+        "step": 328,
+        "loss": 2.800161361694336,
+        "step_time_ms": 0.8599758148193359
+    },
+    {
+        "type": "Convergence",
+        "step": 329,
+        "loss": 2.852574348449707,
+        "step_time_ms": 1.1568069458007812
+    },
+    {
+        "type": "Convergence",
+        "step": 330,
+        "loss": 2.4536616802215576,
+        "step_time_ms": 0.8928775787353516
+    },
+    {
+        "type": "Convergence",
+        "step": 331,
+        "loss": 2.229562759399414,
+        "step_time_ms": 0.9300708770751953
+    },
+    {
+        "type": "Convergence",
+        "step": 332,
+        "loss": 1.9875524044036865,
+        "step_time_ms": 1.312255859375
+    },
+    {
+        "type": "Convergence",
+        "step": 333,
+        "loss": 2.6092758178710938,
+        "step_time_ms": 1.085519790649414
+    },
+    {
+        "type": "Convergence",
+        "step": 334,
+        "loss": 3.1600122451782227,
+        "step_time_ms": 1.4200210571289062
+    },
+    {
+        "type": "Convergence",
+        "step": 335,
+        "loss": 2.7855708599090576,
+        "step_time_ms": 1.3327598571777344
+    },
+    {
+        "type": "Convergence",
+        "step": 336,
+        "loss": 2.664628744125366,
+        "step_time_ms": 1.4712810516357422
+    },
+    {
+        "type": "Convergence",
+        "step": 337,
+        "loss": 2.5159285068511963,
+        "step_time_ms": 0.9107589721679688
+    },
+    {
+        "type": "Convergence",
+        "step": 338,
+        "loss": 2.649714708328247,
+        "step_time_ms": 0.7987022399902344
+    },
+    {
+        "type": "Convergence",
+        "step": 339,
+        "loss": 2.1788365840911865,
+        "step_time_ms": 0.8070468902587891
+    },
+    {
+        "type": "Convergence",
+        "step": 340,
+        "loss": 3.6399898529052734,
+        "step_time_ms": 0.7977485656738281
+    },
+    {
+        "type": "Convergence",
+        "step": 341,
+        "loss": 2.9585163593292236,
+        "step_time_ms": 0.9629726409912109
+    },
+    {
+        "type": "Convergence",
+        "step": 342,
+        "loss": 1.7819797992706299,
+        "step_time_ms": 1.2674331665039062
+    },
+    {
+        "type": "Convergence",
+        "step": 343,
+        "loss": 2.6236460208892822,
+        "step_time_ms": 1.18255615234375
+    },
+    {
+        "type": "Convergence",
+        "step": 344,
+        "loss": 2.6416049003601074,
+        "step_time_ms": 0.7433891296386719
+    },
+    {
+        "type": "Convergence",
+        "step": 345,
+        "loss": 2.557738780975342,
+        "step_time_ms": 0.7128715515136719
+    },
+    {
+        "type": "Convergence",
+        "step": 346,
+        "loss": 3.0981969833374023,
+        "step_time_ms": 0.8182525634765625
+    },
+    {
+        "type": "Convergence",
+        "step": 347,
+        "loss": 2.92085599899292,
+        "step_time_ms": 1.0900497436523438
+    },
+    {
+        "type": "Convergence",
+        "step": 348,
+        "loss": 3.052602529525757,
+        "step_time_ms": 1.3551712036132812
+    },
+    {
+        "type": "Convergence",
+        "step": 349,
+        "loss": 2.3660943508148193,
+        "step_time_ms": 1.1887550354003906
+    },
+    {
+        "type": "Convergence",
+        "step": 350,
+        "loss": 3.0823843479156494,
+        "step_time_ms": 0.9791851043701172
+    },
+    {
+        "type": "Convergence",
+        "step": 351,
+        "loss": 2.581965208053589,
+        "step_time_ms": 0.9496212005615234
+    },
+    {
+        "type": "Convergence",
+        "step": 352,
+        "loss": 2.637376070022583,
+        "step_time_ms": 1.1794567108154297
+    },
+    {
+        "type": "Convergence",
+        "step": 353,
+        "loss": 3.054607391357422,
+        "step_time_ms": 0.7593631744384766
+    },
+    {
+        "type": "Convergence",
+        "step": 354,
+        "loss": 2.861464023590088,
+        "step_time_ms": 0.7481575012207031
+    },
+    {
+        "type": "Convergence",
+        "step": 355,
+        "loss": 2.065598249435425,
+        "step_time_ms": 0.7176399230957031
+    },
+    {
+        "type": "Convergence",
+        "step": 356,
+        "loss": 3.0008938312530518,
+        "step_time_ms": 0.7166862487792969
+    },
+    {
+        "type": "Convergence",
+        "step": 357,
+        "loss": 2.099078416824341,
+        "step_time_ms": 0.7300376892089844
+    },
+    {
+        "type": "Convergence",
+        "step": 358,
+        "loss": 2.062744617462158,
+        "step_time_ms": 0.8480548858642578
+    },
+    {
+        "type": "Convergence",
+        "step": 359,
+        "loss": 2.8114500045776367,
+        "step_time_ms": 1.1467933654785156
+    },
+    {
+        "type": "Convergence",
+        "step": 360,
+        "loss": 2.6374385356903076,
+        "step_time_ms": 0.9524822235107422
+    },
+    {
+        "type": "Convergence",
+        "step": 361,
+        "loss": 2.621553659439087,
+        "step_time_ms": 0.9212493896484375
+    },
+    {
+        "type": "Convergence",
+        "step": 362,
+        "loss": 2.1086487770080566,
+        "step_time_ms": 0.8366107940673828
+    },
+    {
+        "type": "Convergence",
+        "step": 363,
+        "loss": 2.2805352210998535,
+        "step_time_ms": 0.8878707885742188
+    },
+    {
+        "type": "Convergence",
+        "step": 364,
+        "loss": 2.3972830772399902,
+        "step_time_ms": 1.1763572692871094
+    },
+    {
+        "type": "Convergence",
+        "step": 365,
+        "loss": 1.9999879598617554,
+        "step_time_ms": 0.8566379547119141
+    },
+    {
+        "type": "Convergence",
+        "step": 366,
+        "loss": 3.01173996925354,
+        "step_time_ms": 0.8904933929443359
+    },
+    {
+        "type": "Convergence",
+        "step": 367,
+        "loss": 3.158912181854248,
+        "step_time_ms": 0.9274482727050781
+    },
+    {
+        "type": "Convergence",
+        "step": 368,
+        "loss": 3.0680251121520996,
+        "step_time_ms": 0.8509159088134766
+    },
+    {
+        "type": "Convergence",
+        "step": 369,
+        "loss": 2.1631264686584473,
+        "step_time_ms": 0.7815361022949219
+    },
+    {
+        "type": "Convergence",
+        "step": 370,
+        "loss": 3.0318052768707275,
+        "step_time_ms": 0.789642333984375
+    },
+    {
+        "type": "Convergence",
+        "step": 371,
+        "loss": 2.110412359237671,
+        "step_time_ms": 0.7951259613037109
+    },
+    {
+        "type": "Convergence",
+        "step": 372,
+        "loss": 3.4390320777893066,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 373,
+        "loss": 2.25742769241333,
+        "step_time_ms": 0.8187294006347656
+    },
+    {
+        "type": "Convergence",
+        "step": 374,
+        "loss": 2.243587017059326,
+        "step_time_ms": 0.7891654968261719
+    },
+    {
+        "type": "Convergence",
+        "step": 375,
+        "loss": 2.46669340133667,
+        "step_time_ms": 0.7925033569335938
+    },
+    {
+        "type": "Convergence",
+        "step": 376,
+        "loss": 2.4450933933258057,
+        "step_time_ms": 1.1639595031738281
+    },
+    {
+        "type": "Convergence",
+        "step": 377,
+        "loss": 2.5752298831939697,
+        "step_time_ms": 0.8933544158935547
+    },
+    {
+        "type": "Convergence",
+        "step": 378,
+        "loss": 2.8031318187713623,
+        "step_time_ms": 0.8442401885986328
+    },
+    {
+        "type": "Convergence",
+        "step": 379,
+        "loss": 2.4599621295928955,
+        "step_time_ms": 0.7841587066650391
+    },
+    {
+        "type": "Convergence",
+        "step": 380,
+        "loss": 2.2719483375549316,
+        "step_time_ms": 0.7874965667724609
+    },
+    {
+        "type": "Convergence",
+        "step": 381,
+        "loss": 2.882357120513916,
+        "step_time_ms": 0.87738037109375
+    },
+    {
+        "type": "Convergence",
+        "step": 382,
+        "loss": 2.5454373359680176,
+        "step_time_ms": 0.8337497711181641
+    },
+    {
+        "type": "Convergence",
+        "step": 383,
+        "loss": 3.326878786087036,
+        "step_time_ms": 0.91552734375
+    },
+    {
+        "type": "Convergence",
+        "step": 384,
+        "loss": 2.8983566761016846,
+        "step_time_ms": 0.8046627044677734
+    },
+    {
+        "type": "Convergence",
+        "step": 385,
+        "loss": 2.314822196960449,
+        "step_time_ms": 0.8151531219482422
+    },
+    {
+        "type": "Convergence",
+        "step": 386,
+        "loss": 3.537700653076172,
+        "step_time_ms": 0.7891654968261719
+    },
+    {
+        "type": "Convergence",
+        "step": 387,
+        "loss": 2.3351364135742188,
+        "step_time_ms": 0.7734298706054688
+    },
+    {
+        "type": "Convergence",
+        "step": 388,
+        "loss": 2.7664897441864014,
+        "step_time_ms": 0.7755756378173828
+    },
+    {
+        "type": "Convergence",
+        "step": 389,
+        "loss": 3.3142905235290527,
+        "step_time_ms": 0.8077621459960938
+    },
+    {
+        "type": "Convergence",
+        "step": 390,
+        "loss": 2.678025960922241,
+        "step_time_ms": 0.774383544921875
+    },
+    {
+        "type": "Convergence",
+        "step": 391,
+        "loss": 2.2578113079071045,
+        "step_time_ms": 0.8022785186767578
+    },
+    {
+        "type": "Convergence",
+        "step": 392,
+        "loss": 2.33927321434021,
+        "step_time_ms": 0.8471012115478516
+    },
+    {
+        "type": "Convergence",
+        "step": 393,
+        "loss": 2.366077423095703,
+        "step_time_ms": 0.8015632629394531
+    },
+    {
+        "type": "Convergence",
+        "step": 394,
+        "loss": 2.21993088722229,
+        "step_time_ms": 0.8845329284667969
+    },
+    {
+        "type": "Convergence",
+        "step": 395,
+        "loss": 1.972617745399475,
+        "step_time_ms": 0.9281635284423828
+    },
+    {
+        "type": "Convergence",
+        "step": 396,
+        "loss": 2.4654910564422607,
+        "step_time_ms": 1.1544227600097656
+    },
+    {
+        "type": "Convergence",
+        "step": 397,
+        "loss": 2.8422110080718994,
+        "step_time_ms": 0.8723735809326172
+    },
+    {
+        "type": "Convergence",
+        "step": 398,
+        "loss": 3.053849935531616,
+        "step_time_ms": 1.2993812561035156
+    },
+    {
+        "type": "Convergence",
+        "step": 399,
+        "loss": 2.490931272506714,
+        "step_time_ms": 1.0094642639160156
+    },
+    {
+        "type": "Convergence",
+        "step": 400,
+        "loss": 2.738189935684204,
+        "step_time_ms": 1.3470649719238281
+    },
+    {
+        "type": "Convergence",
+        "step": 401,
+        "loss": 2.650639772415161,
+        "step_time_ms": 1.2831687927246094
+    },
+    {
+        "type": "Convergence",
+        "step": 402,
+        "loss": 1.9172252416610718,
+        "step_time_ms": 1.157522201538086
+    },
+    {
+        "type": "Convergence",
+        "step": 403,
+        "loss": 2.051909923553467,
+        "step_time_ms": 0.8649826049804688
+    },
+    {
+        "type": "Convergence",
+        "step": 404,
+        "loss": 2.7086904048919678,
+        "step_time_ms": 1.1720657348632812
+    },
+    {
+        "type": "Convergence",
+        "step": 405,
+        "loss": 2.84114146232605,
+        "step_time_ms": 0.9307861328125
+    },
+    {
+        "type": "Convergence",
+        "step": 406,
+        "loss": 2.5409905910491943,
+        "step_time_ms": 0.8614063262939453
+    },
+    {
+        "type": "Convergence",
+        "step": 407,
+        "loss": 3.208543300628662,
+        "step_time_ms": 0.8361339569091797
+    },
+    {
+        "type": "Convergence",
+        "step": 408,
+        "loss": 2.791804075241089,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 409,
+        "loss": 3.3391780853271484,
+        "step_time_ms": 0.7891654968261719
+    },
+    {
+        "type": "Convergence",
+        "step": 410,
+        "loss": 2.279445171356201,
+        "step_time_ms": 0.7758140563964844
+    },
+    {
+        "type": "Convergence",
+        "step": 411,
+        "loss": 2.26517653465271,
+        "step_time_ms": 0.8451938629150391
+    },
+    {
+        "type": "Convergence",
+        "step": 412,
+        "loss": 2.6731464862823486,
+        "step_time_ms": 0.7810592651367188
+    },
+    {
+        "type": "Convergence",
+        "step": 413,
+        "loss": 3.162925958633423,
+        "step_time_ms": 0.8945465087890625
+    },
+    {
+        "type": "Convergence",
+        "step": 414,
+        "loss": 2.1415300369262695,
+        "step_time_ms": 1.033782958984375
+    },
+    {
+        "type": "Convergence",
+        "step": 415,
+        "loss": 3.00296950340271,
+        "step_time_ms": 0.9279251098632812
+    },
+    {
+        "type": "Convergence",
+        "step": 416,
+        "loss": 2.7914936542510986,
+        "step_time_ms": 0.7874965667724609
+    },
+    {
+        "type": "Convergence",
+        "step": 417,
+        "loss": 2.217444658279419,
+        "step_time_ms": 0.7855892181396484
+    },
+    {
+        "type": "Convergence",
+        "step": 418,
+        "loss": 2.3199737071990967,
+        "step_time_ms": 0.7867813110351562
+    },
+    {
+        "type": "Convergence",
+        "step": 419,
+        "loss": 2.7258050441741943,
+        "step_time_ms": 0.7929801940917969
+    },
+    {
+        "type": "Convergence",
+        "step": 420,
+        "loss": 3.302079916000366,
+        "step_time_ms": 0.7419586181640625
+    },
+    {
+        "type": "Convergence",
+        "step": 421,
+        "loss": 2.785677194595337,
+        "step_time_ms": 1.041412353515625
+    },
+    {
+        "type": "Convergence",
+        "step": 422,
+        "loss": 2.0751209259033203,
+        "step_time_ms": 0.7960796356201172
+    },
+    {
+        "type": "Convergence",
+        "step": 423,
+        "loss": 2.7064285278320312,
+        "step_time_ms": 0.8170604705810547
+    },
+    {
+        "type": "Convergence",
+        "step": 424,
+        "loss": 2.4000790119171143,
+        "step_time_ms": 0.8096694946289062
+    },
+    {
+        "type": "Convergence",
+        "step": 425,
+        "loss": 2.740699052810669,
+        "step_time_ms": 0.8366107940673828
+    },
+    {
+        "type": "Convergence",
+        "step": 426,
+        "loss": 3.108128070831299,
+        "step_time_ms": 0.8006095886230469
+    },
+    {
+        "type": "Convergence",
+        "step": 427,
+        "loss": 2.8930702209472656,
+        "step_time_ms": 0.7908344268798828
+    },
+    {
+        "type": "Convergence",
+        "step": 428,
+        "loss": 2.0285680294036865,
+        "step_time_ms": 0.8175373077392578
+    },
+    {
+        "type": "Convergence",
+        "step": 429,
+        "loss": 2.406059741973877,
+        "step_time_ms": 0.7910728454589844
+    },
+    {
+        "type": "Convergence",
+        "step": 430,
+        "loss": 2.932028293609619,
+        "step_time_ms": 0.7767677307128906
+    },
+    {
+        "type": "Convergence",
+        "step": 431,
+        "loss": 2.055476427078247,
+        "step_time_ms": 0.9157657623291016
+    },
+    {
+        "type": "Convergence",
+        "step": 432,
+        "loss": 2.9027202129364014,
+        "step_time_ms": 0.8971691131591797
+    },
+    {
+        "type": "Convergence",
+        "step": 433,
+        "loss": 2.355740785598755,
+        "step_time_ms": 0.8299350738525391
+    },
+    {
+        "type": "Convergence",
+        "step": 434,
+        "loss": 2.781430959701538,
+        "step_time_ms": 0.7767677307128906
+    },
+    {
+        "type": "Convergence",
+        "step": 435,
+        "loss": 3.0171303749084473,
+        "step_time_ms": 0.7853507995605469
+    },
+    {
+        "type": "Convergence",
+        "step": 436,
+        "loss": 2.62446928024292,
+        "step_time_ms": 0.8299350738525391
+    },
+    {
+        "type": "Convergence",
+        "step": 437,
+        "loss": 2.0017130374908447,
+        "step_time_ms": 0.9448528289794922
+    },
+    {
+        "type": "Convergence",
+        "step": 438,
+        "loss": 2.0192766189575195,
+        "step_time_ms": 0.8845329284667969
+    },
+    {
+        "type": "Convergence",
+        "step": 439,
+        "loss": 2.508110761642456,
+        "step_time_ms": 0.8075237274169922
+    },
+    {
+        "type": "Convergence",
+        "step": 440,
+        "loss": 3.0664985179901123,
+        "step_time_ms": 0.8051395416259766
+    },
+    {
+        "type": "Convergence",
+        "step": 441,
+        "loss": 3.3823463916778564,
+        "step_time_ms": 1.331329345703125
+    },
+    {
+        "type": "Convergence",
+        "step": 442,
+        "loss": 3.910294771194458,
+        "step_time_ms": 1.1529922485351562
+    },
+    {
+        "type": "Convergence",
+        "step": 443,
+        "loss": 2.485936164855957,
+        "step_time_ms": 0.7545948028564453
+    },
+    {
+        "type": "Convergence",
+        "step": 444,
+        "loss": 2.7040014266967773,
+        "step_time_ms": 0.865936279296875
+    },
+    {
+        "type": "Convergence",
+        "step": 445,
+        "loss": 2.0904595851898193,
+        "step_time_ms": 1.1897087097167969
+    },
+    {
+        "type": "Convergence",
+        "step": 446,
+        "loss": 2.332641363143921,
+        "step_time_ms": 0.7121562957763672
+    },
+    {
+        "type": "Convergence",
+        "step": 447,
+        "loss": 2.661806344985962,
+        "step_time_ms": 0.83160400390625
+    },
+    {
+        "type": "Convergence",
+        "step": 448,
+        "loss": 2.2254889011383057,
+        "step_time_ms": 0.8902549743652344
+    },
+    {
+        "type": "Convergence",
+        "step": 449,
+        "loss": 3.4052231311798096,
+        "step_time_ms": 1.3120174407958984
+    },
+    {
+        "type": "Convergence",
+        "step": 450,
+        "loss": 2.838656425476074,
+        "step_time_ms": 1.1699199676513672
+    },
+    {
+        "type": "Convergence",
+        "step": 451,
+        "loss": 2.8088126182556152,
+        "step_time_ms": 1.0371208190917969
+    },
+    {
+        "type": "Convergence",
+        "step": 452,
+        "loss": 2.6904382705688477,
+        "step_time_ms": 0.8838176727294922
+    },
+    {
+        "type": "Convergence",
+        "step": 453,
+        "loss": 2.2714812755584717,
+        "step_time_ms": 0.8206367492675781
+    },
+    {
+        "type": "Convergence",
+        "step": 454,
+        "loss": 2.5149290561676025,
+        "step_time_ms": 0.8199214935302734
+    },
+    {
+        "type": "Convergence",
+        "step": 455,
+        "loss": 2.941288471221924,
+        "step_time_ms": 0.7989406585693359
+    },
+    {
+        "type": "Convergence",
+        "step": 456,
+        "loss": 3.1709790229797363,
+        "step_time_ms": 0.7827281951904297
+    },
+    {
+        "type": "Convergence",
+        "step": 457,
+        "loss": 3.402998447418213,
+        "step_time_ms": 0.7727146148681641
+    },
+    {
+        "type": "Convergence",
+        "step": 458,
+        "loss": 2.099228620529175,
+        "step_time_ms": 0.7841587066650391
+    },
+    {
+        "type": "Convergence",
+        "step": 459,
+        "loss": 2.370915412902832,
+        "step_time_ms": 0.8256435394287109
+    },
+    {
+        "type": "Convergence",
+        "step": 460,
+        "loss": 1.7771563529968262,
+        "step_time_ms": 0.7836818695068359
+    },
+    {
+        "type": "Convergence",
+        "step": 461,
+        "loss": 2.816249132156372,
+        "step_time_ms": 1.3153553009033203
+    },
+    {
+        "type": "Convergence",
+        "step": 462,
+        "loss": 2.11103892326355,
+        "step_time_ms": 1.154184341430664
+    },
+    {
+        "type": "Convergence",
+        "step": 463,
+        "loss": 2.288961172103882,
+        "step_time_ms": 0.8585453033447266
+    },
+    {
+        "type": "Convergence",
+        "step": 464,
+        "loss": 2.6914665699005127,
+        "step_time_ms": 0.8995532989501953
+    },
+    {
+        "type": "Convergence",
+        "step": 465,
+        "loss": 2.8468048572540283,
+        "step_time_ms": 1.2466907501220703
+    },
+    {
+        "type": "Convergence",
+        "step": 466,
+        "loss": 2.234387159347534,
+        "step_time_ms": 0.7793903350830078
+    },
+    {
+        "type": "Convergence",
+        "step": 467,
+        "loss": 2.33542799949646,
+        "step_time_ms": 0.9188652038574219
+    },
+    {
+        "type": "Convergence",
+        "step": 468,
+        "loss": 3.006225347518921,
+        "step_time_ms": 1.2218952178955078
+    },
+    {
+        "type": "Convergence",
+        "step": 469,
+        "loss": 3.7782974243164062,
+        "step_time_ms": 0.7266998291015625
+    },
+    {
+        "type": "Convergence",
+        "step": 470,
+        "loss": 2.754176616668701,
+        "step_time_ms": 0.8325576782226562
+    },
+    {
+        "type": "Convergence",
+        "step": 471,
+        "loss": 2.9933393001556396,
+        "step_time_ms": 0.9024143218994141
+    },
+    {
+        "type": "Convergence",
+        "step": 472,
+        "loss": 3.5252511501312256,
+        "step_time_ms": 1.1734962463378906
+    },
+    {
+        "type": "Convergence",
+        "step": 473,
+        "loss": 3.1489694118499756,
+        "step_time_ms": 0.7243156433105469
+    },
+    {
+        "type": "Convergence",
+        "step": 474,
+        "loss": 2.421177387237549,
+        "step_time_ms": 0.7312297821044922
+    },
+    {
+        "type": "Convergence",
+        "step": 475,
+        "loss": 2.600865125656128,
+        "step_time_ms": 0.7021427154541016
+    },
+    {
+        "type": "Convergence",
+        "step": 476,
+        "loss": 3.2151217460632324,
+        "step_time_ms": 0.7052421569824219
+    },
+    {
+        "type": "Convergence",
+        "step": 477,
+        "loss": 2.4738082885742188,
+        "step_time_ms": 0.7207393646240234
+    },
+    {
+        "type": "Convergence",
+        "step": 478,
+        "loss": 2.5294549465179443,
+        "step_time_ms": 0.713348388671875
+    },
+    {
+        "type": "Convergence",
+        "step": 479,
+        "loss": 2.2253785133361816,
+        "step_time_ms": 1.238107681274414
+    },
+    {
+        "type": "Convergence",
+        "step": 480,
+        "loss": 3.492753505706787,
+        "step_time_ms": 1.2285709381103516
+    },
+    {
+        "type": "Convergence",
+        "step": 481,
+        "loss": 3.1628682613372803,
+        "step_time_ms": 1.271963119506836
+    },
+    {
+        "type": "Convergence",
+        "step": 482,
+        "loss": 2.5427982807159424,
+        "step_time_ms": 0.9098052978515625
+    },
+    {
+        "type": "Convergence",
+        "step": 483,
+        "loss": 2.8872485160827637,
+        "step_time_ms": 1.1794567108154297
+    },
+    {
+        "type": "Convergence",
+        "step": 484,
+        "loss": 2.969027042388916,
+        "step_time_ms": 0.72479248046875
+    },
+    {
+        "type": "Convergence",
+        "step": 485,
+        "loss": 1.9270519018173218,
+        "step_time_ms": 0.8943080902099609
+    },
+    {
+        "type": "Convergence",
+        "step": 486,
+        "loss": 3.22788143157959,
+        "step_time_ms": 1.1348724365234375
+    },
+    {
+        "type": "Convergence",
+        "step": 487,
+        "loss": 2.7055513858795166,
+        "step_time_ms": 0.8740425109863281
+    },
+    {
+        "type": "Convergence",
+        "step": 488,
+        "loss": 2.6510262489318848,
+        "step_time_ms": 1.3000965118408203
+    },
+    {
+        "type": "Convergence",
+        "step": 489,
+        "loss": 2.6219608783721924,
+        "step_time_ms": 0.9031295776367188
+    },
+    {
+        "type": "Convergence",
+        "step": 490,
+        "loss": 2.5231730937957764,
+        "step_time_ms": 1.134634017944336
+    },
+    {
+        "type": "Convergence",
+        "step": 491,
+        "loss": 2.3667640686035156,
+        "step_time_ms": 0.8831024169921875
+    },
+    {
+        "type": "Convergence",
+        "step": 492,
+        "loss": 2.526862144470215,
+        "step_time_ms": 1.313924789428711
+    },
+    {
+        "type": "Convergence",
+        "step": 493,
+        "loss": 2.312683343887329,
+        "step_time_ms": 0.8826255798339844
+    },
+    {
+        "type": "Convergence",
+        "step": 494,
+        "loss": 2.449737548828125,
+        "step_time_ms": 0.9839534759521484
+    },
+    {
+        "type": "Convergence",
+        "step": 495,
+        "loss": 2.2443928718566895,
+        "step_time_ms": 0.93841552734375
+    },
+    {
+        "type": "Convergence",
+        "step": 496,
+        "loss": 2.885451555252075,
+        "step_time_ms": 1.199483871459961
+    },
+    {
+        "type": "Convergence",
+        "step": 497,
+        "loss": 2.4427454471588135,
+        "step_time_ms": 0.7367134094238281
+    },
+    {
+        "type": "Convergence",
+        "step": 498,
+        "loss": 2.471961498260498,
+        "step_time_ms": 0.7407665252685547
+    },
+    {
+        "type": "Convergence",
+        "step": 499,
+        "loss": 2.20011830329895,
+        "step_time_ms": 0.8642673492431641
+    },
+    {
+        "type": "Convergence",
+        "step": 500,
+        "loss": 2.438382148742676,
+        "step_time_ms": 1.1677742004394531
+    },
+    {
+        "type": "Convergence",
+        "step": 501,
+        "loss": 2.571133613586426,
+        "step_time_ms": 0.8840560913085938
+    },
+    {
+        "type": "Convergence",
+        "step": 502,
+        "loss": 2.6916122436523438,
+        "step_time_ms": 1.2378692626953125
+    },
+    {
+        "type": "Convergence",
+        "step": 503,
+        "loss": 1.8652751445770264,
+        "step_time_ms": 0.74005126953125
+    },
+    {
+        "type": "Convergence",
+        "step": 504,
+        "loss": 2.8859505653381348,
+        "step_time_ms": 0.7138252258300781
+    },
+    {
+        "type": "Convergence",
+        "step": 505,
+        "loss": 2.893692970275879,
+        "step_time_ms": 0.7028579711914062
+    },
+    {
+        "type": "Convergence",
+        "step": 506,
+        "loss": 2.203799247741699,
+        "step_time_ms": 0.7326602935791016
+    },
+    {
+        "type": "Convergence",
+        "step": 507,
+        "loss": 2.793689012527466,
+        "step_time_ms": 0.7357597351074219
+    },
+    {
+        "type": "Convergence",
+        "step": 508,
+        "loss": 2.729804515838623,
+        "step_time_ms": 1.1832714080810547
+    },
+    {
+        "type": "Convergence",
+        "step": 509,
+        "loss": 2.944467544555664,
+        "step_time_ms": 1.0685920715332031
+    },
+    {
+        "type": "Convergence",
+        "step": 510,
+        "loss": 2.5823185443878174,
+        "step_time_ms": 0.9903907775878906
+    },
+    {
+        "type": "Convergence",
+        "step": 511,
+        "loss": 2.273524522781372,
+        "step_time_ms": 0.9417533874511719
+    },
+    {
+        "type": "Convergence",
+        "step": 512,
+        "loss": 2.500803232192993,
+        "step_time_ms": 1.1861324310302734
+    },
+    {
+        "type": "Convergence",
+        "step": 513,
+        "loss": 3.187509775161743,
+        "step_time_ms": 0.9002685546875
+    },
+    {
+        "type": "Convergence",
+        "step": 514,
+        "loss": 3.1708333492279053,
+        "step_time_ms": 1.2857913970947266
+    },
+    {
+        "type": "Convergence",
+        "step": 515,
+        "loss": 3.553842067718506,
+        "step_time_ms": 1.2581348419189453
+    },
+    {
+        "type": "Convergence",
+        "step": 516,
+        "loss": 2.2648425102233887,
+        "step_time_ms": 1.1413097381591797
+    },
+    {
+        "type": "Convergence",
+        "step": 517,
+        "loss": 2.71706223487854,
+        "step_time_ms": 0.8959770202636719
+    },
+    {
+        "type": "Convergence",
+        "step": 518,
+        "loss": 2.2721879482269287,
+        "step_time_ms": 1.1782646179199219
+    },
+    {
+        "type": "Convergence",
+        "step": 519,
+        "loss": 3.151580810546875,
+        "step_time_ms": 0.732421875
+    },
+    {
+        "type": "Convergence",
+        "step": 520,
+        "loss": 1.777179479598999,
+        "step_time_ms": 0.7417201995849609
+    },
+    {
+        "type": "Convergence",
+        "step": 521,
+        "loss": 2.061440944671631,
+        "step_time_ms": 0.9012222290039062
+    },
+    {
+        "type": "Convergence",
+        "step": 522,
+        "loss": 2.2578694820404053,
+        "step_time_ms": 1.1823177337646484
+    },
+    {
+        "type": "Convergence",
+        "step": 523,
+        "loss": 2.6881210803985596,
+        "step_time_ms": 0.9338855743408203
+    },
+    {
+        "type": "Convergence",
+        "step": 524,
+        "loss": 2.306256055831909,
+        "step_time_ms": 1.2943744659423828
+    },
+    {
+        "type": "Convergence",
+        "step": 525,
+        "loss": 2.7940444946289062,
+        "step_time_ms": 1.0781288146972656
+    },
+    {
+        "type": "Convergence",
+        "step": 526,
+        "loss": 1.9075708389282227,
+        "step_time_ms": 0.7824897766113281
+    },
+    {
+        "type": "Convergence",
+        "step": 527,
+        "loss": 2.6909682750701904,
+        "step_time_ms": 0.8816719055175781
+    },
+    {
+        "type": "Convergence",
+        "step": 528,
+        "loss": 2.5089805126190186,
+        "step_time_ms": 0.8215904235839844
+    },
+    {
+        "type": "Convergence",
+        "step": 529,
+        "loss": 1.8397859334945679,
+        "step_time_ms": 0.7987022399902344
+    },
+    {
+        "type": "Convergence",
+        "step": 530,
+        "loss": 2.9119608402252197,
+        "step_time_ms": 0.7650852203369141
+    },
+    {
+        "type": "Convergence",
+        "step": 531,
+        "loss": 2.780930995941162,
+        "step_time_ms": 0.8974075317382812
+    },
+    {
+        "type": "Convergence",
+        "step": 532,
+        "loss": 4.223758697509766,
+        "step_time_ms": 1.2607574462890625
+    },
+    {
+        "type": "Convergence",
+        "step": 533,
+        "loss": 2.148923635482788,
+        "step_time_ms": 1.1425018310546875
+    },
+    {
+        "type": "Convergence",
+        "step": 534,
+        "loss": 3.2827980518341064,
+        "step_time_ms": 0.7340908050537109
+    },
+    {
+        "type": "Convergence",
+        "step": 535,
+        "loss": 2.2495007514953613,
+        "step_time_ms": 0.7381439208984375
+    },
+    {
+        "type": "Convergence",
+        "step": 536,
+        "loss": 1.9715650081634521,
+        "step_time_ms": 0.7219314575195312
+    },
+    {
+        "type": "Convergence",
+        "step": 537,
+        "loss": 2.712648630142212,
+        "step_time_ms": 0.7174015045166016
+    },
+    {
+        "type": "Convergence",
+        "step": 538,
+        "loss": 1.8152389526367188,
+        "step_time_ms": 0.8728504180908203
+    },
+    {
+        "type": "Convergence",
+        "step": 539,
+        "loss": 3.2854065895080566,
+        "step_time_ms": 1.051187515258789
+    },
+    {
+        "type": "Convergence",
+        "step": 540,
+        "loss": 2.750237464904785,
+        "step_time_ms": 0.8654594421386719
+    },
+    {
+        "type": "Convergence",
+        "step": 541,
+        "loss": 1.823164701461792,
+        "step_time_ms": 0.8690357208251953
+    },
+    {
+        "type": "Convergence",
+        "step": 542,
+        "loss": 3.3541226387023926,
+        "step_time_ms": 0.7784366607666016
+    },
+    {
+        "type": "Convergence",
+        "step": 543,
+        "loss": 3.0160951614379883,
+        "step_time_ms": 1.1582374572753906
+    },
+    {
+        "type": "Convergence",
+        "step": 544,
+        "loss": 2.81786847114563,
+        "step_time_ms": 1.2607574462890625
+    },
+    {
+        "type": "Convergence",
+        "step": 545,
+        "loss": 2.4465184211730957,
+        "step_time_ms": 1.171112060546875
+    },
+    {
+        "type": "Convergence",
+        "step": 546,
+        "loss": 3.3669192790985107,
+        "step_time_ms": 0.9605884552001953
+    },
+    {
+        "type": "Convergence",
+        "step": 547,
+        "loss": 3.726527452468872,
+        "step_time_ms": 1.2707710266113281
+    },
+    {
+        "type": "Convergence",
+        "step": 548,
+        "loss": 2.2065269947052,
+        "step_time_ms": 1.1372566223144531
+    },
+    {
+        "type": "Convergence",
+        "step": 549,
+        "loss": 1.9343005418777466,
+        "step_time_ms": 0.9479522705078125
+    },
+    {
+        "type": "Convergence",
+        "step": 550,
+        "loss": 2.776045560836792,
+        "step_time_ms": 1.25885009765625
+    },
+    {
+        "type": "Convergence",
+        "step": 551,
+        "loss": 2.533552408218384,
+        "step_time_ms": 1.2497901916503906
+    },
+    {
+        "type": "Convergence",
+        "step": 552,
+        "loss": 3.065274238586426,
+        "step_time_ms": 1.2001991271972656
+    },
+    {
+        "type": "Convergence",
+        "step": 553,
+        "loss": 2.9497578144073486,
+        "step_time_ms": 0.9729862213134766
+    },
+    {
+        "type": "Convergence",
+        "step": 554,
+        "loss": 3.3614068031311035,
+        "step_time_ms": 0.8304119110107422
+    },
+    {
+        "type": "Convergence",
+        "step": 555,
+        "loss": 2.8776886463165283,
+        "step_time_ms": 0.8232593536376953
+    },
+    {
+        "type": "Convergence",
+        "step": 556,
+        "loss": 2.4447131156921387,
+        "step_time_ms": 0.8738040924072266
+    },
+    {
+        "type": "Convergence",
+        "step": 557,
+        "loss": 2.090113878250122,
+        "step_time_ms": 0.8187294006347656
+    },
+    {
+        "type": "Convergence",
+        "step": 558,
+        "loss": 2.7032992839813232,
+        "step_time_ms": 0.7886886596679688
+    },
+    {
+        "type": "Convergence",
+        "step": 559,
+        "loss": 3.06174373626709,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 560,
+        "loss": 1.996130347251892,
+        "step_time_ms": 0.9696483612060547
+    },
+    {
+        "type": "Convergence",
+        "step": 561,
+        "loss": 3.2887885570526123,
+        "step_time_ms": 0.8962154388427734
+    },
+    {
+        "type": "Convergence",
+        "step": 562,
+        "loss": 2.7490148544311523,
+        "step_time_ms": 0.8087158203125
+    },
+    {
+        "type": "Convergence",
+        "step": 563,
+        "loss": 2.7152740955352783,
+        "step_time_ms": 0.7860660552978516
+    },
+    {
+        "type": "Convergence",
+        "step": 564,
+        "loss": 2.997262477874756,
+        "step_time_ms": 0.8118152618408203
+    },
+    {
+        "type": "Convergence",
+        "step": 565,
+        "loss": 2.076395034790039,
+        "step_time_ms": 0.7920265197753906
+    },
+    {
+        "type": "Convergence",
+        "step": 566,
+        "loss": 2.6938648223876953,
+        "step_time_ms": 0.8733272552490234
+    },
+    {
+        "type": "Convergence",
+        "step": 567,
+        "loss": 2.907172203063965,
+        "step_time_ms": 0.8661746978759766
+    },
+    {
+        "type": "Convergence",
+        "step": 568,
+        "loss": 3.022151231765747,
+        "step_time_ms": 0.9844303131103516
+    },
+    {
+        "type": "Convergence",
+        "step": 569,
+        "loss": 2.554020404815674,
+        "step_time_ms": 0.9739398956298828
+    },
+    {
+        "type": "Convergence",
+        "step": 570,
+        "loss": 1.820678472518921,
+        "step_time_ms": 0.8397102355957031
+    },
+    {
+        "type": "Convergence",
+        "step": 571,
+        "loss": 3.680086851119995,
+        "step_time_ms": 0.8313655853271484
+    },
+    {
+        "type": "Convergence",
+        "step": 572,
+        "loss": 3.394054412841797,
+        "step_time_ms": 0.8296966552734375
+    },
+    {
+        "type": "Convergence",
+        "step": 573,
+        "loss": 2.9455349445343018,
+        "step_time_ms": 0.7841587066650391
+    },
+    {
+        "type": "Convergence",
+        "step": 574,
+        "loss": 2.500831365585327,
+        "step_time_ms": 0.7913112640380859
+    },
+    {
+        "type": "Convergence",
+        "step": 575,
+        "loss": 2.1909048557281494,
+        "step_time_ms": 0.8254051208496094
+    },
+    {
+        "type": "Convergence",
+        "step": 576,
+        "loss": 1.975637435913086,
+        "step_time_ms": 0.8182525634765625
+    },
+    {
+        "type": "Convergence",
+        "step": 577,
+        "loss": 2.969374179840088,
+        "step_time_ms": 0.8020401000976562
+    },
+    {
+        "type": "Convergence",
+        "step": 578,
+        "loss": 2.3228023052215576,
+        "step_time_ms": 0.7915496826171875
+    },
+    {
+        "type": "Convergence",
+        "step": 579,
+        "loss": 2.5031065940856934,
+        "step_time_ms": 0.8022785186767578
+    },
+    {
+        "type": "Convergence",
+        "step": 580,
+        "loss": 2.41168212890625,
+        "step_time_ms": 0.8645057678222656
+    },
+    {
+        "type": "Convergence",
+        "step": 581,
+        "loss": 2.4394478797912598,
+        "step_time_ms": 1.5330314636230469
+    },
+    {
+        "type": "Convergence",
+        "step": 582,
+        "loss": 3.3802363872528076,
+        "step_time_ms": 0.8935928344726562
+    },
+    {
+        "type": "Convergence",
+        "step": 583,
+        "loss": 2.7603492736816406,
+        "step_time_ms": 0.7948875427246094
+    },
+    {
+        "type": "Convergence",
+        "step": 584,
+        "loss": 2.6300244331359863,
+        "step_time_ms": 0.8444786071777344
+    },
+    {
+        "type": "Convergence",
+        "step": 585,
+        "loss": 2.18475341796875,
+        "step_time_ms": 1.180887222290039
+    },
+    {
+        "type": "Convergence",
+        "step": 586,
+        "loss": 2.4169514179229736,
+        "step_time_ms": 0.9953975677490234
+    },
+    {
+        "type": "Convergence",
+        "step": 587,
+        "loss": 2.3505773544311523,
+        "step_time_ms": 0.7879734039306641
+    },
+    {
+        "type": "Convergence",
+        "step": 588,
+        "loss": 2.0892157554626465,
+        "step_time_ms": 0.8373260498046875
+    },
+    {
+        "type": "Convergence",
+        "step": 589,
+        "loss": 2.6547188758850098,
+        "step_time_ms": 0.7848739624023438
+    },
+    {
+        "type": "Convergence",
+        "step": 590,
+        "loss": 2.805392026901245,
+        "step_time_ms": 0.7970333099365234
+    },
+    {
+        "type": "Convergence",
+        "step": 591,
+        "loss": 2.486416816711426,
+        "step_time_ms": 1.4019012451171875
+    },
+    {
+        "type": "Convergence",
+        "step": 592,
+        "loss": 2.687509536743164,
+        "step_time_ms": 1.2826919555664062
+    },
+    {
+        "type": "Convergence",
+        "step": 593,
+        "loss": 3.1005489826202393,
+        "step_time_ms": 1.188039779663086
+    },
+    {
+        "type": "Convergence",
+        "step": 594,
+        "loss": 2.6814277172088623,
+        "step_time_ms": 0.9856224060058594
+    },
+    {
+        "type": "Convergence",
+        "step": 595,
+        "loss": 2.118781805038452,
+        "step_time_ms": 1.1832714080810547
+    },
+    {
+        "type": "Convergence",
+        "step": 596,
+        "loss": 2.5920498371124268,
+        "step_time_ms": 0.9214878082275391
+    },
+    {
+        "type": "Convergence",
+        "step": 597,
+        "loss": 2.662557601928711,
+        "step_time_ms": 1.1653900146484375
+    },
+    {
+        "type": "Convergence",
+        "step": 598,
+        "loss": 2.3357410430908203,
+        "step_time_ms": 0.9143352508544922
+    },
+    {
+        "type": "Convergence",
+        "step": 599,
+        "loss": 2.365544319152832,
+        "step_time_ms": 1.0080337524414062
+    },
+    {
+        "type": "Convergence",
+        "step": 600,
+        "loss": 2.2607948780059814,
+        "step_time_ms": 0.9286403656005859
+    },
+    {
+        "type": "Convergence",
+        "step": 601,
+        "loss": 2.7111759185791016,
+        "step_time_ms": 0.8740425109863281
+    },
+    {
+        "type": "Convergence",
+        "step": 602,
+        "loss": 3.061253309249878,
+        "step_time_ms": 0.8227825164794922
+    },
+    {
+        "type": "Convergence",
+        "step": 603,
+        "loss": 2.600987672805786,
+        "step_time_ms": 0.7948875427246094
+    },
+    {
+        "type": "Convergence",
+        "step": 604,
+        "loss": 2.723405122756958,
+        "step_time_ms": 0.7975101470947266
+    },
+    {
+        "type": "Convergence",
+        "step": 605,
+        "loss": 1.8838815689086914,
+        "step_time_ms": 0.7824897766113281
+    },
+    {
+        "type": "Convergence",
+        "step": 606,
+        "loss": 3.0011634826660156,
+        "step_time_ms": 0.8606910705566406
+    },
+    {
+        "type": "Convergence",
+        "step": 607,
+        "loss": 2.414876937866211,
+        "step_time_ms": 0.8041858673095703
+    },
+    {
+        "type": "Convergence",
+        "step": 608,
+        "loss": 2.5000715255737305,
+        "step_time_ms": 0.8008480072021484
+    },
+    {
+        "type": "Convergence",
+        "step": 609,
+        "loss": 2.929429769515991,
+        "step_time_ms": 0.7867813110351562
+    },
+    {
+        "type": "Convergence",
+        "step": 610,
+        "loss": 2.583951711654663,
+        "step_time_ms": 0.8332729339599609
+    },
+    {
+        "type": "Convergence",
+        "step": 611,
+        "loss": 3.0735397338867188,
+        "step_time_ms": 0.8437633514404297
+    },
+    {
+        "type": "Convergence",
+        "step": 612,
+        "loss": 2.1185362339019775,
+        "step_time_ms": 0.8542537689208984
+    },
+    {
+        "type": "Convergence",
+        "step": 613,
+        "loss": 2.340632438659668,
+        "step_time_ms": 0.8733272552490234
+    },
+    {
+        "type": "Convergence",
+        "step": 614,
+        "loss": 2.6132638454437256,
+        "step_time_ms": 0.8220672607421875
+    },
+    {
+        "type": "Convergence",
+        "step": 615,
+        "loss": 3.2258780002593994,
+        "step_time_ms": 0.7824897766113281
+    },
+    {
+        "type": "Convergence",
+        "step": 616,
+        "loss": 3.0113143920898438,
+        "step_time_ms": 0.9856224060058594
+    },
+    {
+        "type": "Convergence",
+        "step": 617,
+        "loss": 2.8631627559661865,
+        "step_time_ms": 1.3427734375
+    },
+    {
+        "type": "Convergence",
+        "step": 618,
+        "loss": 2.479710817337036,
+        "step_time_ms": 1.1641979217529297
+    },
+    {
+        "type": "Convergence",
+        "step": 619,
+        "loss": 3.2660791873931885,
+        "step_time_ms": 0.8943080902099609
+    },
+    {
+        "type": "Convergence",
+        "step": 620,
+        "loss": 1.947656512260437,
+        "step_time_ms": 1.1379718780517578
+    },
+    {
+        "type": "Convergence",
+        "step": 621,
+        "loss": 2.7848706245422363,
+        "step_time_ms": 0.9794235229492188
+    },
+    {
+        "type": "Convergence",
+        "step": 622,
+        "loss": 1.8501867055892944,
+        "step_time_ms": 1.1601448059082031
+    },
+    {
+        "type": "Convergence",
+        "step": 623,
+        "loss": 2.7724437713623047,
+        "step_time_ms": 0.7402896881103516
+    },
+    {
+        "type": "Convergence",
+        "step": 624,
+        "loss": 1.8480093479156494,
+        "step_time_ms": 0.7228851318359375
+    },
+    {
+        "type": "Convergence",
+        "step": 625,
+        "loss": 2.922773599624634,
+        "step_time_ms": 0.9021759033203125
+    },
+    {
+        "type": "Convergence",
+        "step": 626,
+        "loss": 2.2806589603424072,
+        "step_time_ms": 1.4224052429199219
+    },
+    {
+        "type": "Convergence",
+        "step": 627,
+        "loss": 2.1199774742126465,
+        "step_time_ms": 0.8301734924316406
+    },
+    {
+        "type": "Convergence",
+        "step": 628,
+        "loss": 2.9071497917175293,
+        "step_time_ms": 0.8087158203125
+    },
+    {
+        "type": "Convergence",
+        "step": 629,
+        "loss": 2.9440410137176514,
+        "step_time_ms": 0.789642333984375
+    },
+    {
+        "type": "Convergence",
+        "step": 630,
+        "loss": 3.461531639099121,
+        "step_time_ms": 0.7832050323486328
+    },
+    {
+        "type": "Convergence",
+        "step": 631,
+        "loss": 2.0075254440307617,
+        "step_time_ms": 1.3573169708251953
+    },
+    {
+        "type": "Convergence",
+        "step": 632,
+        "loss": 3.0941126346588135,
+        "step_time_ms": 1.379251480102539
+    },
+    {
+        "type": "Convergence",
+        "step": 633,
+        "loss": 2.6969478130340576,
+        "step_time_ms": 1.1551380157470703
+    },
+    {
+        "type": "Convergence",
+        "step": 634,
+        "loss": 3.045753240585327,
+        "step_time_ms": 0.8442401885986328
+    },
+    {
+        "type": "Convergence",
+        "step": 635,
+        "loss": 3.1731810569763184,
+        "step_time_ms": 0.9043216705322266
+    },
+    {
+        "type": "Convergence",
+        "step": 636,
+        "loss": 2.624814748764038,
+        "step_time_ms": 1.41143798828125
+    },
+    {
+        "type": "Convergence",
+        "step": 637,
+        "loss": 2.8896281719207764,
+        "step_time_ms": 1.1348724365234375
+    },
+    {
+        "type": "Convergence",
+        "step": 638,
+        "loss": 3.0259182453155518,
+        "step_time_ms": 0.8981227874755859
+    },
+    {
+        "type": "Convergence",
+        "step": 639,
+        "loss": 1.9958820343017578,
+        "step_time_ms": 1.2543201446533203
+    },
+    {
+        "type": "Convergence",
+        "step": 640,
+        "loss": 2.0175254344940186,
+        "step_time_ms": 0.9546279907226562
+    },
+    {
+        "type": "Convergence",
+        "step": 641,
+        "loss": 2.1392858028411865,
+        "step_time_ms": 0.9341239929199219
+    },
+    {
+        "type": "Convergence",
+        "step": 642,
+        "loss": 2.527470111846924,
+        "step_time_ms": 1.209259033203125
+    },
+    {
+        "type": "Convergence",
+        "step": 643,
+        "loss": 2.028005838394165,
+        "step_time_ms": 0.8745193481445312
+    },
+    {
+        "type": "Convergence",
+        "step": 644,
+        "loss": 2.311297655105591,
+        "step_time_ms": 1.653432846069336
+    },
+    {
+        "type": "Convergence",
+        "step": 645,
+        "loss": 3.016895294189453,
+        "step_time_ms": 1.3082027435302734
+    },
+    {
+        "type": "Convergence",
+        "step": 646,
+        "loss": 2.5662314891815186,
+        "step_time_ms": 1.1601448059082031
+    },
+    {
+        "type": "Convergence",
+        "step": 647,
+        "loss": 3.093642234802246,
+        "step_time_ms": 0.759124755859375
+    },
+    {
+        "type": "Convergence",
+        "step": 648,
+        "loss": 2.2859599590301514,
+        "step_time_ms": 0.7369518280029297
+    },
+    {
+        "type": "Convergence",
+        "step": 649,
+        "loss": 2.850832223892212,
+        "step_time_ms": 0.7236003875732422
+    },
+    {
+        "type": "Convergence",
+        "step": 650,
+        "loss": 2.8469128608703613,
+        "step_time_ms": 0.7228851318359375
+    },
+    {
+        "type": "Convergence",
+        "step": 651,
+        "loss": 2.9953482151031494,
+        "step_time_ms": 0.8921623229980469
+    },
+    {
+        "type": "Convergence",
+        "step": 652,
+        "loss": 2.9179437160491943,
+        "step_time_ms": 1.6949176788330078
+    },
+    {
+        "type": "Convergence",
+        "step": 653,
+        "loss": 2.1644809246063232,
+        "step_time_ms": 0.9071826934814453
+    },
+    {
+        "type": "Convergence",
+        "step": 654,
+        "loss": 3.309441328048706,
+        "step_time_ms": 0.8320808410644531
+    },
+    {
+        "type": "Convergence",
+        "step": 655,
+        "loss": 2.5231752395629883,
+        "step_time_ms": 0.8363723754882812
+    },
+    {
+        "type": "Convergence",
+        "step": 656,
+        "loss": 2.382730484008789,
+        "step_time_ms": 0.8020401000976562
+    },
+    {
+        "type": "Convergence",
+        "step": 657,
+        "loss": 2.99039888381958,
+        "step_time_ms": 0.7865428924560547
+    },
+    {
+        "type": "Convergence",
+        "step": 658,
+        "loss": 2.695469617843628,
+        "step_time_ms": 0.7867813110351562
+    },
+    {
+        "type": "Convergence",
+        "step": 659,
+        "loss": 2.758066177368164,
+        "step_time_ms": 1.1942386627197266
+    },
+    {
+        "type": "Convergence",
+        "step": 660,
+        "loss": 2.2928738594055176,
+        "step_time_ms": 0.9851455688476562
+    },
+    {
+        "type": "Convergence",
+        "step": 661,
+        "loss": 3.0284347534179688,
+        "step_time_ms": 0.9176731109619141
+    },
+    {
+        "type": "Convergence",
+        "step": 662,
+        "loss": 2.834918975830078,
+        "step_time_ms": 1.2025833129882812
+    },
+    {
+        "type": "Convergence",
+        "step": 663,
+        "loss": 3.062544345855713,
+        "step_time_ms": 0.7352828979492188
+    },
+    {
+        "type": "Convergence",
+        "step": 664,
+        "loss": 2.4742591381073,
+        "step_time_ms": 0.8563995361328125
+    },
+    {
+        "type": "Convergence",
+        "step": 665,
+        "loss": 2.604912281036377,
+        "step_time_ms": 1.1205673217773438
+    },
+    {
+        "type": "Convergence",
+        "step": 666,
+        "loss": 2.87386155128479,
+        "step_time_ms": 0.7274150848388672
+    },
+    {
+        "type": "Convergence",
+        "step": 667,
+        "loss": 2.613837480545044,
+        "step_time_ms": 0.7297992706298828
+    },
+    {
+        "type": "Convergence",
+        "step": 668,
+        "loss": 2.659531354904175,
+        "step_time_ms": 0.9443759918212891
+    },
+    {
+        "type": "Convergence",
+        "step": 669,
+        "loss": 2.4926464557647705,
+        "step_time_ms": 1.2137889862060547
+    },
+    {
+        "type": "Convergence",
+        "step": 670,
+        "loss": 2.3299527168273926,
+        "step_time_ms": 1.005411148071289
+    },
+    {
+        "type": "Convergence",
+        "step": 671,
+        "loss": 2.0159566402435303,
+        "step_time_ms": 0.8924007415771484
+    },
+    {
+        "type": "Convergence",
+        "step": 672,
+        "loss": 2.743806838989258,
+        "step_time_ms": 1.1584758758544922
+    },
+    {
+        "type": "Convergence",
+        "step": 673,
+        "loss": 2.6237332820892334,
+        "step_time_ms": 0.7216930389404297
+    },
+    {
+        "type": "Convergence",
+        "step": 674,
+        "loss": 2.6602773666381836,
+        "step_time_ms": 1.0309219360351562
+    },
+    {
+        "type": "Convergence",
+        "step": 675,
+        "loss": 2.3535044193267822,
+        "step_time_ms": 0.9541511535644531
+    },
+    {
+        "type": "Convergence",
+        "step": 676,
+        "loss": 2.3004117012023926,
+        "step_time_ms": 1.165628433227539
+    },
+    {
+        "type": "Convergence",
+        "step": 677,
+        "loss": 2.2061448097229004,
+        "step_time_ms": 0.9064674377441406
+    },
+    {
+        "type": "Convergence",
+        "step": 678,
+        "loss": 2.6859259605407715,
+        "step_time_ms": 1.1763572692871094
+    },
+    {
+        "type": "Convergence",
+        "step": 679,
+        "loss": 2.306365728378296,
+        "step_time_ms": 0.7331371307373047
+    },
+    {
+        "type": "Convergence",
+        "step": 680,
+        "loss": 3.361055612564087,
+        "step_time_ms": 0.7145404815673828
+    },
+    {
+        "type": "Convergence",
+        "step": 681,
+        "loss": 2.54953932762146,
+        "step_time_ms": 0.9028911590576172
+    },
+    {
+        "type": "Convergence",
+        "step": 682,
+        "loss": 1.881718635559082,
+        "step_time_ms": 0.9391307830810547
+    },
+    {
+        "type": "Convergence",
+        "step": 683,
+        "loss": 2.4829771518707275,
+        "step_time_ms": 0.8103847503662109
+    },
+    {
+        "type": "Convergence",
+        "step": 684,
+        "loss": 2.0253751277923584,
+        "step_time_ms": 0.8099079132080078
+    },
+    {
+        "type": "Convergence",
+        "step": 685,
+        "loss": 3.3960444927215576,
+        "step_time_ms": 0.8475780487060547
+    },
+    {
+        "type": "Convergence",
+        "step": 686,
+        "loss": 1.9199210405349731,
+        "step_time_ms": 0.8356571197509766
+    },
+    {
+        "type": "Convergence",
+        "step": 687,
+        "loss": 2.6315207481384277,
+        "step_time_ms": 0.8122920989990234
+    },
+    {
+        "type": "Convergence",
+        "step": 688,
+        "loss": 2.599961757659912,
+        "step_time_ms": 0.9098052978515625
+    },
+    {
+        "type": "Convergence",
+        "step": 689,
+        "loss": 2.6736950874328613,
+        "step_time_ms": 0.9820461273193359
+    },
+    {
+        "type": "Convergence",
+        "step": 690,
+        "loss": 2.598965644836426,
+        "step_time_ms": 1.3804435729980469
+    },
+    {
+        "type": "Convergence",
+        "step": 691,
+        "loss": 2.0409491062164307,
+        "step_time_ms": 1.2657642364501953
+    },
+    {
+        "type": "Convergence",
+        "step": 692,
+        "loss": 2.2006404399871826,
+        "step_time_ms": 1.2919902801513672
+    },
+    {
+        "type": "Convergence",
+        "step": 693,
+        "loss": 3.7400527000427246,
+        "step_time_ms": 0.9191036224365234
+    },
+    {
+        "type": "Convergence",
+        "step": 694,
+        "loss": 2.8980166912078857,
+        "step_time_ms": 1.2238025665283203
+    },
+    {
+        "type": "Convergence",
+        "step": 695,
+        "loss": 2.614553213119507,
+        "step_time_ms": 0.9164810180664062
+    },
+    {
+        "type": "Convergence",
+        "step": 696,
+        "loss": 3.3920516967773438,
+        "step_time_ms": 1.3816356658935547
+    },
+    {
+        "type": "Convergence",
+        "step": 697,
+        "loss": 2.8416523933410645,
+        "step_time_ms": 1.3556480407714844
+    },
+    {
+        "type": "Convergence",
+        "step": 698,
+        "loss": 3.002830982208252,
+        "step_time_ms": 1.3756752014160156
+    },
+    {
+        "type": "Convergence",
+        "step": 699,
+        "loss": 2.366170644760132,
+        "step_time_ms": 1.3110637664794922
+    },
+    {
+        "type": "Convergence",
+        "step": 700,
+        "loss": 2.2774505615234375,
+        "step_time_ms": 1.3074874877929688
+    },
+    {
+        "type": "Convergence",
+        "step": 701,
+        "loss": 3.2412002086639404,
+        "step_time_ms": 1.360177993774414
+    },
+    {
+        "type": "Convergence",
+        "step": 702,
+        "loss": 2.6099870204925537,
+        "step_time_ms": 1.1188983917236328
+    },
+    {
+        "type": "Convergence",
+        "step": 703,
+        "loss": 2.14330792427063,
+        "step_time_ms": 1.325845718383789
+    },
+    {
+        "type": "Convergence",
+        "step": 704,
+        "loss": 2.625404119491577,
+        "step_time_ms": 1.4224052429199219
+    },
+    {
+        "type": "Convergence",
+        "step": 705,
+        "loss": 2.3586223125457764,
+        "step_time_ms": 1.1811256408691406
+    },
+    {
+        "type": "Convergence",
+        "step": 706,
+        "loss": 2.915134906768799,
+        "step_time_ms": 0.7729530334472656
+    },
+    {
+        "type": "Convergence",
+        "step": 707,
+        "loss": 2.5286974906921387,
+        "step_time_ms": 0.9243488311767578
+    },
+    {
+        "type": "Convergence",
+        "step": 708,
+        "loss": 2.3568038940429688,
+        "step_time_ms": 1.268148422241211
+    },
+    {
+        "type": "Convergence",
+        "step": 709,
+        "loss": 2.77463436126709,
+        "step_time_ms": 0.8168220520019531
+    },
+    {
+        "type": "Convergence",
+        "step": 710,
+        "loss": 2.750622034072876,
+        "step_time_ms": 0.9987354278564453
+    },
+    {
+        "type": "Convergence",
+        "step": 711,
+        "loss": 2.6558690071105957,
+        "step_time_ms": 0.8611679077148438
+    },
+    {
+        "type": "Convergence",
+        "step": 712,
+        "loss": 2.8479037284851074,
+        "step_time_ms": 0.8053779602050781
+    },
+    {
+        "type": "Convergence",
+        "step": 713,
+        "loss": 2.625673294067383,
+        "step_time_ms": 0.7951259613037109
+    },
+    {
+        "type": "Convergence",
+        "step": 714,
+        "loss": 2.462790012359619,
+        "step_time_ms": 0.8449554443359375
+    },
+    {
+        "type": "Convergence",
+        "step": 715,
+        "loss": 1.9421226978302002,
+        "step_time_ms": 0.7846355438232422
+    },
+    {
+        "type": "Convergence",
+        "step": 716,
+        "loss": 2.193122148513794,
+        "step_time_ms": 0.8931159973144531
+    },
+    {
+        "type": "Convergence",
+        "step": 717,
+        "loss": 2.770277738571167,
+        "step_time_ms": 0.9701251983642578
+    },
+    {
+        "type": "Convergence",
+        "step": 718,
+        "loss": 2.9106533527374268,
+        "step_time_ms": 0.8802413940429688
+    },
+    {
+        "type": "Convergence",
+        "step": 719,
+        "loss": 2.476228952407837,
+        "step_time_ms": 0.8029937744140625
+    },
+    {
+        "type": "Convergence",
+        "step": 720,
+        "loss": 2.6256043910980225,
+        "step_time_ms": 0.7841587066650391
+    },
+    {
+        "type": "Convergence",
+        "step": 721,
+        "loss": 3.003535509109497,
+        "step_time_ms": 0.8254051208496094
+    },
+    {
+        "type": "Convergence",
+        "step": 722,
+        "loss": 2.4662210941314697,
+        "step_time_ms": 0.8728504180908203
+    },
+    {
+        "type": "Convergence",
+        "step": 723,
+        "loss": 3.2793502807617188,
+        "step_time_ms": 0.8974075317382812
+    },
+    {
+        "type": "Convergence",
+        "step": 724,
+        "loss": 2.929703712463379,
+        "step_time_ms": 0.8087158203125
+    },
+    {
+        "type": "Convergence",
+        "step": 725,
+        "loss": 3.0862858295440674,
+        "step_time_ms": 0.7953643798828125
+    },
+    {
+        "type": "Convergence",
+        "step": 726,
+        "loss": 1.9279056787490845,
+        "step_time_ms": 0.8497238159179688
+    },
+    {
+        "type": "Convergence",
+        "step": 727,
+        "loss": 2.4251601696014404,
+        "step_time_ms": 0.7905960083007812
+    },
+    {
+        "type": "Convergence",
+        "step": 728,
+        "loss": 2.5727031230926514,
+        "step_time_ms": 0.79345703125
+    },
+    {
+        "type": "Convergence",
+        "step": 729,
+        "loss": 2.754595994949341,
+        "step_time_ms": 0.7882118225097656
+    },
+    {
+        "type": "Convergence",
+        "step": 730,
+        "loss": 2.5770771503448486,
+        "step_time_ms": 0.7951259613037109
+    },
+    {
+        "type": "Convergence",
+        "step": 731,
+        "loss": 2.552534341812134,
+        "step_time_ms": 0.8718967437744141
+    },
+    {
+        "type": "Convergence",
+        "step": 732,
+        "loss": 2.455087900161743,
+        "step_time_ms": 0.7967948913574219
+    },
+    {
+        "type": "Convergence",
+        "step": 733,
+        "loss": 2.9312546253204346,
+        "step_time_ms": 0.9119510650634766
+    },
+    {
+        "type": "Convergence",
+        "step": 734,
+        "loss": 3.4422733783721924,
+        "step_time_ms": 0.9825229644775391
+    },
+    {
+        "type": "Convergence",
+        "step": 735,
+        "loss": 2.9270904064178467,
+        "step_time_ms": 1.3370513916015625
+    },
+    {
+        "type": "Convergence",
+        "step": 736,
+        "loss": 2.6916120052337646,
+        "step_time_ms": 1.1882781982421875
+    },
+    {
+        "type": "Convergence",
+        "step": 737,
+        "loss": 2.1979098320007324,
+        "step_time_ms": 0.7817745208740234
+    },
+    {
+        "type": "Convergence",
+        "step": 738,
+        "loss": 2.709990978240967,
+        "step_time_ms": 0.9484291076660156
+    },
+    {
+        "type": "Convergence",
+        "step": 739,
+        "loss": 3.7620785236358643,
+        "step_time_ms": 1.2013912200927734
+    },
+    {
+        "type": "Convergence",
+        "step": 740,
+        "loss": 2.939622640609741,
+        "step_time_ms": 0.8254051208496094
+    },
+    {
+        "type": "Convergence",
+        "step": 741,
+        "loss": 3.035597085952759,
+        "step_time_ms": 1.5091896057128906
+    },
+    {
+        "type": "Convergence",
+        "step": 742,
+        "loss": 2.4223473072052,
+        "step_time_ms": 1.2438297271728516
+    },
+    {
+        "type": "Convergence",
+        "step": 743,
+        "loss": 2.61466121673584,
+        "step_time_ms": 0.9629726409912109
+    },
+    {
+        "type": "Convergence",
+        "step": 744,
+        "loss": 1.9789108037948608,
+        "step_time_ms": 1.247406005859375
+    },
+    {
+        "type": "Convergence",
+        "step": 745,
+        "loss": 2.7297160625457764,
+        "step_time_ms": 0.9245872497558594
+    },
+    {
+        "type": "Convergence",
+        "step": 746,
+        "loss": 2.5724916458129883,
+        "step_time_ms": 1.2438297271728516
+    },
+    {
+        "type": "Convergence",
+        "step": 747,
+        "loss": 2.765244245529175,
+        "step_time_ms": 1.0669231414794922
+    },
+    {
+        "type": "Convergence",
+        "step": 748,
+        "loss": 3.3120789527893066,
+        "step_time_ms": 1.3496875762939453
+    },
+    {
+        "type": "Convergence",
+        "step": 749,
+        "loss": 2.311004161834717,
+        "step_time_ms": 1.1930465698242188
+    },
+    {
+        "type": "Convergence",
+        "step": 750,
+        "loss": 2.2603023052215576,
+        "step_time_ms": 0.9322166442871094
+    },
+    {
+        "type": "Convergence",
+        "step": 751,
+        "loss": 1.9541460275650024,
+        "step_time_ms": 1.3632774353027344
+    },
+    {
+        "type": "Convergence",
+        "step": 752,
+        "loss": 3.3330039978027344,
+        "step_time_ms": 1.2469291687011719
+    },
+    {
+        "type": "Convergence",
+        "step": 753,
+        "loss": 2.886624574661255,
+        "step_time_ms": 0.7367134094238281
+    },
+    {
+        "type": "Convergence",
+        "step": 754,
+        "loss": 2.7055599689483643,
+        "step_time_ms": 0.7255077362060547
+    },
+    {
+        "type": "Convergence",
+        "step": 755,
+        "loss": 2.580627918243408,
+        "step_time_ms": 0.7178783416748047
+    },
+    {
+        "type": "Convergence",
+        "step": 756,
+        "loss": 2.471597909927368,
+        "step_time_ms": 0.7293224334716797
+    },
+    {
+        "type": "Convergence",
+        "step": 757,
+        "loss": 2.8764126300811768,
+        "step_time_ms": 1.0216236114501953
+    },
+    {
+        "type": "Convergence",
+        "step": 758,
+        "loss": 2.5935862064361572,
+        "step_time_ms": 0.9067058563232422
+    },
+    {
+        "type": "Convergence",
+        "step": 759,
+        "loss": 3.0773372650146484,
+        "step_time_ms": 0.8003711700439453
+    },
+    {
+        "type": "Convergence",
+        "step": 760,
+        "loss": 2.8057451248168945,
+        "step_time_ms": 0.7903575897216797
+    },
+    {
+        "type": "Convergence",
+        "step": 761,
+        "loss": 2.1119861602783203,
+        "step_time_ms": 0.8704662322998047
+    },
+    {
+        "type": "Convergence",
+        "step": 762,
+        "loss": 1.9001134634017944,
+        "step_time_ms": 0.9703636169433594
+    },
+    {
+        "type": "Convergence",
+        "step": 763,
+        "loss": 2.070378303527832,
+        "step_time_ms": 0.8428096771240234
+    },
+    {
+        "type": "Convergence",
+        "step": 764,
+        "loss": 2.209317445755005,
+        "step_time_ms": 0.7996559143066406
+    },
+    {
+        "type": "Convergence",
+        "step": 765,
+        "loss": 2.5501456260681152,
+        "step_time_ms": 0.8995532989501953
+    },
+    {
+        "type": "Convergence",
+        "step": 766,
+        "loss": 2.639876365661621,
+        "step_time_ms": 0.8358955383300781
+    },
+    {
+        "type": "Convergence",
+        "step": 767,
+        "loss": 2.583875894546509,
+        "step_time_ms": 0.7936954498291016
+    },
+    {
+        "type": "Convergence",
+        "step": 768,
+        "loss": 2.26655912399292,
+        "step_time_ms": 0.7827281951904297
+    },
+    {
+        "type": "Convergence",
+        "step": 769,
+        "loss": 2.4175381660461426,
+        "step_time_ms": 0.7948875427246094
+    },
+    {
+        "type": "Convergence",
+        "step": 770,
+        "loss": 2.6778788566589355,
+        "step_time_ms": 0.8330345153808594
+    },
+    {
+        "type": "Convergence",
+        "step": 771,
+        "loss": 2.307821035385132,
+        "step_time_ms": 0.8475780487060547
+    },
+    {
+        "type": "Convergence",
+        "step": 772,
+        "loss": 2.2065470218658447,
+        "step_time_ms": 0.7867813110351562
+    },
+    {
+        "type": "Convergence",
+        "step": 773,
+        "loss": 2.746856927871704,
+        "step_time_ms": 0.8189678192138672
+    },
+    {
+        "type": "Convergence",
+        "step": 774,
+        "loss": 2.743546724319458,
+        "step_time_ms": 0.8039474487304688
+    },
+    {
+        "type": "Convergence",
+        "step": 775,
+        "loss": 1.9552841186523438,
+        "step_time_ms": 0.8070468902587891
+    },
+    {
+        "type": "Convergence",
+        "step": 776,
+        "loss": 2.964376211166382,
+        "step_time_ms": 0.7889270782470703
+    },
+    {
+        "type": "Convergence",
+        "step": 777,
+        "loss": 2.132675886154175,
+        "step_time_ms": 0.7841587066650391
+    },
+    {
+        "type": "Convergence",
+        "step": 778,
+        "loss": 2.756139039993286,
+        "step_time_ms": 0.7793903350830078
+    },
+    {
+        "type": "Convergence",
+        "step": 779,
+        "loss": 2.139543294906616,
+        "step_time_ms": 0.8914470672607422
+    },
+    {
+        "type": "Convergence",
+        "step": 780,
+        "loss": 1.957275152206421,
+        "step_time_ms": 0.9200572967529297
+    },
+    {
+        "type": "Convergence",
+        "step": 781,
+        "loss": 2.880204439163208,
+        "step_time_ms": 0.881195068359375
+    },
+    {
+        "type": "Convergence",
+        "step": 782,
+        "loss": 1.7111808061599731,
+        "step_time_ms": 0.7946491241455078
+    },
+    {
+        "type": "Convergence",
+        "step": 783,
+        "loss": 3.0389397144317627,
+        "step_time_ms": 0.8370876312255859
+    },
+    {
+        "type": "Convergence",
+        "step": 784,
+        "loss": 2.5302703380584717,
+        "step_time_ms": 0.7894039154052734
+    },
+    {
+        "type": "Convergence",
+        "step": 785,
+        "loss": 2.6756930351257324,
+        "step_time_ms": 0.7948875427246094
+    },
+    {
+        "type": "Convergence",
+        "step": 786,
+        "loss": 2.8311803340911865,
+        "step_time_ms": 0.7798671722412109
+    },
+    {
+        "type": "Convergence",
+        "step": 787,
+        "loss": 2.5714688301086426,
+        "step_time_ms": 0.8282661437988281
+    },
+    {
+        "type": "Convergence",
+        "step": 788,
+        "loss": 2.5011250972747803,
+        "step_time_ms": 0.8115768432617188
+    },
+    {
+        "type": "Convergence",
+        "step": 789,
+        "loss": 2.1663334369659424,
+        "step_time_ms": 0.7910728454589844
+    },
+    {
+        "type": "Convergence",
+        "step": 790,
+        "loss": 2.614940643310547,
+        "step_time_ms": 0.8707046508789062
+    },
+    {
+        "type": "Convergence",
+        "step": 791,
+        "loss": 3.0179812908172607,
+        "step_time_ms": 0.9729862213134766
+    },
+    {
+        "type": "Convergence",
+        "step": 792,
+        "loss": 2.265684127807617,
+        "step_time_ms": 1.1637210845947266
+    },
+    {
+        "type": "Convergence",
+        "step": 793,
+        "loss": 2.5092737674713135,
+        "step_time_ms": 0.888824462890625
+    },
+    {
+        "type": "Convergence",
+        "step": 794,
+        "loss": 2.296999216079712,
+        "step_time_ms": 1.1725425720214844
+    },
+    {
+        "type": "Convergence",
+        "step": 795,
+        "loss": 2.4761788845062256,
+        "step_time_ms": 1.0006427764892578
+    },
+    {
+        "type": "Convergence",
+        "step": 796,
+        "loss": 2.414562702178955,
+        "step_time_ms": 0.8938312530517578
+    },
+    {
+        "type": "Convergence",
+        "step": 797,
+        "loss": 3.360966920852661,
+        "step_time_ms": 0.9386539459228516
+    },
+    {
+        "type": "Convergence",
+        "step": 798,
+        "loss": 2.126014471054077,
+        "step_time_ms": 1.2652873992919922
+    },
+    {
+        "type": "Convergence",
+        "step": 799,
+        "loss": 2.3658981323242188,
+        "step_time_ms": 0.8838176727294922
+    },
+    {
+        "type": "Convergence",
+        "step": 800,
+        "loss": 2.349414348602295,
+        "step_time_ms": 0.835418701171875
+    },
+    {
+        "type": "Convergence",
+        "step": 801,
+        "loss": 2.2651772499084473,
+        "step_time_ms": 0.8404254913330078
+    },
+    {
+        "type": "Convergence",
+        "step": 802,
+        "loss": 2.885880708694458,
+        "step_time_ms": 0.8401870727539062
+    },
+    {
+        "type": "Convergence",
+        "step": 803,
+        "loss": 2.394223213195801,
+        "step_time_ms": 0.7913112640380859
+    },
+    {
+        "type": "Convergence",
+        "step": 804,
+        "loss": 2.4803645610809326,
+        "step_time_ms": 0.8299350738525391
+    },
+    {
+        "type": "Convergence",
+        "step": 805,
+        "loss": 2.4436464309692383,
+        "step_time_ms": 0.7891654968261719
+    },
+    {
+        "type": "Convergence",
+        "step": 806,
+        "loss": 2.0805721282958984,
+        "step_time_ms": 0.8065700531005859
+    },
+    {
+        "type": "Convergence",
+        "step": 807,
+        "loss": 1.8962217569351196,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 808,
+        "loss": 2.8131206035614014,
+        "step_time_ms": 0.7936954498291016
+    },
+    {
+        "type": "Convergence",
+        "step": 809,
+        "loss": 2.527801036834717,
+        "step_time_ms": 0.8640289306640625
+    },
+    {
+        "type": "Convergence",
+        "step": 810,
+        "loss": 2.2123889923095703,
+        "step_time_ms": 0.8144378662109375
+    },
+    {
+        "type": "Convergence",
+        "step": 811,
+        "loss": 2.6097633838653564,
+        "step_time_ms": 0.8947849273681641
+    },
+    {
+        "type": "Convergence",
+        "step": 812,
+        "loss": 2.7099015712738037,
+        "step_time_ms": 1.64031982421875
+    },
+    {
+        "type": "Convergence",
+        "step": 813,
+        "loss": 3.2117812633514404,
+        "step_time_ms": 1.2879371643066406
+    },
+    {
+        "type": "Convergence",
+        "step": 814,
+        "loss": 2.6104185581207275,
+        "step_time_ms": 1.1603832244873047
+    },
+    {
+        "type": "Convergence",
+        "step": 815,
+        "loss": 3.2421388626098633,
+        "step_time_ms": 0.8537769317626953
+    },
+    {
+        "type": "Convergence",
+        "step": 816,
+        "loss": 2.3172359466552734,
+        "step_time_ms": 0.8981227874755859
+    },
+    {
+        "type": "Convergence",
+        "step": 817,
+        "loss": 2.8086318969726562,
+        "step_time_ms": 1.270294189453125
+    },
+    {
+        "type": "Convergence",
+        "step": 818,
+        "loss": 2.433763265609741,
+        "step_time_ms": 0.7333755493164062
+    },
+    {
+        "type": "Convergence",
+        "step": 819,
+        "loss": 2.738750457763672,
+        "step_time_ms": 0.8728504180908203
+    },
+    {
+        "type": "Convergence",
+        "step": 820,
+        "loss": 2.3718204498291016,
+        "step_time_ms": 1.161813735961914
+    },
+    {
+        "type": "Convergence",
+        "step": 821,
+        "loss": 2.8080878257751465,
+        "step_time_ms": 0.8912086486816406
+    },
+    {
+        "type": "Convergence",
+        "step": 822,
+        "loss": 2.092827558517456,
+        "step_time_ms": 1.2009143829345703
+    },
+    {
+        "type": "Convergence",
+        "step": 823,
+        "loss": 2.5875258445739746,
+        "step_time_ms": 0.8273124694824219
+    },
+    {
+        "type": "Convergence",
+        "step": 824,
+        "loss": 3.0276429653167725,
+        "step_time_ms": 1.058816909790039
+    },
+    {
+        "type": "Convergence",
+        "step": 825,
+        "loss": 2.508697032928467,
+        "step_time_ms": 0.8344650268554688
+    },
+    {
+        "type": "Convergence",
+        "step": 826,
+        "loss": 2.9015018939971924,
+        "step_time_ms": 1.3892650604248047
+    },
+    {
+        "type": "Convergence",
+        "step": 827,
+        "loss": 3.437049627304077,
+        "step_time_ms": 1.2559890747070312
+    },
+    {
+        "type": "Convergence",
+        "step": 828,
+        "loss": 1.8564695119857788,
+        "step_time_ms": 1.3163089752197266
+    },
+    {
+        "type": "Convergence",
+        "step": 829,
+        "loss": 3.638934373855591,
+        "step_time_ms": 0.9670257568359375
+    },
+    {
+        "type": "Convergence",
+        "step": 830,
+        "loss": 2.254183530807495,
+        "step_time_ms": 1.3527870178222656
+    },
+    {
+        "type": "Convergence",
+        "step": 831,
+        "loss": 2.3804972171783447,
+        "step_time_ms": 1.4696121215820312
+    },
+    {
+        "type": "Convergence",
+        "step": 832,
+        "loss": 1.9658857583999634,
+        "step_time_ms": 1.2242794036865234
+    },
+    {
+        "type": "Convergence",
+        "step": 833,
+        "loss": 2.3308699131011963,
+        "step_time_ms": 0.8842945098876953
+    },
+    {
+        "type": "Convergence",
+        "step": 834,
+        "loss": 3.0664126873016357,
+        "step_time_ms": 1.1684894561767578
+    },
+    {
+        "type": "Convergence",
+        "step": 835,
+        "loss": 3.0315780639648438,
+        "step_time_ms": 0.8876323699951172
+    },
+    {
+        "type": "Convergence",
+        "step": 836,
+        "loss": 3.1445555686950684,
+        "step_time_ms": 1.2669563293457031
+    },
+    {
+        "type": "Convergence",
+        "step": 837,
+        "loss": 2.642843723297119,
+        "step_time_ms": 0.9765625
+    },
+    {
+        "type": "Convergence",
+        "step": 838,
+        "loss": 2.5282838344573975,
+        "step_time_ms": 0.9627342224121094
+    },
+    {
+        "type": "Convergence",
+        "step": 839,
+        "loss": 3.2521259784698486,
+        "step_time_ms": 0.9362697601318359
+    },
+    {
+        "type": "Convergence",
+        "step": 840,
+        "loss": 2.975095748901367,
+        "step_time_ms": 0.8020401000976562
+    },
+    {
+        "type": "Convergence",
+        "step": 841,
+        "loss": 3.060143232345581,
+        "step_time_ms": 0.8511543273925781
+    },
+    {
+        "type": "Convergence",
+        "step": 842,
+        "loss": 2.1882522106170654,
+        "step_time_ms": 0.8177757263183594
+    },
+    {
+        "type": "Convergence",
+        "step": 843,
+        "loss": 2.8982062339782715,
+        "step_time_ms": 0.9701251983642578
+    },
+    {
+        "type": "Convergence",
+        "step": 844,
+        "loss": 2.7283997535705566,
+        "step_time_ms": 1.2629032135009766
+    },
+    {
+        "type": "Convergence",
+        "step": 845,
+        "loss": 1.8625627756118774,
+        "step_time_ms": 0.8726119995117188
+    },
+    {
+        "type": "Convergence",
+        "step": 846,
+        "loss": 2.9025681018829346,
+        "step_time_ms": 1.216888427734375
+    },
+    {
+        "type": "Convergence",
+        "step": 847,
+        "loss": 2.6008129119873047,
+        "step_time_ms": 0.8594989776611328
+    },
+    {
+        "type": "Convergence",
+        "step": 848,
+        "loss": 2.0682051181793213,
+        "step_time_ms": 1.201629638671875
+    },
+    {
+        "type": "Convergence",
+        "step": 849,
+        "loss": 2.2862062454223633,
+        "step_time_ms": 0.8783340454101562
+    },
+    {
+        "type": "Convergence",
+        "step": 850,
+        "loss": 2.9545209407806396,
+        "step_time_ms": 0.8969306945800781
+    },
+    {
+        "type": "Convergence",
+        "step": 851,
+        "loss": 2.218909740447998,
+        "step_time_ms": 0.9486675262451172
+    },
+    {
+        "type": "Convergence",
+        "step": 852,
+        "loss": 2.649374008178711,
+        "step_time_ms": 1.3418197631835938
+    },
+    {
+        "type": "Convergence",
+        "step": 853,
+        "loss": 2.5785317420959473,
+        "step_time_ms": 1.3952255249023438
+    },
+    {
+        "type": "Convergence",
+        "step": 854,
+        "loss": 2.905564785003662,
+        "step_time_ms": 1.1854171752929688
+    },
+    {
+        "type": "Convergence",
+        "step": 855,
+        "loss": 2.1846346855163574,
+        "step_time_ms": 0.8971691131591797
+    },
+    {
+        "type": "Convergence",
+        "step": 856,
+        "loss": 3.228992462158203,
+        "step_time_ms": 1.2173652648925781
+    },
+    {
+        "type": "Convergence",
+        "step": 857,
+        "loss": 2.417393207550049,
+        "step_time_ms": 0.7297992706298828
+    },
+    {
+        "type": "Convergence",
+        "step": 858,
+        "loss": 2.606637954711914,
+        "step_time_ms": 0.7300376892089844
+    },
+    {
+        "type": "Convergence",
+        "step": 859,
+        "loss": 2.9704041481018066,
+        "step_time_ms": 0.7116794586181641
+    },
+    {
+        "type": "Convergence",
+        "step": 860,
+        "loss": 2.590669870376587,
+        "step_time_ms": 0.7379055023193359
+    },
+    {
+        "type": "Convergence",
+        "step": 861,
+        "loss": 2.97479248046875,
+        "step_time_ms": 0.9059906005859375
+    },
+    {
+        "type": "Convergence",
+        "step": 862,
+        "loss": 2.511972188949585,
+        "step_time_ms": 1.1620521545410156
+    },
+    {
+        "type": "Convergence",
+        "step": 863,
+        "loss": 3.3517651557922363,
+        "step_time_ms": 0.8730888366699219
+    },
+    {
+        "type": "Convergence",
+        "step": 864,
+        "loss": 2.3606936931610107,
+        "step_time_ms": 1.4443397521972656
+    },
+    {
+        "type": "Convergence",
+        "step": 865,
+        "loss": 2.3465402126312256,
+        "step_time_ms": 0.8149147033691406
+    },
+    {
+        "type": "Convergence",
+        "step": 866,
+        "loss": 2.5082595348358154,
+        "step_time_ms": 0.8485317230224609
+    },
+    {
+        "type": "Convergence",
+        "step": 867,
+        "loss": 2.223764419555664,
+        "step_time_ms": 1.2247562408447266
+    },
+    {
+        "type": "Convergence",
+        "step": 868,
+        "loss": 2.6458115577697754,
+        "step_time_ms": 0.8797645568847656
+    },
+    {
+        "type": "Convergence",
+        "step": 869,
+        "loss": 2.671255588531494,
+        "step_time_ms": 0.8077621459960938
+    },
+    {
+        "type": "Convergence",
+        "step": 870,
+        "loss": 2.3065688610076904,
+        "step_time_ms": 0.7865428924560547
+    },
+    {
+        "type": "Convergence",
+        "step": 871,
+        "loss": 2.601378917694092,
+        "step_time_ms": 0.8525848388671875
+    },
+    {
+        "type": "Convergence",
+        "step": 872,
+        "loss": 3.0871424674987793,
+        "step_time_ms": 0.7946491241455078
+    },
+    {
+        "type": "Convergence",
+        "step": 873,
+        "loss": 2.311328887939453,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 874,
+        "loss": 2.467986583709717,
+        "step_time_ms": 0.7889270782470703
+    },
+    {
+        "type": "Convergence",
+        "step": 875,
+        "loss": 2.5680482387542725,
+        "step_time_ms": 0.7755756378173828
+    },
+    {
+        "type": "Convergence",
+        "step": 876,
+        "loss": 2.545945644378662,
+        "step_time_ms": 0.8416175842285156
+    },
+    {
+        "type": "Convergence",
+        "step": 877,
+        "loss": 2.886718273162842,
+        "step_time_ms": 0.7915496826171875
+    },
+    {
+        "type": "Convergence",
+        "step": 878,
+        "loss": 2.6042706966400146,
+        "step_time_ms": 0.7805824279785156
+    },
+    {
+        "type": "Convergence",
+        "step": 879,
+        "loss": 2.917844533920288,
+        "step_time_ms": 0.7939338684082031
+    },
+    {
+        "type": "Convergence",
+        "step": 880,
+        "loss": 2.4653098583221436,
+        "step_time_ms": 0.8683204650878906
+    },
+    {
+        "type": "Convergence",
+        "step": 881,
+        "loss": 2.0178802013397217,
+        "step_time_ms": 0.8966922760009766
+    },
+    {
+        "type": "Convergence",
+        "step": 882,
+        "loss": 2.515876054763794,
+        "step_time_ms": 0.8325576782226562
+    },
+    {
+        "type": "Convergence",
+        "step": 883,
+        "loss": 2.4512908458709717,
+        "step_time_ms": 0.7991790771484375
+    },
+    {
+        "type": "Convergence",
+        "step": 884,
+        "loss": 2.2271981239318848,
+        "step_time_ms": 0.9539127349853516
+    },
+    {
+        "type": "Convergence",
+        "step": 885,
+        "loss": 3.167673349380493,
+        "step_time_ms": 0.9624958038330078
+    },
+    {
+        "type": "Convergence",
+        "step": 886,
+        "loss": 3.628899097442627,
+        "step_time_ms": 0.8952617645263672
+    },
+    {
+        "type": "Convergence",
+        "step": 887,
+        "loss": 2.483567476272583,
+        "step_time_ms": 0.8211135864257812
+    },
+    {
+        "type": "Convergence",
+        "step": 888,
+        "loss": 2.6032536029815674,
+        "step_time_ms": 1.0242462158203125
+    },
+    {
+        "type": "Convergence",
+        "step": 889,
+        "loss": 2.3949263095855713,
+        "step_time_ms": 0.8244514465332031
+    },
+    {
+        "type": "Convergence",
+        "step": 890,
+        "loss": 2.282050371170044,
+        "step_time_ms": 0.8633136749267578
+    },
+    {
+        "type": "Convergence",
+        "step": 891,
+        "loss": 3.8195297718048096,
+        "step_time_ms": 0.8342266082763672
+    },
+    {
+        "type": "Convergence",
+        "step": 892,
+        "loss": 2.366623640060425,
+        "step_time_ms": 0.8194446563720703
+    },
+    {
+        "type": "Convergence",
+        "step": 893,
+        "loss": 1.9416918754577637,
+        "step_time_ms": 0.7722377777099609
+    },
+    {
+        "type": "Convergence",
+        "step": 894,
+        "loss": 2.1911370754241943,
+        "step_time_ms": 0.7758140563964844
+    },
+    {
+        "type": "Convergence",
+        "step": 895,
+        "loss": 2.714536666870117,
+        "step_time_ms": 0.7824897766113281
+    },
+    {
+        "type": "Convergence",
+        "step": 896,
+        "loss": 2.701932191848755,
+        "step_time_ms": 0.8516311645507812
+    },
+    {
+        "type": "Convergence",
+        "step": 897,
+        "loss": 2.0887978076934814,
+        "step_time_ms": 0.8671283721923828
+    },
+    {
+        "type": "Convergence",
+        "step": 898,
+        "loss": 2.1429390907287598,
+        "step_time_ms": 0.7882118225097656
+    },
+    {
+        "type": "Convergence",
+        "step": 899,
+        "loss": 2.8558712005615234,
+        "step_time_ms": 0.7929801940917969
+    },
+    {
+        "type": "Convergence",
+        "step": 900,
+        "loss": 2.091200351715088,
+        "step_time_ms": 0.7750988006591797
+    },
+    {
+        "type": "Convergence",
+        "step": 901,
+        "loss": 2.483062744140625,
+        "step_time_ms": 1.3437271118164062
+    },
+    {
+        "type": "Convergence",
+        "step": 902,
+        "loss": 1.9088270664215088,
+        "step_time_ms": 0.9467601776123047
+    },
+    {
+        "type": "Convergence",
+        "step": 903,
+        "loss": 2.2190442085266113,
+        "step_time_ms": 1.3065338134765625
+    },
+    {
+        "type": "Convergence",
+        "step": 904,
+        "loss": 2.3881964683532715,
+        "step_time_ms": 1.2726783752441406
+    },
+    {
+        "type": "Convergence",
+        "step": 905,
+        "loss": 2.3530147075653076,
+        "step_time_ms": 0.8306503295898438
+    },
+    {
+        "type": "Convergence",
+        "step": 906,
+        "loss": 2.748110294342041,
+        "step_time_ms": 0.8833408355712891
+    },
+    {
+        "type": "Convergence",
+        "step": 907,
+        "loss": 2.6216964721679688,
+        "step_time_ms": 1.3196468353271484
+    },
+    {
+        "type": "Convergence",
+        "step": 908,
+        "loss": 2.5166494846343994,
+        "step_time_ms": 0.8325576782226562
+    },
+    {
+        "type": "Convergence",
+        "step": 909,
+        "loss": 2.7935791015625,
+        "step_time_ms": 0.8199214935302734
+    },
+    {
+        "type": "Convergence",
+        "step": 910,
+        "loss": 2.5599892139434814,
+        "step_time_ms": 0.7736682891845703
+    },
+    {
+        "type": "Convergence",
+        "step": 911,
+        "loss": 2.749061346054077,
+        "step_time_ms": 0.9379386901855469
+    },
+    {
+        "type": "Convergence",
+        "step": 912,
+        "loss": 2.958078145980835,
+        "step_time_ms": 1.2776851654052734
+    },
+    {
+        "type": "Convergence",
+        "step": 913,
+        "loss": 3.0767855644226074,
+        "step_time_ms": 0.8175373077392578
+    },
+    {
+        "type": "Convergence",
+        "step": 914,
+        "loss": 2.302546262741089,
+        "step_time_ms": 0.8089542388916016
+    },
+    {
+        "type": "Convergence",
+        "step": 915,
+        "loss": 2.782902956008911,
+        "step_time_ms": 0.8542537689208984
+    },
+    {
+        "type": "Convergence",
+        "step": 916,
+        "loss": 2.3731963634490967,
+        "step_time_ms": 0.8111000061035156
+    },
+    {
+        "type": "Convergence",
+        "step": 917,
+        "loss": 2.586925506591797,
+        "step_time_ms": 0.9958744049072266
+    },
+    {
+        "type": "Convergence",
+        "step": 918,
+        "loss": 2.4635844230651855,
+        "step_time_ms": 0.8103847503662109
+    },
+    {
+        "type": "Convergence",
+        "step": 919,
+        "loss": 3.3929736614227295,
+        "step_time_ms": 0.8251667022705078
+    },
+    {
+        "type": "Convergence",
+        "step": 920,
+        "loss": 2.379456043243408,
+        "step_time_ms": 0.7870197296142578
+    },
+    {
+        "type": "Convergence",
+        "step": 921,
+        "loss": 2.136455535888672,
+        "step_time_ms": 0.8261203765869141
+    },
+    {
+        "type": "Convergence",
+        "step": 922,
+        "loss": 2.1343982219696045,
+        "step_time_ms": 0.7760524749755859
+    },
+    {
+        "type": "Convergence",
+        "step": 923,
+        "loss": 3.0194666385650635,
+        "step_time_ms": 0.8244514465332031
+    },
+    {
+        "type": "Convergence",
+        "step": 924,
+        "loss": 2.7725610733032227,
+        "step_time_ms": 0.7750988006591797
+    },
+    {
+        "type": "Convergence",
+        "step": 925,
+        "loss": 1.8813472986221313,
+        "step_time_ms": 1.01470947265625
+    },
+    {
+        "type": "Convergence",
+        "step": 926,
+        "loss": 2.376873254776001,
+        "step_time_ms": 0.9198188781738281
+    },
+    {
+        "type": "Convergence",
+        "step": 927,
+        "loss": 2.6784913539886475,
+        "step_time_ms": 1.3055801391601562
+    },
+    {
+        "type": "Convergence",
+        "step": 928,
+        "loss": 2.0869030952453613,
+        "step_time_ms": 1.2202262878417969
+    },
+    {
+        "type": "Convergence",
+        "step": 929,
+        "loss": 3.093022346496582,
+        "step_time_ms": 0.8263587951660156
+    },
+    {
+        "type": "Convergence",
+        "step": 930,
+        "loss": 3.21016788482666,
+        "step_time_ms": 0.8475780487060547
+    },
+    {
+        "type": "Convergence",
+        "step": 931,
+        "loss": 2.4409046173095703,
+        "step_time_ms": 1.300811767578125
+    },
+    {
+        "type": "Convergence",
+        "step": 932,
+        "loss": 2.142026901245117,
+        "step_time_ms": 0.9913444519042969
+    },
+    {
+        "type": "Convergence",
+        "step": 933,
+        "loss": 1.9648162126541138,
+        "step_time_ms": 1.3282299041748047
+    },
+    {
+        "type": "Convergence",
+        "step": 934,
+        "loss": 2.4883663654327393,
+        "step_time_ms": 1.2369155883789062
+    },
+    {
+        "type": "Convergence",
+        "step": 935,
+        "loss": 2.483710527420044,
+        "step_time_ms": 0.8172988891601562
+    },
+    {
+        "type": "Convergence",
+        "step": 936,
+        "loss": 2.0716543197631836,
+        "step_time_ms": 0.8130073547363281
+    },
+    {
+        "type": "Convergence",
+        "step": 937,
+        "loss": 1.6687062978744507,
+        "step_time_ms": 0.8687973022460938
+    },
+    {
+        "type": "Convergence",
+        "step": 938,
+        "loss": 2.94094181060791,
+        "step_time_ms": 0.8137226104736328
+    },
+    {
+        "type": "Convergence",
+        "step": 939,
+        "loss": 2.0943329334259033,
+        "step_time_ms": 0.9014606475830078
+    },
+    {
+        "type": "Convergence",
+        "step": 940,
+        "loss": 2.1787173748016357,
+        "step_time_ms": 1.2531280517578125
+    },
+    {
+        "type": "Convergence",
+        "step": 941,
+        "loss": 2.6653590202331543,
+        "step_time_ms": 0.8869171142578125
+    },
+    {
+        "type": "Convergence",
+        "step": 942,
+        "loss": 1.9555635452270508,
+        "step_time_ms": 1.3546943664550781
+    },
+    {
+        "type": "Convergence",
+        "step": 943,
+        "loss": 2.3335678577423096,
+        "step_time_ms": 0.8251667022705078
+    },
+    {
+        "type": "Convergence",
+        "step": 944,
+        "loss": 2.4088547229766846,
+        "step_time_ms": 0.8616447448730469
+    },
+    {
+        "type": "Convergence",
+        "step": 945,
+        "loss": 2.6058781147003174,
+        "step_time_ms": 0.8082389831542969
+    },
+    {
+        "type": "Convergence",
+        "step": 946,
+        "loss": 2.077608108520508,
+        "step_time_ms": 0.9150505065917969
+    },
+    {
+        "type": "Convergence",
+        "step": 947,
+        "loss": 1.7676435708999634,
+        "step_time_ms": 1.074075698852539
+    },
+    {
+        "type": "Convergence",
+        "step": 948,
+        "loss": 2.250417947769165,
+        "step_time_ms": 0.8528232574462891
+    },
+    {
+        "type": "Convergence",
+        "step": 949,
+        "loss": 2.7383742332458496,
+        "step_time_ms": 0.7920265197753906
+    },
+    {
+        "type": "Convergence",
+        "step": 950,
+        "loss": 3.651805877685547,
+        "step_time_ms": 0.804901123046875
+    },
+    {
+        "type": "Convergence",
+        "step": 951,
+        "loss": 2.6568965911865234,
+        "step_time_ms": 0.8428096771240234
+    },
+    {
+        "type": "Convergence",
+        "step": 952,
+        "loss": 2.890305757522583,
+        "step_time_ms": 0.8082389831542969
+    },
+    {
+        "type": "Convergence",
+        "step": 953,
+        "loss": 2.173691511154175,
+        "step_time_ms": 0.9129047393798828
+    },
+    {
+        "type": "Convergence",
+        "step": 954,
+        "loss": 2.914358377456665,
+        "step_time_ms": 0.8046627044677734
+    },
+    {
+        "type": "Convergence",
+        "step": 955,
+        "loss": 3.432821035385132,
+        "step_time_ms": 0.8075237274169922
+    },
+    {
+        "type": "Convergence",
+        "step": 956,
+        "loss": 2.6767795085906982,
+        "step_time_ms": 0.8356571197509766
+    },
+    {
+        "type": "Convergence",
+        "step": 957,
+        "loss": 2.2892098426818848,
+        "step_time_ms": 0.7839202880859375
+    },
+    {
+        "type": "Convergence",
+        "step": 958,
+        "loss": 2.2819619178771973,
+        "step_time_ms": 0.7939338684082031
+    },
+    {
+        "type": "Convergence",
+        "step": 959,
+        "loss": 2.1815669536590576,
+        "step_time_ms": 0.7781982421875
+    },
+    {
+        "type": "Convergence",
+        "step": 960,
+        "loss": 2.264397621154785,
+        "step_time_ms": 0.7846355438232422
+    },
+    {
+        "type": "Convergence",
+        "step": 961,
+        "loss": 2.7826836109161377,
+        "step_time_ms": 0.9617805480957031
+    },
+    {
+        "type": "Convergence",
+        "step": 962,
+        "loss": 2.808788776397705,
+        "step_time_ms": 0.8087158203125
+    },
+    {
+        "type": "Convergence",
+        "step": 963,
+        "loss": 2.7790112495422363,
+        "step_time_ms": 0.8914470672607422
+    },
+    {
+        "type": "Convergence",
+        "step": 964,
+        "loss": 3.9096970558166504,
+        "step_time_ms": 0.9791851043701172
+    },
+    {
+        "type": "Convergence",
+        "step": 965,
+        "loss": 2.403102397918701,
+        "step_time_ms": 0.8401870727539062
+    },
+    {
+        "type": "Convergence",
+        "step": 966,
+        "loss": 2.77229642868042,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 967,
+        "loss": 1.999848484992981,
+        "step_time_ms": 0.7812976837158203
+    },
+    {
+        "type": "Convergence",
+        "step": 968,
+        "loss": 2.435579299926758,
+        "step_time_ms": 0.8003711700439453
+    },
+    {
+        "type": "Convergence",
+        "step": 969,
+        "loss": 2.434512138366699,
+        "step_time_ms": 0.7889270782470703
+    },
+    {
+        "type": "Convergence",
+        "step": 970,
+        "loss": 2.1849167346954346,
+        "step_time_ms": 0.9362697601318359
+    },
+    {
+        "type": "Convergence",
+        "step": 971,
+        "loss": 2.2440290451049805,
+        "step_time_ms": 1.3039112091064453
+    },
+    {
+        "type": "Convergence",
+        "step": 972,
+        "loss": 2.925532579421997,
+        "step_time_ms": 1.3480186462402344
+    },
+    {
+        "type": "Convergence",
+        "step": 973,
+        "loss": 2.5857391357421875,
+        "step_time_ms": 1.3179779052734375
+    },
+    {
+        "type": "Convergence",
+        "step": 974,
+        "loss": 2.492009162902832,
+        "step_time_ms": 0.79345703125
+    },
+    {
+        "type": "Convergence",
+        "step": 975,
+        "loss": 2.6480839252471924,
+        "step_time_ms": 0.8881092071533203
+    },
+    {
+        "type": "Convergence",
+        "step": 976,
+        "loss": 2.353057622909546,
+        "step_time_ms": 0.7932186126708984
+    },
+    {
+        "type": "Convergence",
+        "step": 977,
+        "loss": 1.8289178609848022,
+        "step_time_ms": 0.7967948913574219
+    },
+    {
+        "type": "Convergence",
+        "step": 978,
+        "loss": 2.15427565574646,
+        "step_time_ms": 0.7786750793457031
+    },
+    {
+        "type": "Convergence",
+        "step": 979,
+        "loss": 2.4839985370635986,
+        "step_time_ms": 0.9410381317138672
+    },
+    {
+        "type": "Convergence",
+        "step": 980,
+        "loss": 2.6548476219177246,
+        "step_time_ms": 0.8599758148193359
+    },
+    {
+        "type": "Convergence",
+        "step": 981,
+        "loss": 3.739185094833374,
+        "step_time_ms": 0.8630752563476562
+    },
+    {
+        "type": "Convergence",
+        "step": 982,
+        "loss": 3.0081982612609863,
+        "step_time_ms": 0.7891654968261719
+    },
+    {
+        "type": "Convergence",
+        "step": 983,
+        "loss": 2.137582302093506,
+        "step_time_ms": 1.12152099609375
+    },
+    {
+        "type": "Convergence",
+        "step": 984,
+        "loss": 2.8443796634674072,
+        "step_time_ms": 0.8914470672607422
+    },
+    {
+        "type": "Convergence",
+        "step": 985,
+        "loss": 2.637971878051758,
+        "step_time_ms": 0.8206367492675781
+    },
+    {
+        "type": "Convergence",
+        "step": 986,
+        "loss": 2.0917952060699463,
+        "step_time_ms": 0.7872581481933594
+    },
+    {
+        "type": "Convergence",
+        "step": 987,
+        "loss": 2.337496757507324,
+        "step_time_ms": 0.8034706115722656
+    },
+    {
+        "type": "Convergence",
+        "step": 988,
+        "loss": 2.762951135635376,
+        "step_time_ms": 0.7762908935546875
+    },
+    {
+        "type": "Convergence",
+        "step": 989,
+        "loss": 2.8893513679504395,
+        "step_time_ms": 0.7915496826171875
+    },
+    {
+        "type": "Convergence",
+        "step": 990,
+        "loss": 2.688925266265869,
+        "step_time_ms": 0.7805824279785156
+    },
+    {
+        "type": "Convergence",
+        "step": 991,
+        "loss": 2.387505292892456,
+        "step_time_ms": 0.9624958038330078
+    },
+    {
+        "type": "Convergence",
+        "step": 992,
+        "loss": 2.7822299003601074,
+        "step_time_ms": 1.1696815490722656
+    },
+    {
+        "type": "Convergence",
+        "step": 993,
+        "loss": 1.8458904027938843,
+        "step_time_ms": 0.8568763732910156
+    },
+    {
+        "type": "Convergence",
+        "step": 994,
+        "loss": 2.8323795795440674,
+        "step_time_ms": 1.1708736419677734
+    },
+    {
+        "type": "Convergence",
+        "step": 995,
+        "loss": 2.2965011596679688,
+        "step_time_ms": 0.9973049163818359
+    },
+    {
+        "type": "Convergence",
+        "step": 996,
+        "loss": 2.0506768226623535,
+        "step_time_ms": 1.2197494506835938
+    },
+    {
+        "type": "Convergence",
+        "step": 997,
+        "loss": 2.324221611022949,
+        "step_time_ms": 0.8356571197509766
+    },
+    {
+        "type": "Convergence",
+        "step": 998,
+        "loss": 2.9946017265319824,
+        "step_time_ms": 0.9229183197021484
+    },
+    {
+        "type": "Convergence",
+        "step": 999,
+        "loss": 3.0019149780273438,
+        "step_time_ms": 0.9789466857910156
     }
 ]
