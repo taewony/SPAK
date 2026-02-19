@@ -52,7 +52,7 @@ load_meta = False
 if init_from == 'resume':
     # Try to find meta.pkl from data/dataset/
     # For shakespeare_char, it's usually there
-    meta_path = os.path.join('nanoGPT', 'data', 'shakespeare_char', 'meta.pkl')
+    meta_path = os.path.join(os.path.dirname(__file__), 'data', 'shakespeare_char', 'meta.pkl')
     load_meta = os.path.exists(meta_path)
 
 if load_meta:
