@@ -5,12 +5,12 @@ import pickle
 import json
 import numpy as np
 import torch
-from nanogpt_cutile import GPTConfig, GPT
+from model import GPTConfig, GPT
 
 # -----------------------------------------------------------------------------
-# Configuration (Optimized for rapid experiment on shakespeare_char)
+# Identical configuration to train_nanogpt_cutile.py
 dataset = 'shakespeare_char'
-out_dir = 'out_nanogpt'
+out_dir = 'out_baseline'
 batch_size = 12
 block_size = 256
 n_layer = 6
@@ -18,19 +18,18 @@ n_head = 6
 n_embd = 384
 dropout = 0.0
 bias = False
-learning_rate = 6e-4 # Match train.py
-max_iters = 5000 # Enough to see real convergence
-eval_interval = 500
-eval_iters = 100
+learning_rate = 6e-4
+max_iters = 1000 
+eval_interval = 100
+eval_iters = 20
 device = 'cuda'
 dtype = 'float16' 
 
 # learning rate decay settings
 decay_lr = True
 warmup_iters = 100
-lr_decay_iters = 5000
-min_lr = 6e-5 # learning_rate / 10
-
+lr_decay_iters = 1000
+min_lr = 6e-5
 # -----------------------------------------------------------------------------
 
 os.makedirs(out_dir, exist_ok=True)
@@ -86,7 +85,6 @@ def estimate_loss():
     model.train()
     return out
 
-# learning rate decay scheduler (cosine with warmup)
 def get_lr(it):
     if it < warmup_iters:
         return learning_rate * it / warmup_iters
@@ -98,17 +96,15 @@ def get_lr(it):
     return min_lr + coeff * (learning_rate - min_lr)
 
 # Training Loop
-print(f"Starting NanoGPT cuTile Training on {dataset}...")
+print(f"Starting PyTorch Baseline Training on {dataset}...")
 t0 = time.time()
 history = []
 
 for iter_num in range(max_iters):
-    # determine and set the learning rate for this iteration
     lr = get_lr(iter_num) if decay_lr else learning_rate
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
-    # Eval
     if iter_num % eval_interval == 0:
         losses = estimate_loss()
         print(f"step {iter_num}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}, lr {lr:.4e}")
@@ -119,17 +115,13 @@ for iter_num in range(max_iters):
             "val_loss": losses['val']
         })
 
-    # Step
     X, Y = get_batch('train')
     with ctx:
         _, loss = model(X, Y)
     
     scaler.scale(loss).backward()
-    
-    # gradient clipping
     scaler.unscale_(optimizer)
     torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-    
     scaler.step(optimizer)
     scaler.update()
     optimizer.zero_grad(set_to_none=True)
@@ -146,19 +138,14 @@ for iter_num in range(max_iters):
             "step_time_ms": dt
         })
 
-# Save Trace
-with open("nanogpt_train_trace.json", "w") as f:
+with open("nanoGPT/nanogpt_pytorch_trace.json", "w") as f:
     json.dump(history, f, indent=4)
 
-# --- Save Checkpoint ---
 checkpoint = {
     'model': model.state_dict(),
     'optimizer': optimizer.state_dict(),
     'model_args': model_args,
     'iter_num': iter_num,
 }
-ckpt_path = os.path.join(out_dir, 'ckpt.pt')
-torch.save(checkpoint, ckpt_path)
-print(f"Checkpoint saved to {ckpt_path}")
-
-print("\nTraining Complete. Trace saved to nanogpt_train_trace.json")
+torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
+print("\nBaseline Training Complete.")
