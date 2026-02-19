@@ -1,43 +1,60 @@
 python train_nanogpt_cutile.py
+[INFO] Added /home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/TileGym/src to sys.path for TileGym ops.
 [WARN] TileGym ops not found. Using PyTorch fallback for orchestration logic.
-/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/train_nanogpt_cutile.py:65: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
-  scaler = torch.cuda.amp.GradScaler(enabled=(dtype == 'float16'))
 Starting NanoGPT cuTile Training on shakespeare_char...
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/train_nanogpt_cutile.py", line 90, in <module>
-    losses = estimate_loss()
-             ^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/train_nanogpt_cutile.py", line 76, in estimate_loss
-    _, loss = model(X, Y)
-              ^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/nanogpt_cutile.py", line 143, in forward
-    x = block(x)
-        ^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/nanogpt_cutile.py", line 97, in forward
-    x = x + self.attn(x_norm1)
-            ^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/nanogpt_cutile.py", line 63, in forward
-    y = fmha(
-        ^^^^^
-TypeError: fmha() got an unexpected keyword argument 'kernel_configs'
+step 0: train loss 4.2831, val loss 4.2805
+iter 0: loss 4.2765, time 489.07ms
+iter 10: loss 3.3359, time 9.66ms
+iter 20: loss 3.2887, time 9.24ms
+iter 30: loss 3.3872, time 9.67ms
+iter 40: loss 3.3041, time 9.81ms
+iter 50: loss 3.2605, time 9.17ms
+iter 60: loss 3.1818, time 9.20ms
+iter 70: loss 3.1805, time 9.22ms
+iter 80: loss 3.0488, time 9.55ms
+iter 90: loss 3.0883, time 9.95ms
+step 100: train loss 2.8677, val loss 2.9499
+iter 100: loss 2.8411, time 21.04ms
+iter 110: loss 2.8357, time 9.42ms
+iter 120: loss 2.7798, time 9.31ms
+iter 130: loss 2.6609, time 9.56ms
+iter 140: loss 2.6557, time 9.43ms
+iter 150: loss 2.6712, time 9.31ms
+iter 160: loss 2.6153, time 9.64ms
+iter 170: loss 2.6261, time 9.57ms
+iter 180: loss 2.5725, time 9.69ms
+iter 190: loss 2.5423, time 9.68ms
+step 200: train loss 2.5671, val loss 2.5636
+iter 200: loss 2.5622, time 20.13ms
+iter 210: loss 2.5878, time 9.53ms
+iter 220: loss 2.5665, time 9.26ms
+iter 230: loss 2.5527, time 9.83ms
+iter 240: loss 2.5805, time 9.55ms
+iter 250: loss 2.5629, time 9.07ms
+iter 260: loss 2.5154, time 9.64ms
+iter 270: loss 2.5083, time 9.61ms
+iter 280: loss 2.5496, time 9.31ms
+iter 290: loss 2.5151, time 9.82ms
+step 300: train loss 2.5176, val loss 2.5391
+iter 300: loss 2.4763, time 20.14ms
+iter 310: loss 2.5400, time 9.60ms
+iter 320: loss 2.5006, time 9.29ms
+iter 330: loss 2.5304, time 9.44ms
+iter 340: loss 2.5151, time 9.43ms
+iter 350: loss 2.4854, time 9.64ms
+iter 360: loss 2.4796, time 9.87ms
+iter 370: loss 2.4995, time 9.27ms
+iter 380: loss 2.5066, time 9.14ms
+iter 390: loss 2.5153, time 9.72ms
+step 400: train loss 2.4946, val loss 2.5110
+iter 400: loss 2.5259, time 19.16ms
+iter 410: loss 2.4657, time 96.90ms
+iter 420: loss 2.4421, time 9.15ms
+iter 430: loss 2.5311, time 9.36ms
+iter 440: loss 2.4792, time 9.61ms
+iter 450: loss 2.4648, time 9.30ms
+iter 460: loss 2.5158, time 9.54ms
+iter 470: loss 2.4958, time 9.34ms
+iter 480: loss 2.4809, time 9.65ms
+iter 490: loss 2.4561, time 9.72ms
+Training Complete. Trace saved to nanogpt_train_trace.json

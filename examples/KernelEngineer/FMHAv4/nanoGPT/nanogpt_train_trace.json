@@ -1,0 +1,32 @@
+[
+    {
+        "type": "Convergence",
+        "step": 0,
+        "train_loss": 4.2831010818481445,
+        "val_loss": 4.280459403991699
+    },
+    {
+        "type": "Convergence",
+        "step": 100,
+        "train_loss": 2.8677306175231934,
+        "val_loss": 2.949915647506714
+    },
+    {
+        "type": "Convergence",
+        "step": 200,
+        "train_loss": 2.567143440246582,
+        "val_loss": 2.563551425933838
+    },
+    {
+        "type": "Convergence",
+        "step": 300,
+        "train_loss": 2.5176339149475098,
+        "val_loss": 2.5390825271606445
+    },
+    {
+        "type": "Convergence",
+        "step": 400,
+        "train_loss": 2.494631767272949,
+        "val_loss": 2.5110182762145996
+    }
+]
