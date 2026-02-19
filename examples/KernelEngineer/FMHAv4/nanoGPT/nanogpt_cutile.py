@@ -15,7 +15,7 @@ if os.path.exists(tilegym_src):
 # Direct Import from verified sub-packages
 try:
     from tilegym.ops.cutile import attention as attention_kernel
-    from tilegym.ops.cutile import layernorm as layernorm_kernel
+    from tilegym.ops.cutile import layer_norm_legacy as layernorm_kernel
     # Wrap them into the expected functional interface if they differ from dispatch
     def fmha(q, k, v, is_causal=True, scaling=None, **kwargs):
         # Using the direct kernel interface
