@@ -8,8 +8,7 @@ from nanogpt_cutile import GPTConfig, GPT
 # -----------------------------------------------------------------------------
 init_from = 'resume' # 'resume' or 'gpt2*'
 out_dir = 'out_nanogpt'
-start = "
-" 
+start = "" 
 num_samples = 5
 max_new_tokens = 100
 temperature = 0.8
