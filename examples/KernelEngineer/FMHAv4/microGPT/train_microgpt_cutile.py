@@ -28,7 +28,8 @@ block_size = 16
 n_head = 4
 device = 'cuda'
 
-model = MicroGPT(vocab_size, n_embd, n_head, n_layer, block_size).to(device).half()
+# Start with float32 for stability, then compound into float16
+model = MicroGPT(vocab_size, n_embd, n_head, n_layer, block_size).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.85, 0.99))
 
 # --- 3. Training Loop ---
