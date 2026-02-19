@@ -44,22 +44,18 @@ with open(meta_path, 'rb') as f:
 stoi, itos = meta['stoi'], meta['itos']
 decode = lambda l: ''.join([itos[i] for i in l])
 
-start_ids = [stoi['
-']]
+start_ids = [stoi['']]
 x = torch.tensor(start_ids, dtype=torch.long, device=device)[None, ...]
 
 print(f"--- Comparison: implementation vs implementation (Same Weights) ---")
 with torch.no_grad():
     with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
-        print("
-[ORIGINAL model.py Output]:")
+        print("[ORIGINAL model.py Output]:")
         y_orig = model_orig.generate(x, 100, temperature=0.8, top_k=200)
         print(decode(y_orig[0].tolist()))
         
-        print("
-" + "="*50)
+        print("" + "="*50)
         
-        print("
-[cuTile nanogpt_cutile.py Output]:")
+        print("[cuTile nanogpt_cutile.py Output]:")
         y_cutile = model_cutile.generate(x, 100, temperature=0.8, top_k=200)
         print(decode(y_cutile[0].tolist()))
