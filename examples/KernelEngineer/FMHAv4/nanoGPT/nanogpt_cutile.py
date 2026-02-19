@@ -3,18 +3,29 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 from dataclasses import dataclass
+import os
+import sys
 
-# Importing TileGym Ops (Assuming tilegym is in PYTHONPATH on the execution node)
+# --- Dynamic TileGym Path Handling ---
+# If TileGym is moved into the nanoGPT folder, we add it to sys.path
+# Expecting structure: nanoGPT/TileGym/src/tilegym
+tilegym_src = os.path.join(os.path.dirname(__file__), 'TileGym', 'src')
+if os.path.exists(tilegym_src):
+    sys.path.append(tilegym_src)
+    print(f"[INFO] Added {tilegym_src} to sys.path for TileGym ops.")
+
+# Importing TileGym Ops
 try:
     from tilegym.ops import fmha, layer_norm_legacy, matmul
+    print("[INFO] Successfully imported TileGym ops.")
 except ImportError:
     # Fallback for conceptual node/development
     print("[WARN] TileGym ops not found. Using PyTorch fallback for orchestration logic.")
-    def fmha(q, k, v, is_causal=True, scaling=None):
+    def fmha(q, k, v, is_causal=True, scaling=None, **kwargs):
         return F.scaled_dot_product_attention(q, k, v, is_causal=is_causal, scale=scaling)
-    def layer_norm_legacy(x, weight, bias, eps):
+    def layer_norm_legacy(x, weight, bias, eps, **kwargs):
         return F.layer_norm(x, weight.shape, weight, bias if bias is not None else torch.zeros_like(weight), eps)
-    def matmul(a, b):
+    def matmul(a, b, **kwargs):
         return torch.matmul(a, b)
 
 @dataclass
@@ -154,11 +165,11 @@ class GPT(nn.Module):
         return logits, loss
 
 if __name__ == "__main__":
-    config = GPTConfig(n_layer=4, n_head=4, n_embd=256) # Small test config
+    config = GPTConfig(n_layer=4, n_head=4, n_embd=256)
     model = GPT(config).cuda().half()
     idx = torch.randint(0, config.vocab_size, (1, 128)).cuda()
     
-    print("NanoGPT cuTile Forward Pass (Tiled & Weight-Tied)...")
+    print("NanoGPT cuTile Forward Pass (Modular & Weight-Tied)...")
     with torch.no_grad():
         logits, _ = model(idx)
     print(f"Success! Logits shape: {logits.shape}")

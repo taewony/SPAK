@@ -68,10 +68,11 @@ Compound Engineering의 핵심 동력으로, 각 사이클에서 얻은 통찰�
 ### Phase 8: Production-Grade NanoGPT (ACTIVE)
 **Objective**: Evolve the cognitive model to handle production-level GPT-2 architectures (768 dim, LayerNorm, GELU).
 - [x] **DSL Initialization**: Created `NanoGPT_System_v2.dsl` with production invariants.
-- [x] **Kernel Implementation**: Developed `nanogpt_cutile.py` using `TileGym` modular ops.
+- [x] **Kernel Implementation**: Developed `nanogpt_cutile.py` with `TileGym` modular ops and fallback support.
 - [ ] **Data Preparation**: Run `data/shakespeare_char/prepare.py` to generate tokens.
-- [ ] **Experimental Validation**: Execute `train_nanogpt_cutile.py` to verify convergence and MFU (Model FLOPs Utilization).
-- [ ] **Baseline Comparison**: Compare `SPAK+cuTile` against PyTorch `compile` mode.
+- [x] **Sanity Check**: Fixed `TypeError` in fallback ops and modernized `GradScaler`.
+- [ ] **Experimental Validation**: Execute `train_nanogpt_cutile.py` on the RTX 5070 node.
+- [ ] **Knowledge Transfer Audit**: Confirm that FMHAv4 attention parameters provide the expected 1.1x speedup in the full GPT context.
 
 ---
 
