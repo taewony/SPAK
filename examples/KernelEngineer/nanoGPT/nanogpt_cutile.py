@@ -30,13 +30,13 @@ def nanogpt_attention_kernel(
     offs_m = bid_x * TILE_M + ct.arange(TILE_M, dtype=ct.int32)[:, None]
     offs_n_tile = ct.arange(TILE_N, dtype=ct.int32)[None, :]
 
-    q = ct.load(Q, index=(batch_idx, head_idx, bid_x, 0), shape=(1, 1, TILE_M, TILE_D)).reshape((TILE_M, TILE_D))
+    q = ct.load(Q, index=(batch_idx, head_idx, bid_x, 0), shape=(1, 1, TILE_M, TILE_D), padding_mode=ct.PaddingMode.ZERO).reshape((TILE_M, TILE_D))
     k_seqlen = K.shape[2]
     m_end = (bid_x + 1) * TILE_M
     Tc = ct.cdiv(min(m_end, k_seqlen), TILE_N)
 
     for j in range(0, Tc):
-        k = ct.load(K, index=(batch_idx, head_idx, 0, j), shape=(1, 1, TILE_D, TILE_N), order=(0,1,3,2), latency=K_LAT).reshape((TILE_D, TILE_N))
+        k = ct.load(K, index=(batch_idx, head_idx, 0, j), shape=(1, 1, TILE_D, TILE_N), order=(0,1,3,2), latency=K_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_D, TILE_N))
         qk = ct.full((TILE_M, TILE_N), 0.0, dtype=ct.float32)
         qk = ct.mma(q, k, qk)
 
@@ -54,7 +54,7 @@ def nanogpt_attention_kernel(
         l_i = l_i * alpha + l_ij
         acc = acc * alpha
 
-        v = ct.load(V, index=(batch_idx, head_idx, j, 0), shape=(1, 1, TILE_N, TILE_D), latency=V_LAT).reshape((TILE_N, TILE_D))
+        v = ct.load(V, index=(batch_idx, head_idx, j, 0), shape=(1, 1, TILE_N, TILE_D), latency=V_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_N, TILE_D))
         acc = ct.mma(p.astype(Q.dtype), v, acc)
         m_i = m_ij
 
@@ -99,8 +99,10 @@ def nanogpt_layernorm_kernel(
         rstd = ct.rsqrt(var + eps)
         
         y = (centered * rstd) * ct.astype(w, ct.float32) + ct.astype(b, ct.float32)
-        # Fix: Slice the tile to exactly N columns to avoid overwriting next rows due to TILE_SIZE_N > N
-        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y[:, :N], X.dtype))
+        # Fix: Extract the valid portion to avoid overwriting next rows due to TILE_SIZE_N > N
+        # We must use ct.extract because y[:, :N] syntax is not supported in cuTile kernels.
+        y_valid = ct.extract(y, (0, 0), shape=(TILE_SIZE_M, N))
+        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y_valid, X.dtype))
 
 # ============================================================
 # 2. GPT-2 ARCHITECTURE
@@ -136,14 +138,19 @@ class CausalSelfAttention(nn.Module):
         q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
         v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
 
-        out = torch.empty_like(q)
+        # Attention forward with padding for T to match TILE_M
+        tile_m = self.config_delta["tile_m"]
+        T_padded = math.ceil(T / tile_m) * tile_m
+        out_padded = torch.empty((B, self.n_head, T_padded, self.head_dim), dtype=q.dtype, device=q.device)
+        
         scale_log2 = (1.0 / math.sqrt(self.head_dim)) * (1.0 / math.log(2))
-        grid = (max(1, T // self.config_delta["tile_m"]), B * self.n_head, 1)
+        grid = (T_padded // tile_m, B * self.n_head, 1)
         
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_attention_kernel,
-                 (q, k, v, out, scale_log2, self.config_delta["neg_inf"], 
-                  self.head_dim, self.n_head, self.config_delta["tile_m"], self.config_delta["tile_n"], 2, 5))
+                 (q, k, v, out_padded, scale_log2, self.config_delta["neg_inf"], 
+                  self.head_dim, self.n_head, tile_m, self.config_delta["tile_n"], 2, 5))
 
+        out = out_padded[:, :, :T, :]
         y = out.transpose(1, 2).contiguous().view(B, T, C)
         return self.resid_dropout(self.c_proj(y))
 
@@ -174,12 +181,15 @@ class Block(nn.Module):
 
     def _run_layernorm(self, x, ln_mod):
         M, N = x.view(-1, x.size(-1)).shape
-        y = torch.empty_like(x)
+        tile_m = 4
+        M_padded = math.ceil(M / tile_m) * tile_m
+        y_padded = torch.empty((M_padded, N), dtype=x.dtype, device=x.device)
+        
         tile_n = next_pow2(N)
-        grid = (min(80, (M + 3) // 4),)
+        grid = (min(80, M_padded // tile_m),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x.view(-1, N), y.view(-1, N), ln_mod.weight, ln_mod.bias, N, 4, tile_n, 1e-5))
-        return y
+                 (x.view(-1, N), y_padded, ln_mod.weight, ln_mod.bias, N, tile_m, tile_n, 1e-5))
+        return y_padded[:M, :].view_as(x)
 
 class GPT(nn.Module):
     def __init__(self, config):
@@ -224,12 +234,15 @@ class GPT(nn.Module):
 
     def _run_layernorm(self, x, ln_mod):
         M, N = x.view(-1, x.size(-1)).shape
-        y = torch.empty_like(x)
+        tile_m = 4
+        M_padded = math.ceil(M / tile_m) * tile_m
+        y_padded = torch.empty((M_padded, N), dtype=x.dtype, device=x.device)
+        
         tile_n = next_pow2(N)
-        grid = (min(80, (M + 3) // 4),)
+        grid = (min(80, M_padded // tile_m),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x.view(-1, N), y.view(-1, N), ln_mod.weight, ln_mod.bias, N, 4, tile_n, 1e-5))
-        return y
+                 (x.view(-1, N), y_padded, ln_mod.weight, ln_mod.bias, N, tile_m, tile_n, 1e-5))
+        return y_padded[:M, :].view_as(x)
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
