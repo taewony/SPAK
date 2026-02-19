@@ -5,8 +5,12 @@ from torch.nn import functional as F
 from dataclasses import dataclass
 import cuda.tile as ct
 
+# --- Helper for power-of-two tiling ---
+def next_pow2(n):
+    return 2**(n - 1).bit_length()
+
 # ============================================================
-# 1. COMPOUND KERNELS (Verified Performance)
+# 1. OPTIMIZED KERNELS
 # ============================================================
 
 @ct.kernel(occupancy=2)
@@ -46,6 +50,7 @@ def nanogpt_attention_kernel(
         p = ct.exp2(qk * qk_scale_log2 - m_ij)
         l_ij = ct.sum(p, axis=-1, keepdims=True)
         alpha = ct.exp2(m_i - m_ij)
+        
         l_i = l_i * alpha + l_ij
         acc = acc * alpha
 
@@ -57,28 +62,47 @@ def nanogpt_attention_kernel(
     ct.store(Out, index=(batch_idx, head_idx, bid_x, 0), tile=acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype))
 
 @ct.kernel
-def nanogpt_layernorm_kernel(X, Y, W, B, TILE_SIZE_M: ct.Constant[int], TILE_SIZE_N: ct.Constant[int], eps: float):
+def nanogpt_layernorm_kernel(
+    X, Y, W, B, 
+    N: ct.Constant[int], # Actual non-pow2 dimension
+    TILE_SIZE_M: ct.Constant[int], 
+    TILE_SIZE_N: ct.Constant[int], # Pow2 tile size >= N
+    eps: float
+):
     bid = ct.bid(0)
-    M, N = X.shape[0], X.shape[1]
+    M = X.shape[0]
     upper_bound = ct.cdiv(M, TILE_SIZE_M)
-    w = ct.load(W, index=(0,), shape=(TILE_SIZE_N,)).reshape((1, TILE_SIZE_N))
-    b = ct.load(B, index=(0,), shape=(TILE_SIZE_N,)).reshape((1, TILE_SIZE_N))
+    
+    # Load weights with padding
+    w = ct.load(W, index=(0,), shape=(TILE_SIZE_N,), padding_mode=ct.PaddingMode.ZERO).reshape((1, TILE_SIZE_N))
+    b = ct.load(B, index=(0,), shape=(TILE_SIZE_N,), padding_mode=ct.PaddingMode.ZERO).reshape((1, TILE_SIZE_N))
+    
+    # Create mask for mean/var calculation
+    offs_n = ct.arange(TILE_SIZE_N, dtype=ct.int32)[None, :]
+    mask = offs_n < N
     
     num_tile_blocks = ct.num_blocks(0)
     for current_bid in range(bid, upper_bound, num_tile_blocks):
-        x = ct.load(X, index=(current_bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
+        x = ct.load(X, index=(current_bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N), padding_mode=ct.PaddingMode.ZERO)
         x_f32 = ct.astype(x, ct.float32)
         
-        mean = ct.sum(x_f32, axis=1, keepdims=True) / N
+        # Masked mean
+        sum_x = ct.sum(x_f32, axis=1, keepdims=True)
+        mean = sum_x / N
+        
+        # Masked variance
         centered = x_f32 - mean
-        var = ct.sum(centered * centered, axis=1, keepdims=True) / N
+        centered_sq = centered * centered
+        # We must zero out the squares of padded elements to not corrupt the variance sum
+        centered_sq = ct.where(mask, centered_sq, 0.0)
+        var = ct.sum(centered_sq, axis=1, keepdims=True) / N
         rstd = ct.rsqrt(var + eps)
         
         y = (centered * rstd) * ct.astype(w, ct.float32) + ct.astype(b, ct.float32)
         ct.store(Y, index=(current_bid, 0), tile=ct.astype(y, X.dtype))
 
 # ============================================================
-# 2. GPT-2 ARCHITECTURE (nanoGPT model.py parity)
+# 2. GPT-2 ARCHITECTURE
 # ============================================================
 
 @dataclass
@@ -102,11 +126,7 @@ class CausalSelfAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.head_dim = config.n_embd // config.n_head
-        
-        # Inherited Blackwell Optimal Config
-        self.config_delta = {
-            "tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -1e20
-        }
+        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -1e20}
 
     def forward(self, x):
         B, T, C = x.size()
@@ -115,17 +135,16 @@ class CausalSelfAttention(nn.Module):
         q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
         v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
 
-        out = torch.empty_like(q, dtype=torch.float16 if q.dtype == torch.float16 else torch.float32)
+        out = torch.empty_like(q)
         scale_log2 = (1.0 / math.sqrt(self.head_dim)) * (1.0 / math.log(2))
         grid = (max(1, T // self.config_delta["tile_m"]), B * self.n_head, 1)
         
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_attention_kernel,
                  (q, k, v, out, scale_log2, self.config_delta["neg_inf"], 
-                  self.head_dim, self.n_head, self.config_delta["tile_m"], 64, 2, 5))
+                  self.head_dim, self.n_head, self.config_delta["tile_m"], self.config_delta["tile_n"], 2, 5))
 
         y = out.transpose(1, 2).contiguous().view(B, T, C)
-        y = self.resid_dropout(self.c_proj(y))
-        return y
+        return self.resid_dropout(self.c_proj(y))
 
 class MLP(nn.Module):
     def __init__(self, config):
@@ -137,9 +156,7 @@ class MLP(nn.Module):
     def forward(self, x):
         x = self.c_fc(x)
         x = F.gelu(x, approximate='tanh')
-        x = self.c_proj(x)
-        x = self.dropout(x)
-        return x
+        return self.dropout(self.c_proj(x))
 
 class Block(nn.Module):
     def __init__(self, config):
@@ -157,9 +174,10 @@ class Block(nn.Module):
     def _run_layernorm(self, x, ln_mod):
         M, N = x.view(-1, x.size(-1)).shape
         y = torch.empty_like(x)
+        tile_n = next_pow2(N)
         grid = (min(80, (M + 3) // 4),)
         ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x.view(-1, N), y.view(-1, N), ln_mod.weight, ln_mod.bias, 4, N, 1e-5))
+                 (x.view(-1, N), y.view(-1, N), ln_mod.weight, ln_mod.bias, N, 4, tile_n, 1e-5))
         return y
 
 class GPT(nn.Module):
@@ -175,7 +193,6 @@ class GPT(nn.Module):
         ))
         self.lm_head = nn.Linear(config.n_embd, config.vocab_size, bias=False)
         self.transformer.wte.weight = self.lm_head.weight 
-
         self.apply(self._init_weights)
         for pn, p in self.named_parameters():
             if pn.endswith('c_proj.weight'):
@@ -198,52 +215,20 @@ class GPT(nn.Module):
         for block in self.transformer.h:
             x = block(x)
         x = self._run_layernorm(x, self.transformer.ln_f)
-
+        logits = self.lm_head(x)
+        loss = None
         if targets is not None:
-            logits = self.lm_head(x)
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
-        else:
-            logits = self.lm_head(x[:, [-1], :])
-            loss = None
         return logits, loss
 
-    def crop_block_size(self, block_size):
-        assert block_size <= self.config.block_size
-        self.config.block_size = block_size
-        self.transformer.wpe.weight = nn.Parameter(self.transformer.wpe.weight[:block_size])
-        for block in self.transformer.h:
-            if hasattr(block.attn, 'bias'):
-                block.attn.bias = block.attn.bias[:,:,:block_size,:block_size]
-
-    @classmethod
-    def from_pretrained(cls, model_type, override_args=None):
-        # This allows us to load OpenAI GPT-2 weights into our cuTile implementation
-        from transformers import GPT2LMHeadModel
-        config_args = {
-            'gpt2':         dict(n_layer=12, n_head=12, n_embd=768),
-            'gpt2-medium':  dict(n_layer=24, n_head=16, n_embd=1024),
-            'gpt2-large':   dict(n_layer=36, n_head=20, n_embd=1280),
-            'gpt2-xl':      dict(n_layer=48, n_head=25, n_embd=1600),
-        }[model_type]
-        config_args['vocab_size'] = 50257
-        config_args['block_size'] = 1024
-        config_args['bias'] = True
-        config = GPTConfig(**config_args)
-        model = cls(config)
-        sd = model.state_dict()
-        model_hf = GPT2LMHeadModel.from_pretrained(model_type)
-        sd_hf = model_hf.state_dict()
-        # Filter and copy weights
-        sd_keys_hf = [k for k in sd_hf.keys() if not k.endswith('.attn.masked_bias') and not k.endswith('.attn.bias')]
-        transposed = ['attn.c_attn.weight', 'attn.c_proj.weight', 'mlp.c_fc.weight', 'mlp.c_proj.weight']
-        for k in sd_keys_hf:
-            if any(k.endswith(w) for w in transposed):
-                assert sd_hf[k].shape[::-1] == sd[k].shape
-                with torch.no_grad(): sd[k].copy_(sd_hf[k].t())
-            else:
-                assert sd_hf[k].shape == sd[k].shape
-                with torch.no_grad(): sd[k].copy_(sd_hf[k])
-        return model
+    def _run_layernorm(self, x, ln_mod):
+        M, N = x.view(-1, x.size(-1)).shape
+        y = torch.empty_like(x)
+        tile_n = next_pow2(N)
+        grid = (min(80, (M + 3) // 4),)
+        ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
+                 (x.view(-1, N), y.view(-1, N), ln_mod.weight, ln_mod.bias, N, 4, tile_n, 1e-5))
+        return y
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
@@ -258,14 +243,6 @@ class GPT(nn.Module):
             idx_next = torch.multinomial(probs, num_samples=1)
             idx = torch.cat((idx, idx_next), dim=1)
         return idx
-
-    def _run_layernorm(self, x, ln_mod):
-        M, N = x.view(-1, x.size(-1)).shape
-        y = torch.empty_like(x)
-        grid = (min(80, (M + 3) // 4),)
-        ct.launch(torch.cuda.current_stream(), grid, nanogpt_layernorm_kernel,
-                 (x.view(-1, N), y.view(-1, N), ln_mod.weight, ln_mod.bias, 4, N, 1e-5))
-        return y
 
 if __name__ == "__main__":
     config = GPTConfig(n_layer=4, n_head=4, n_embd=256)
