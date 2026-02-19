@@ -33,7 +33,7 @@ model = MicroGPT(vocab_size, n_embd, n_head, n_layer, block_size).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, betas=(0.85, 0.99))
 
 # --- 3. Training Loop ---
-num_steps = 100
+num_steps = 1000
 print(f"Starting cuTile MicroGPT Training for {num_steps} steps...")
 
 history = []
