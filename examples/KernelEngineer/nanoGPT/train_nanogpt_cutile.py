@@ -116,4 +116,15 @@ for iter_num in range(max_iters):
 with open("nanogpt_train_trace.json", "w") as f:
     json.dump(history, f, indent=4)
 
-print("Training Complete. Trace saved to nanogpt_train_trace.json")
+# --- Save Checkpoint ---
+checkpoint = {
+    'model': model.state_dict(),
+    'optimizer': optimizer.state_dict(),
+    'model_args': model_args,
+    'iter_num': iter_num,
+}
+ckpt_path = os.path.join(out_dir, 'ckpt.pt')
+torch.save(checkpoint, ckpt_path)
+print(f"Checkpoint saved to {ckpt_path}")
+
+print("\nTraining Complete. Trace saved to nanogpt_train_trace.json")

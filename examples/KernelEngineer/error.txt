@@ -1,8 +1,0 @@
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python3 matmul_baseline.py
-=== cuTile Baseline Benchmark (4096x4096x4096) ===
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/matmul_baseline.py", line 126, in <module>
-    main()
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/matmul_baseline.py", line 90, in main
-    ct.launch((GRID_M, GRID_N, 1), matmul_tile_kernel, (d_A, d_B, d_C))
-TypeError: Wrong number of arguments to launch(stream, grid, kernel, kernel_args, /)
