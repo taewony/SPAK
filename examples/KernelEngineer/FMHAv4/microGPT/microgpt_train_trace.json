@@ -1,0 +1,602 @@
+[
+    {
+        "type": "Convergence",
+        "step": 0,
+        "loss": NaN,
+        "step_time_ms": 810.4126453399658
+    },
+    {
+        "type": "Convergence",
+        "step": 1,
+        "loss": NaN,
+        "step_time_ms": 2.256155014038086
+    },
+    {
+        "type": "Convergence",
+        "step": 2,
+        "loss": NaN,
+        "step_time_ms": 1.180887222290039
+    },
+    {
+        "type": "Convergence",
+        "step": 3,
+        "loss": NaN,
+        "step_time_ms": 1.0311603546142578
+    },
+    {
+        "type": "Convergence",
+        "step": 4,
+        "loss": NaN,
+        "step_time_ms": 0.9260177612304688
+    },
+    {
+        "type": "Convergence",
+        "step": 5,
+        "loss": NaN,
+        "step_time_ms": 1.0161399841308594
+    },
+    {
+        "type": "Convergence",
+        "step": 6,
+        "loss": NaN,
+        "step_time_ms": 0.9357929229736328
+    },
+    {
+        "type": "Convergence",
+        "step": 7,
+        "loss": NaN,
+        "step_time_ms": 0.8716583251953125
+    },
+    {
+        "type": "Convergence",
+        "step": 8,
+        "loss": NaN,
+        "step_time_ms": 0.9121894836425781
+    },
+    {
+        "type": "Convergence",
+        "step": 9,
+        "loss": NaN,
+        "step_time_ms": 0.9191036224365234
+    },
+    {
+        "type": "Convergence",
+        "step": 10,
+        "loss": NaN,
+        "step_time_ms": 0.8828639984130859
+    },
+    {
+        "type": "Convergence",
+        "step": 11,
+        "loss": NaN,
+        "step_time_ms": 0.9324550628662109
+    },
+    {
+        "type": "Convergence",
+        "step": 12,
+        "loss": NaN,
+        "step_time_ms": 1.0275840759277344
+    },
+    {
+        "type": "Convergence",
+        "step": 13,
+        "loss": NaN,
+        "step_time_ms": 1.0676383972167969
+    },
+    {
+        "type": "Convergence",
+        "step": 14,
+        "loss": NaN,
+        "step_time_ms": 0.9088516235351562
+    },
+    {
+        "type": "Convergence",
+        "step": 15,
+        "loss": NaN,
+        "step_time_ms": 1.1096000671386719
+    },
+    {
+        "type": "Convergence",
+        "step": 16,
+        "loss": NaN,
+        "step_time_ms": 0.8563995361328125
+    },
+    {
+        "type": "Convergence",
+        "step": 17,
+        "loss": NaN,
+        "step_time_ms": 0.7731914520263672
+    },
+    {
+        "type": "Convergence",
+        "step": 18,
+        "loss": NaN,
+        "step_time_ms": 0.7290840148925781
+    },
+    {
+        "type": "Convergence",
+        "step": 19,
+        "loss": NaN,
+        "step_time_ms": 0.8461475372314453
+    },
+    {
+        "type": "Convergence",
+        "step": 20,
+        "loss": NaN,
+        "step_time_ms": 0.7834434509277344
+    },
+    {
+        "type": "Convergence",
+        "step": 21,
+        "loss": NaN,
+        "step_time_ms": 0.774383544921875
+    },
+    {
+        "type": "Convergence",
+        "step": 22,
+        "loss": NaN,
+        "step_time_ms": 0.7636547088623047
+    },
+    {
+        "type": "Convergence",
+        "step": 23,
+        "loss": NaN,
+        "step_time_ms": 0.7619857788085938
+    },
+    {
+        "type": "Convergence",
+        "step": 24,
+        "loss": NaN,
+        "step_time_ms": 0.7522106170654297
+    },
+    {
+        "type": "Convergence",
+        "step": 25,
+        "loss": NaN,
+        "step_time_ms": 0.7538795471191406
+    },
+    {
+        "type": "Convergence",
+        "step": 26,
+        "loss": NaN,
+        "step_time_ms": 0.75531005859375
+    },
+    {
+        "type": "Convergence",
+        "step": 27,
+        "loss": NaN,
+        "step_time_ms": 0.7448196411132812
+    },
+    {
+        "type": "Convergence",
+        "step": 28,
+        "loss": NaN,
+        "step_time_ms": 0.7922649383544922
+    },
+    {
+        "type": "Convergence",
+        "step": 29,
+        "loss": NaN,
+        "step_time_ms": 0.797271728515625
+    },
+    {
+        "type": "Convergence",
+        "step": 30,
+        "loss": NaN,
+        "step_time_ms": 0.8373260498046875
+    },
+    {
+        "type": "Convergence",
+        "step": 31,
+        "loss": NaN,
+        "step_time_ms": 0.7796287536621094
+    },
+    {
+        "type": "Convergence",
+        "step": 32,
+        "loss": NaN,
+        "step_time_ms": 0.8242130279541016
+    },
+    {
+        "type": "Convergence",
+        "step": 33,
+        "loss": NaN,
+        "step_time_ms": 0.7529258728027344
+    },
+    {
+        "type": "Convergence",
+        "step": 34,
+        "loss": NaN,
+        "step_time_ms": 0.7402896881103516
+    },
+    {
+        "type": "Convergence",
+        "step": 35,
+        "loss": NaN,
+        "step_time_ms": 0.7281303405761719
+    },
+    {
+        "type": "Convergence",
+        "step": 36,
+        "loss": NaN,
+        "step_time_ms": 0.7450580596923828
+    },
+    {
+        "type": "Convergence",
+        "step": 37,
+        "loss": NaN,
+        "step_time_ms": 0.7450580596923828
+    },
+    {
+        "type": "Convergence",
+        "step": 38,
+        "loss": NaN,
+        "step_time_ms": 0.8313655853271484
+    },
+    {
+        "type": "Convergence",
+        "step": 39,
+        "loss": NaN,
+        "step_time_ms": 0.8170604705810547
+    },
+    {
+        "type": "Convergence",
+        "step": 40,
+        "loss": NaN,
+        "step_time_ms": 0.7593631744384766
+    },
+    {
+        "type": "Convergence",
+        "step": 41,
+        "loss": NaN,
+        "step_time_ms": 0.8397102355957031
+    },
+    {
+        "type": "Convergence",
+        "step": 42,
+        "loss": NaN,
+        "step_time_ms": 0.766754150390625
+    },
+    {
+        "type": "Convergence",
+        "step": 43,
+        "loss": NaN,
+        "step_time_ms": 0.7390975952148438
+    },
+    {
+        "type": "Convergence",
+        "step": 44,
+        "loss": NaN,
+        "step_time_ms": 0.7395744323730469
+    },
+    {
+        "type": "Convergence",
+        "step": 45,
+        "loss": NaN,
+        "step_time_ms": 0.7729530334472656
+    },
+    {
+        "type": "Convergence",
+        "step": 46,
+        "loss": NaN,
+        "step_time_ms": 0.7331371307373047
+    },
+    {
+        "type": "Convergence",
+        "step": 47,
+        "loss": NaN,
+        "step_time_ms": 1.3115406036376953
+    },
+    {
+        "type": "Convergence",
+        "step": 48,
+        "loss": NaN,
+        "step_time_ms": 0.9143352508544922
+    },
+    {
+        "type": "Convergence",
+        "step": 49,
+        "loss": NaN,
+        "step_time_ms": 0.8726119995117188
+    },
+    {
+        "type": "Convergence",
+        "step": 50,
+        "loss": NaN,
+        "step_time_ms": 0.8034706115722656
+    },
+    {
+        "type": "Convergence",
+        "step": 51,
+        "loss": NaN,
+        "step_time_ms": 0.7877349853515625
+    },
+    {
+        "type": "Convergence",
+        "step": 52,
+        "loss": NaN,
+        "step_time_ms": 0.751495361328125
+    },
+    {
+        "type": "Convergence",
+        "step": 53,
+        "loss": NaN,
+        "step_time_ms": 0.7748603820800781
+    },
+    {
+        "type": "Convergence",
+        "step": 54,
+        "loss": NaN,
+        "step_time_ms": 0.7379055023193359
+    },
+    {
+        "type": "Convergence",
+        "step": 55,
+        "loss": NaN,
+        "step_time_ms": 0.7498264312744141
+    },
+    {
+        "type": "Convergence",
+        "step": 56,
+        "loss": NaN,
+        "step_time_ms": 0.7359981536865234
+    },
+    {
+        "type": "Convergence",
+        "step": 57,
+        "loss": NaN,
+        "step_time_ms": 0.7443428039550781
+    },
+    {
+        "type": "Convergence",
+        "step": 58,
+        "loss": NaN,
+        "step_time_ms": 0.7565021514892578
+    },
+    {
+        "type": "Convergence",
+        "step": 59,
+        "loss": NaN,
+        "step_time_ms": 0.7503032684326172
+    },
+    {
+        "type": "Convergence",
+        "step": 60,
+        "loss": NaN,
+        "step_time_ms": 0.7505416870117188
+    },
+    {
+        "type": "Convergence",
+        "step": 61,
+        "loss": NaN,
+        "step_time_ms": 0.7791519165039062
+    },
+    {
+        "type": "Convergence",
+        "step": 62,
+        "loss": NaN,
+        "step_time_ms": 0.7941722869873047
+    },
+    {
+        "type": "Convergence",
+        "step": 63,
+        "loss": NaN,
+        "step_time_ms": 0.7519721984863281
+    },
+    {
+        "type": "Convergence",
+        "step": 64,
+        "loss": NaN,
+        "step_time_ms": 0.9329319000244141
+    },
+    {
+        "type": "Convergence",
+        "step": 65,
+        "loss": NaN,
+        "step_time_ms": 1.0981559753417969
+    },
+    {
+        "type": "Convergence",
+        "step": 66,
+        "loss": NaN,
+        "step_time_ms": 0.8432865142822266
+    },
+    {
+        "type": "Convergence",
+        "step": 67,
+        "loss": NaN,
+        "step_time_ms": 0.7722377777099609
+    },
+    {
+        "type": "Convergence",
+        "step": 68,
+        "loss": NaN,
+        "step_time_ms": 0.7596015930175781
+    },
+    {
+        "type": "Convergence",
+        "step": 69,
+        "loss": NaN,
+        "step_time_ms": 0.7443428039550781
+    },
+    {
+        "type": "Convergence",
+        "step": 70,
+        "loss": NaN,
+        "step_time_ms": 0.7431507110595703
+    },
+    {
+        "type": "Convergence",
+        "step": 71,
+        "loss": NaN,
+        "step_time_ms": 0.812530517578125
+    },
+    {
+        "type": "Convergence",
+        "step": 72,
+        "loss": NaN,
+        "step_time_ms": 0.7581710815429688
+    },
+    {
+        "type": "Convergence",
+        "step": 73,
+        "loss": NaN,
+        "step_time_ms": 0.7402896881103516
+    },
+    {
+        "type": "Convergence",
+        "step": 74,
+        "loss": NaN,
+        "step_time_ms": 0.759124755859375
+    },
+    {
+        "type": "Convergence",
+        "step": 75,
+        "loss": NaN,
+        "step_time_ms": 0.7762908935546875
+    },
+    {
+        "type": "Convergence",
+        "step": 76,
+        "loss": NaN,
+        "step_time_ms": 0.7560253143310547
+    },
+    {
+        "type": "Convergence",
+        "step": 77,
+        "loss": NaN,
+        "step_time_ms": 0.7398128509521484
+    },
+    {
+        "type": "Convergence",
+        "step": 78,
+        "loss": NaN,
+        "step_time_ms": 0.7495880126953125
+    },
+    {
+        "type": "Convergence",
+        "step": 79,
+        "loss": NaN,
+        "step_time_ms": 0.751495361328125
+    },
+    {
+        "type": "Convergence",
+        "step": 80,
+        "loss": NaN,
+        "step_time_ms": 0.8602142333984375
+    },
+    {
+        "type": "Convergence",
+        "step": 81,
+        "loss": NaN,
+        "step_time_ms": 0.7913112640380859
+    },
+    {
+        "type": "Convergence",
+        "step": 82,
+        "loss": NaN,
+        "step_time_ms": 1.1203289031982422
+    },
+    {
+        "type": "Convergence",
+        "step": 83,
+        "loss": NaN,
+        "step_time_ms": 1.2121200561523438
+    },
+    {
+        "type": "Convergence",
+        "step": 84,
+        "loss": NaN,
+        "step_time_ms": 0.8423328399658203
+    },
+    {
+        "type": "Convergence",
+        "step": 85,
+        "loss": NaN,
+        "step_time_ms": 0.7724761962890625
+    },
+    {
+        "type": "Convergence",
+        "step": 86,
+        "loss": NaN,
+        "step_time_ms": 0.7541179656982422
+    },
+    {
+        "type": "Convergence",
+        "step": 87,
+        "loss": NaN,
+        "step_time_ms": 0.7624626159667969
+    },
+    {
+        "type": "Convergence",
+        "step": 88,
+        "loss": NaN,
+        "step_time_ms": 0.789642333984375
+    },
+    {
+        "type": "Convergence",
+        "step": 89,
+        "loss": NaN,
+        "step_time_ms": 0.7488727569580078
+    },
+    {
+        "type": "Convergence",
+        "step": 90,
+        "loss": NaN,
+        "step_time_ms": 0.7386207580566406
+    },
+    {
+        "type": "Convergence",
+        "step": 91,
+        "loss": NaN,
+        "step_time_ms": 0.7665157318115234
+    },
+    {
+        "type": "Convergence",
+        "step": 92,
+        "loss": NaN,
+        "step_time_ms": 0.78582763671875
+    },
+    {
+        "type": "Convergence",
+        "step": 93,
+        "loss": NaN,
+        "step_time_ms": 0.7388591766357422
+    },
+    {
+        "type": "Convergence",
+        "step": 94,
+        "loss": NaN,
+        "step_time_ms": 0.7445812225341797
+    },
+    {
+        "type": "Convergence",
+        "step": 95,
+        "loss": NaN,
+        "step_time_ms": 0.8165836334228516
+    },
+    {
+        "type": "Convergence",
+        "step": 96,
+        "loss": NaN,
+        "step_time_ms": 0.7755756378173828
+    },
+    {
+        "type": "Convergence",
+        "step": 97,
+        "loss": NaN,
+        "step_time_ms": 0.8203983306884766
+    },
+    {
+        "type": "Convergence",
+        "step": 98,
+        "loss": NaN,
+        "step_time_ms": 0.9138584136962891
+    },
+    {
+        "type": "Convergence",
+        "step": 99,
+        "loss": NaN,
+        "step_time_ms": 1.1966228485107422
+    }
+]
