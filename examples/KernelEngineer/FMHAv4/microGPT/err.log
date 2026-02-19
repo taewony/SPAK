@@ -1,4 +1,4 @@
-python train_microgpt_cutile.py
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT$ python train_microgpt_cutile.py
 Starting cuTile MicroGPT Training for 100 steps...
 Traceback (most recent call last):
   File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/train_microgpt_cutile.py", line 53, in <module>
@@ -10,31 +10,13 @@ Traceback (most recent call last):
   File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
     return forward_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/microgpt_cutile.py", line 130, in forward
-    x = self.blocks(x)
-        ^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/microgpt_cutile.py", line 132, in forward
+    return self.lm_head(idx=x) # Pass by keyword if needed, or just x
+           ^^^^^^^^^^^^^^^^^^^
   File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
     return self._call_impl(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
     return forward_call(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/container.py", line 250, in forward
-    input = module(input)
-            ^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/microgpt_cutile.py", line 89, in forward
-    x_norm = self._run_rmsnorm(x, self.ln1)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/microGPT/microgpt_cutile.py", line 115, in _run_rmsnorm
-    (x.view(-1, N), y.view(-1, N), weight, 4, ct.Constant(N), 1e-5))
-                                              ^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/typing.py", line 1157, in __call__
-    result = self.__origin__(*args, **kwargs)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: 'typing.TypeVar' object is not callable
+TypeError: Linear.forward() got an unexpected keyword argument 'idx'
