@@ -99,7 +99,8 @@ def nanogpt_layernorm_kernel(
         rstd = ct.rsqrt(var + eps)
         
         y = (centered * rstd) * ct.astype(w, ct.float32) + ct.astype(b, ct.float32)
-        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y, X.dtype))
+        # Fix: Slice the tile to exactly N columns to avoid overwriting next rows due to TILE_SIZE_N > N
+        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y[:, :N], X.dtype))
 
 # ============================================================
 # 2. GPT-2 ARCHITECTURE
@@ -126,7 +127,7 @@ class CausalSelfAttention(nn.Module):
         self.n_head = config.n_head
         self.n_embd = config.n_embd
         self.head_dim = config.n_embd // config.n_head
-        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -1e20}
+        self.config_delta = {"tile_m": 64, "tile_n": 64, "k_lat": 2, "v_lat": 5, "neg_inf": -float('inf')}
 
     def forward(self, x):
         B, T, C = x.size()
