@@ -1,60 +1,62 @@
 python train_nanogpt_cutile.py
-[INFO] Added /home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/TileGym/src to sys.path.
-[WARN] cuTile backend failed (Error: cannot import name 'layernorm' from 'tilegym.ops.cutile' (/home/linux/taewony/env/lib/python3.12/site-packages/tilegym/ops/cutile/__init__.py)). Using PyTorch fallback.
+[INFO] Added /home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/TileGym/src to the front of sys.path.
+/home/linux/taewony/SPAK/examples/KernelEngineer/FMHAv4/nanoGPT/TileGym/src/tilegym/ops/__init__.py:21: UserWarning: Cutile backend import failed, cutile operations will not be available
+  warnings.warn("Cutile backend import failed, cutile operations will not be available")
+[WARN] cuTile backend failed (Error: No module named 'cuda.tile_experimental'). Using PyTorch fallback.
 Starting NanoGPT cuTile Training on shakespeare_char...
 step 0: train loss 4.2831, val loss 4.2805
-iter 0: loss 4.2765, time 462.84ms
-iter 10: loss 3.3359, time 7.52ms
-iter 20: loss 3.2887, time 7.29ms
-iter 30: loss 3.3872, time 7.31ms
-iter 40: loss 3.3041, time 7.52ms
-iter 50: loss 3.2605, time 7.41ms
-iter 60: loss 3.1818, time 7.38ms
-iter 70: loss 3.1805, time 7.37ms
+iter 0: loss 4.2765, time 484.67ms
+iter 10: loss 3.3359, time 9.10ms
+iter 20: loss 3.2887, time 7.88ms
+iter 30: loss 3.3872, time 7.30ms
+iter 40: loss 3.3041, time 7.25ms
+iter 50: loss 3.2605, time 7.35ms
+iter 60: loss 3.1818, time 7.29ms
+iter 70: loss 3.1805, time 7.28ms
 iter 80: loss 3.0488, time 7.32ms
-iter 90: loss 3.0883, time 7.67ms
+iter 90: loss 3.0883, time 7.50ms
 step 100: train loss 2.8677, val loss 2.9499
-iter 100: loss 2.8411, time 16.50ms
-iter 110: loss 2.8357, time 7.36ms
-iter 120: loss 2.7798, time 7.35ms
-iter 130: loss 2.6609, time 7.33ms
-iter 140: loss 2.6557, time 7.37ms
-iter 150: loss 2.6712, time 7.49ms
-iter 160: loss 2.6153, time 7.35ms
-iter 170: loss 2.6261, time 7.40ms
-iter 180: loss 2.5725, time 7.49ms
-iter 190: loss 2.5423, time 7.40ms
+iter 100: loss 2.8411, time 16.21ms
+iter 110: loss 2.8357, time 7.41ms
+iter 120: loss 2.7798, time 7.30ms
+iter 130: loss 2.6609, time 7.31ms
+iter 140: loss 2.6557, time 7.29ms
+iter 150: loss 2.6712, time 7.33ms
+iter 160: loss 2.6153, time 7.37ms
+iter 170: loss 2.6261, time 7.37ms
+iter 180: loss 2.5725, time 7.34ms
+iter 190: loss 2.5423, time 7.37ms
 step 200: train loss 2.5671, val loss 2.5636
-iter 200: loss 2.5622, time 16.40ms
-iter 210: loss 2.5878, time 7.44ms
-iter 220: loss 2.5665, time 7.35ms
-iter 230: loss 2.5527, time 7.51ms
-iter 240: loss 2.5805, time 7.57ms
-iter 250: loss 2.5629, time 7.44ms
-iter 260: loss 2.5154, time 7.31ms
-iter 270: loss 2.5083, time 7.38ms
-iter 280: loss 2.5496, time 7.48ms
-iter 290: loss 2.5151, time 7.36ms
+iter 200: loss 2.5622, time 16.16ms
+iter 210: loss 2.5878, time 7.28ms
+iter 220: loss 2.5665, time 7.29ms
+iter 230: loss 2.5527, time 7.40ms
+iter 240: loss 2.5805, time 7.37ms
+iter 250: loss 2.5629, time 7.56ms
+iter 260: loss 2.5154, time 7.38ms
+iter 270: loss 2.5083, time 7.37ms
+iter 280: loss 2.5496, time 7.33ms
+iter 290: loss 2.5151, time 7.44ms
 step 300: train loss 2.5176, val loss 2.5391
-iter 300: loss 2.4763, time 16.39ms
-iter 310: loss 2.5400, time 7.42ms
+iter 300: loss 2.4763, time 16.26ms
+iter 310: loss 2.5400, time 7.38ms
 iter 320: loss 2.5006, time 7.42ms
-iter 330: loss 2.5304, time 7.39ms
-iter 340: loss 2.5151, time 7.37ms
-iter 350: loss 2.4854, time 7.40ms
-iter 360: loss 2.4796, time 7.49ms
-iter 370: loss 2.4995, time 7.36ms
-iter 380: loss 2.5066, time 7.37ms
-iter 390: loss 2.5153, time 7.36ms
+iter 330: loss 2.5304, time 7.36ms
+iter 340: loss 2.5151, time 7.35ms
+iter 350: loss 2.4854, time 7.30ms
+iter 360: loss 2.4796, time 7.45ms
+iter 370: loss 2.4995, time 7.37ms
+iter 380: loss 2.5066, time 7.38ms
+iter 390: loss 2.5153, time 7.31ms
 step 400: train loss 2.4946, val loss 2.5110
-iter 400: loss 2.5259, time 16.38ms
-iter 410: loss 2.4657, time 7.31ms
-iter 420: loss 2.4421, time 7.44ms
+iter 400: loss 2.5259, time 16.20ms
+iter 410: loss 2.4657, time 7.39ms
+iter 420: loss 2.4421, time 7.33ms
 iter 430: loss 2.5311, time 7.50ms
-iter 440: loss 2.4792, time 7.33ms
-iter 450: loss 2.4648, time 7.49ms
-iter 460: loss 2.5158, time 7.42ms
-iter 470: loss 2.4958, time 7.42ms
-iter 480: loss 2.4809, time 7.43ms
-iter 490: loss 2.4561, time 7.36ms
+iter 440: loss 2.4792, time 7.34ms
+iter 450: loss 2.4648, time 7.38ms
+iter 460: loss 2.5158, time 7.32ms
+iter 470: loss 2.4958, time 7.35ms
+iter 480: loss 2.4809, time 7.32ms
+iter 490: loss 2.4561, time 7.38ms
 Training Complete. Trace saved to nanogpt_train_trace.json
