@@ -1,0 +1,6 @@
+python train_baseline_12l.py
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_baseline_12l.py", line 35, in <module>
+    exec(open('looplm/configurator.py').read()) # overrides from command line or config file
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'looplm/configurator.py'
