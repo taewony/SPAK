@@ -137,3 +137,26 @@ The success of the NanoGPT transformation validates the **Full Stack Compounding
 
 
    python nanoGPT/compare_implementations.py
+   
+   ✦ 1. meta.pkl이란 무엇인가?
+  meta.pkl은 문자 단위 인코딩 정보를 담고 있는 메타데이터 파일입니다.
+   * 구성 요소: 문자열을 숫자로 바꾸는 stoi (string-to-index) 맵과, 숫자를 문자열로 바꾸는 itos (index-to-string) 맵,
+     그리고 전체 어휘 크기인 vocab_size를 포함합니다.
+   * 생성 주체: python data/shakespeare_char/prepare.py 스크립트가 이 파일을 만듭니다. 원본 텍스트 파일을 읽어 중복되지
+     않는 모든 문자를 정렬하여 고유한 인덱스를 부여합니다.
+   * 중요성: 추론 시 모델이 내뱉은 숫자(Index)를 다시 우리가 읽을 수 있는 문자(Character)로 복원하기 위해 반드시
+     필요합니다.
+     
+     
+✦ compare_implementations.py를 수정하여 out_nanogpt, out-shakespeare-char, out_baseline 세 폴더의 체크포인트를 순회하며
+  원본과 cuTile 버전의 추론 결과를 나란히 출력하도록 했습니다.
+
+
+  스크립트의 주요 특징:
+   1. 자동 순회: 폴더가 존재하지 않으면 건너뛰고, 존재하는 경우 모든 체크포인트를 분석합니다.
+   2. 수치 비교: 각 가중치에 대해 Block 0 이후의 오차를 측정하여 커널의 무결성을 다시 확인합니다.
+   3. 교차 검증: 동일한 가중치로 원본 엔진과 cuTile 엔진의 출력 품질을 직접 비교할 수 있습니다.
+
+
+  이제 python nanoGPT/compare_implementations.py를 실행하여 각 훈련 결과가 실제 문장 생성 품질에 어떤 영향을 주는지
+  확인해 보시기 바랍니다. 어떤 폴더의 결과가 가장 우수하게 나오나요?

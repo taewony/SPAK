@@ -32,7 +32,11 @@ lr_decay_iters = 1000
 min_lr = 6e-5
 # -----------------------------------------------------------------------------
 
-os.makedirs(out_dir, exist_ok=True)
+# Set paths relative to script location
+script_dir = os.path.dirname(__file__)
+full_out_dir = os.path.join(script_dir, out_dir)
+os.makedirs(full_out_dir, exist_ok=True)
+
 torch.manual_seed(1337)
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
@@ -40,8 +44,12 @@ device_type = 'cuda'
 ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[dtype]
 ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype)
 
-# Data loader
-data_dir = os.path.join('nanoGPT', 'data', dataset)
+# Data loader setup
+data_dir = os.path.join(script_dir, 'data', dataset)
+if not os.path.exists(data_dir):
+    # Fallback to root-relative if needed
+    data_dir = os.path.join(script_dir, '..', 'data', dataset)
+
 train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
 val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
 
@@ -138,7 +146,9 @@ for iter_num in range(max_iters):
             "step_time_ms": dt
         })
 
-with open("nanoGPT/nanogpt_pytorch_trace.json", "w") as f:
+# Save trace in script directory
+trace_path = os.path.join(script_dir, "nanogpt_pytorch_trace.json")
+with open(trace_path, "w") as f:
     json.dump(history, f, indent=4)
 
 checkpoint = {
@@ -147,5 +157,5 @@ checkpoint = {
     'model_args': model_args,
     'iter_num': iter_num,
 }
-torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
-print("\nBaseline Training Complete.")
+torch.save(checkpoint, os.path.join(full_out_dir, 'ckpt.pt'))
+print(f"\nBaseline Training Complete. Checkpoint: {full_out_dir}/ckpt.pt")

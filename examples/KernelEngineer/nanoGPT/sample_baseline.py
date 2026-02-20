@@ -4,16 +4,19 @@ import torch
 from model import GPTConfig, GPT
 
 # -----------------------------------------------------------------------------
-out_dir = 'out_baseline'
+out_dir = 'out_baseline' # 'out_baseline' folder is assumed to be in the same dir as this script
 device = 'cuda'
 dtype = 'float16'
 # -----------------------------------------------------------------------------
+
+# Get the directory where this script is located
+script_dir = os.path.dirname(__file__)
 
 torch.manual_seed(1337)
 device_type = 'cuda'
 ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[dtype]
 
-ckpt_path = os.path.join(out_dir, 'ckpt.pt')
+ckpt_path = os.path.join(script_dir, out_dir, 'ckpt.pt')
 if not os.path.exists(ckpt_path):
     print(f"No checkpoint found at {ckpt_path}. Please run train_pytorch_baseline.py first.")
     exit()
@@ -32,7 +35,12 @@ model.eval()
 model.to(device)
 
 # Encoder/Decoder setup
-meta_path = os.path.join('nanoGPT', 'data', 'shakespeare_char', 'meta.pkl')
+# Shakespeare char meta.pkl location
+meta_path = os.path.join(script_dir, 'data', 'shakespeare_char', 'meta.pkl')
+if not os.path.exists(meta_path):
+    # Fallback to root-relative if not found in nanoGPT/data
+    meta_path = os.path.join(script_dir, '..', 'data', 'shakespeare_char', 'meta.pkl')
+
 with open(meta_path, 'rb') as f:
     meta = pickle.load(f)
 stoi, itos = meta['stoi'], meta['itos']
@@ -40,8 +48,7 @@ encode = lambda s: [stoi[c] for c in s]
 decode = lambda l: ''.join([itos[i] for i in l])
 
 # encode the prompt
-start = "
-"
+start = "\n"
 start_ids = encode(start)
 x = (torch.tensor(start_ids, dtype=torch.long, device=device)[None, ...])
 
