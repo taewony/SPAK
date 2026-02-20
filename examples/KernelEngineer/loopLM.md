@@ -68,3 +68,45 @@ SPAK **Outer Loop**가 잠재 공간의 변화율을 모니터링하여 `break` 
 `loopLM` 개발은 단순히 모델을 만드는 과정이 아닙니다. **"Standard GPT(12L)"라는 거인**을 기준으로 세우고, 우리가 NanoGPT에서 배운 **계층적 등가성 검증**과 **Blackwell 하드웨어 법칙**을 결합하여 "적은 자원으로 깊은 사고를 하는" 지능형 시스템을 구축하는 과정입니다. 
 
 우리의 첫 번째 임무는 **표준 12레이어 GPT의 무결성을 완벽히 확보**하는 것에서 시작합니다.
+
+---
+✦ 검색 결과와 최신 연구 흐름을 종합하여 loopLM의 아키텍처 및 검증 전략을 한층 더 구체화할 수 있는 핵심 지표들을 확보했습니다. 특히 "Thinking Step Encoding"과 "Adaptive Entropy-based Exit" 개념이 우리 SPAK DSL에 포함되어야 할 결정적 요소임을 확인했습니다.
+
+  ---
+
+  1. loopLM 정밀 설계 포인트 (Refined Architecture)
+
+   1. Thinking Step Encoding (TSE):
+       * 단순히 레이어를 반복하는 것이 아니라, 각 루프 단계($l=1 \dots L$)에 대한 고유한 인코딩을 추가하여 모델이 "현재
+         몇 번째 사고 단계인지"를 알게 해야 합니다.
+       * 이는 SPAK DSL의 tuning_space에 step_encoding_type: ["Temporal_RoPE", "Step_Learned_Bias"]와 같은 항목으로
+         정의될 수 있습니다.
+
+   2. Adaptive Token Routing & Exit:
+       * 모든 토큰이 동일한 횟수만큼 반복되는 것이 아니라, 엔트로피 임계값($H_{target}$) 이하로 떨어진 토큰은 조기에
+         연산을 멈추는 "Early Exit" 로직이 핵심입니다.
+       * 이는 Blackwell 하드웨어에서 조건부 실행(Conditional Execution) 부하를 줄이기 위한 "Masked Loop Logic"으로
+         구현되어야 합니다.
+
+   3. Input Injection (Residue Link):
+       * 각 반복 단계의 입력에 원본 임베딩 $x_0$를 다시 더해주는(Residue) 방식이 잠재 표현의 "망각"을 방지하고 추론을
+         안정화하는 데 효과적임을 확인했습니다.
+
+✦ 결론: 엔지니어링 실행 계획 (Revised)
+
+  논문 리뷰와 v2.dsl 설계를 통해 우리가 가야 할 길은 명확해졌습니다.
+
+   1. Baseline 완성: 현재 진행 중인 표준 GPT(12L) 학습을 완결하여 "정답 궤적"을 확보합니다.
+   2. Adaptive Kernel 설계: 단순히 for 루프를 돌리는 것이 아니라, 엔트로피 기반 Early Exit이 가능한 cuTile 커널을 설계합니다. (이는 Blackwell 하드웨어에서 엄청난 처리량 이득을 줄 것입니다.)
+   3. Thinking Trace 분석: 추론 시 각 루프마다 문장이 어떻게 "더 똑똑해지는지"를 엔트로피 곡선으로 시각화하여 증명합니다.
+
+
+  주요 DSL 통합 포인트:
+   1. Thinking Mechanism 통합: Step Encoding, X0 Residue Injection, Adaptive Early Exit 등 최신 연구(Ouro, ITT)의 핵심
+      아키텍처 요소를 design_space에 반영했습니다.
+   2. Blackwell 최적화 규칙: 기존 NanoGPT에서 얻은 Stability Floor (-1e20)와 Weight Pinning 전략을 tuning_space와
+      knowledge에 명시했습니다.
+   3. 검증 프로토콜 정교화: Space-Time Equivalence와 Entropy Decay를 불변성(Invariant)으로 정의하여, 모델이 실제로
+      "생각"하고 있음을 증명하는 체계를 구축했습니다.
+
+  이제 이 DSL은 loopLM 프로젝트의 최상위 설계 명세서 역할을 하게 됩니다.
