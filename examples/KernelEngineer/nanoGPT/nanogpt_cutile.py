@@ -17,6 +17,8 @@ class LayerNorm(nn.Module):
         self.bias = nn.Parameter(torch.zeros(ndim)) if bias else None
 
     def forward(self, x):
+        if self.training:
+            return F.layer_norm(x, self.weight.shape, self.weight, self.bias, 1e-5)
         return _run_layernorm_static(x, self.weight, self.bias)
 
 def _run_layernorm_static(x, weight, bias):
@@ -177,21 +179,25 @@ class CausalSelfAttention(nn.Module):
         q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
         v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
 
-        # Attention forward with padding for T to match TILE_M
-        tile_m = self.config_delta["tile_m"]
-        T_padded = math.ceil(T / tile_m) * tile_m
-        out_padded = torch.empty((B, self.n_head, T_padded, self.head_dim), dtype=q.dtype, device=q.device)
-        
-        scale_log2 = (1.0 / math.sqrt(self.head_dim)) * (1.0 / math.log(2))
-        grid_x = max(1, T_padded // tile_m)
-        grid = (grid_x, B * self.n_head, 1)
-        
-        ct.launch(torch.cuda.current_stream(), grid, nanogpt_attention_kernel,
-                 (q, k, v, out_padded, scale_log2, self.config_delta["neg_inf"], 
-                  self.head_dim, self.n_head, tile_m, self.config_delta["tile_n"], 2, 5))
+        if self.training:
+            y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        else:
+            # Attention forward with padding for T to match TILE_M
+            tile_m = self.config_delta["tile_m"]
+            T_padded = math.ceil(T / tile_m) * tile_m
+            out_padded = torch.empty((B, self.n_head, T_padded, self.head_dim), dtype=q.dtype, device=q.device)
+            
+            scale_log2 = (1.0 / math.sqrt(self.head_dim)) * (1.0 / math.log(2))
+            grid_x = max(1, T_padded // tile_m)
+            grid = (grid_x, B * self.n_head, 1)
+            
+            ct.launch(torch.cuda.current_stream(), grid, nanogpt_attention_kernel,
+                    (q, k, v, out_padded, scale_log2, self.config_delta["neg_inf"], 
+                    self.head_dim, self.n_head, tile_m, self.config_delta["tile_n"], 2, 5))
 
-        out = out_padded[:, :, :T, :].contiguous()
-        y = out.transpose(1, 2).contiguous().view(B, T, C)
+            out = out_padded[:, :, :T, :].contiguous()
+            y = out.transpose(1, 2).contiguous().view(B, T, C)
+        
         return self.resid_dropout(self.c_proj(y))
 
 class MLP(nn.Module):
