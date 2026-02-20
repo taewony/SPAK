@@ -78,6 +78,7 @@ The success of the NanoGPT transformation validates the **Full Stack Compounding
    * Scenario A: $T=13$ (Small, prime number) – 패딩 로직의 사각지대 확인.
    * Scenario B: $T=257$ (Exceeds block\_size/multiple tiles) – 타일 간 경계 처리 확인.
    * Scenario C: Trained Weights – 단순 랜덤이 아닌, 실제 학습된 가중치 분포에서의 오차 측정.
+   
 ✦ nanoGPT/test_parity_expanded.py를 생성했습니다. 이 스크립트는 다음 항목들을 검증합니다:
 
 
@@ -93,3 +94,46 @@ The success of the NanoGPT transformation validates the **Full Stack Compounding
 
   이제 python nanoGPT/test_parity_expanded.py를 실행하여 우리 모델이 극한 상황에서도 원본과 동일하게 동작하는지 확인해
   보시기 바랍니다. 이 결과가 모두 [PASS]라면 모델 아키텍처와 커널은 완벽히 검증된 것입니다.
+  
+  ✦ 인덱싱 오류를 수정한 후, T=10의 시퀀스 길이에 대해 레이어별 오차와 Greedy 출력을 비교하는 compare_deep.py를
+  생성했습니다.
+
+
+  이전의 Max difference after Block 0: 0.0은 T=1이었기 때문에 인덱싱 버그가 숨겨져 있었을 확률이 매우 높습니다. 이제
+  python nanoGPT/compare_deep.py를 실행하여 T > 1 상황에서도 블록별 오차가 0에 가깝게 유지되는지 확인해 주시기 바랍니다.
+
+최종 검증 및 실행을 위한 5단계 체크리스트
+
+## 시스템의 무결성을 최종 확인 steps
+
+
+  ### Step 1: 확장 등가성 검증 (Edge Case & Scaling)
+  다양한 시퀀스 길이($T=13, 257$)와 GPT-2 Small 규모(12레이어)에서의 수치적 정확도를 최종 확인합니다.  (엣지 케이스 및 대규모 모델 검증)
+   python nanoGPT/test_parity_expanded.py
+   * 기대 결과: 모든 항목 [PASS] 및 Max Diff < 1e-1
+
+
+  ### Step 2: 심층 블록별 비교 및 결정론적 추론
+  학습된 가중치를 로드하여 레이어별 오차를 측정하고, 원본과 우리 모델이 완전히 동일한 문장을 생성하는지 확인합니다.  (학습 가중치 기반 블록별 등가성 검증)
+
+
+   python nanoGPT/compare_deep.py
+   * 기대 결과: SUCCESS: Greedy outputs are BIT-IDENTICAL!
+
+
+  ### Step 3: 베이스라인 추론 (Original Weights)
+  원본 PyTorch로 학습된 고품질 가중치를 사용하여 우리 모델이 셰익스피어 문체를 정상적으로 출력하는지 확인합니다.
+   python nanoGPT/sample_nanogpt_cutile.py
+   * 기대 결과: 사람이 읽을 수 있는 정상적인 셰익스피어 대사 출력
+
+
+  ### Step 4: cuTile 기반 정식 학습 (Performance & Convergence)
+  이제 최적화된 커널을 사용하여 직접 5000회 학습을 진행하고 수렴 속도와 성능(ms/step)을 측정합니다.
+   python nanoGPT/train_nanogpt_cutile.py
+   * 기대 결과: PyTorch 대비 가속 성능(최대 2.6x) 확인 및 손실값 수렴
+
+  ### Step 5: 최종 품질 비교
+  학습이 완료된 후, 원본 결과(pytorch.sample.log)와 우리 모델의 결과를 나란히 비교합니다.
+
+
+   python nanoGPT/compare_implementations.py

@@ -65,13 +65,15 @@ def nanogpt_attention_kernel(
     offs_m = bid_x * TILE_M + ct.arange(TILE_M, dtype=ct.int32)[:, None]
     offs_n_tile = ct.arange(TILE_N, dtype=ct.int32)[None, :]
 
-    q = ct.load(Q, index=(batch_idx, head_idx, bid_x, 0), shape=(1, 1, TILE_M, TILE_D), padding_mode=ct.PaddingMode.ZERO).reshape((TILE_M, TILE_D))
+    # Explicit element indexing: bid_x * TILE_M
+    q = ct.load(Q, index=(batch_idx, head_idx, bid_x * TILE_M, 0), shape=(1, 1, TILE_M, TILE_D), padding_mode=ct.PaddingMode.ZERO).reshape((TILE_M, TILE_D))
     k_seqlen = K.shape[2]
     m_end = (bid_x + 1) * TILE_M
     Tc = ct.cdiv(min(m_end, k_seqlen), TILE_N)
 
     for j in range(0, Tc):
-        k = ct.load(K, index=(batch_idx, head_idx, 0, j), shape=(1, 1, TILE_D, TILE_N), order=(0,1,3,2), latency=K_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_D, TILE_N))
+        # Explicit element indexing for K: j * TILE_N
+        k = ct.load(K, index=(batch_idx, head_idx, 0, j * TILE_N), shape=(1, 1, TILE_D, TILE_N), order=(0,1,3,2), latency=K_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_D, TILE_N))
         qk = ct.full((TILE_M, TILE_N), 0.0, dtype=ct.float32)
         qk = ct.mma(q, k, qk)
 
@@ -90,12 +92,14 @@ def nanogpt_attention_kernel(
         l_i = l_i * alpha + l_ij
         acc = acc * alpha
 
-        v = ct.load(V, index=(batch_idx, head_idx, j, 0), shape=(1, 1, TILE_N, TILE_D), latency=V_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_N, TILE_D))
+        # Explicit element indexing for V: j * TILE_N
+        v = ct.load(V, index=(batch_idx, head_idx, j * TILE_N, 0), shape=(1, 1, TILE_N, TILE_D), latency=V_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_N, TILE_D))
         acc = ct.mma(p.astype(Q.dtype), v, acc)
         m_i = m_ij
 
     acc = ct.truediv(acc, l_i)
-    ct.store(Out, index=(batch_idx, head_idx, bid_x, 0), tile=acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype))
+    # Explicit element indexing for Out: bid_x * TILE_M
+    ct.store(Out, index=(batch_idx, head_idx, bid_x * TILE_M, 0), tile=acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype))
 
 @ct.kernel
 def nanogpt_layernorm_kernel(
@@ -119,7 +123,8 @@ def nanogpt_layernorm_kernel(
     
     num_tile_blocks = ct.num_blocks(0)
     for current_bid in range(bid, upper_bound, num_tile_blocks):
-        x = ct.load(X, index=(current_bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N), padding_mode=ct.PaddingMode.ZERO)
+        # Explicit element indexing for X and Y: current_bid * TILE_SIZE_M
+        x = ct.load(X, index=(current_bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N), padding_mode=ct.PaddingMode.ZERO)
         x_f32 = ct.astype(x, ct.float32)
         
         # Masked mean
@@ -135,7 +140,7 @@ def nanogpt_layernorm_kernel(
         rstd = ct.rsqrt(var + eps)
         
         y = (centered * rstd) * ct.astype(w, ct.float32) + ct.astype(b, ct.float32)
-        ct.store(Y, index=(current_bid, 0), tile=ct.astype(y, X.dtype))
+        ct.store(Y, index=(current_bid * TILE_SIZE_M, 0), tile=ct.astype(y, X.dtype))
 
 # ============================================================
 # 2. GPT-2 ARCHITECTURE
