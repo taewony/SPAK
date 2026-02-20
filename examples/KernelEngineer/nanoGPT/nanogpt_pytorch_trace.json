@@ -9,7 +9,7 @@
         "type": "Performance",
         "step": 0,
         "loss": 4.2764506340026855,
-        "step_time_ms": 548.2420921325684
+        "step_time_ms": 490.6294345855713
     },
     {
         "type": "Convergence",
@@ -21,7 +21,7 @@
         "type": "Performance",
         "step": 100,
         "loss": 2.473057746887207,
-        "step_time_ms": 10.844297409057617
+        "step_time_ms": 8.751943111419678
     },
     {
         "type": "Convergence",
@@ -33,7 +33,7 @@
         "type": "Performance",
         "step": 200,
         "loss": 2.410855293273926,
-        "step_time_ms": 10.363943576812744
+        "step_time_ms": 8.792431354522705
     },
     {
         "type": "Convergence",
@@ -45,7 +45,7 @@
         "type": "Performance",
         "step": 300,
         "loss": 2.268249750137329,
-        "step_time_ms": 10.760254859924316
+        "step_time_ms": 8.923065662384033
     },
     {
         "type": "Convergence",
@@ -57,7 +57,7 @@
         "type": "Performance",
         "step": 400,
         "loss": 2.1868526935577393,
-        "step_time_ms": 10.723083019256592
+        "step_time_ms": 8.91627550125122
     },
     {
         "type": "Convergence",
@@ -69,7 +69,7 @@
         "type": "Performance",
         "step": 500,
         "loss": 1.9759941101074219,
-        "step_time_ms": 11.351878643035889
+        "step_time_ms": 8.908665180206299
     },
     {
         "type": "Convergence",
@@ -81,7 +81,7 @@
         "type": "Performance",
         "step": 600,
         "loss": 1.8654676675796509,
-        "step_time_ms": 10.746605396270752
+        "step_time_ms": 8.9113187789917
     },
     {
         "type": "Convergence",
@@ -93,7 +93,7 @@
         "type": "Performance",
         "step": 700,
         "loss": 1.8188642263412476,
-        "step_time_ms": 10.775845050811768
+        "step_time_ms": 8.957624435424805
     },
     {
         "type": "Convergence",
@@ -105,7 +105,7 @@
         "type": "Performance",
         "step": 800,
         "loss": 1.6960798501968384,
-        "step_time_ms": 10.716145038604736
+        "step_time_ms": 8.916082382202148
     },
     {
         "type": "Convergence",
@@ -117,6 +117,6 @@
         "type": "Performance",
         "step": 900,
         "loss": 1.675086498260498,
-        "step_time_ms": 11.02440357208252
+        "step_time_ms": 8.866779804229736
     }
 ]

@@ -1,0 +1,92 @@
+python train_nanogpt_cutile.py
+Starting NanoGPT cuTile Training on shakespeare_char...
+step 0: train loss 4.2880, val loss 4.2824, lr 0.0000e+00
+iter 0: loss 4.2900, time 1760.46ms
+iter 100: loss 2.9306, time 4.62ms
+iter 200: loss 2.7732, time 4.19ms
+iter 300: loss 2.7001, time 4.27ms
+iter 400: loss 2.7501, time 4.24ms
+step 500: train loss 2.7321, val loss 2.7410, lr 5.9117e-04
+iter 500: loss 2.7443, time 3.56ms
+iter 600: loss 2.6567, time 4.19ms
+iter 700: loss 2.6768, time 4.18ms
+iter 800: loss 2.6291, time 4.21ms
+iter 900: loss 2.7026, time 4.23ms
+step 1000: train loss 2.6673, val loss 2.6765, lr 5.5628e-04
+iter 1000: loss 2.6397, time 10.34ms
+iter 1100: loss 2.6870, time 4.16ms
+iter 1200: loss 2.6996, time 4.22ms
+iter 1300: loss 2.6814, time 4.20ms
+iter 1400: loss 2.6616, time 4.15ms
+step 1500: train loss 2.6668, val loss 2.6897, lr 4.9834e-04
+iter 1500: loss 2.6616, time 10.26ms
+iter 1600: loss 2.6723, time 4.17ms
+iter 1700: loss 2.6622, time 4.18ms
+iter 1800: loss 2.6971, time 4.19ms
+iter 1900: loss 2.6459, time 4.18ms
+step 2000: train loss 2.6482, val loss 2.6666, lr 4.2325e-04
+iter 2000: loss 2.6245, time 10.26ms
+iter 2100: loss 2.6722, time 4.20ms
+iter 2200: loss 2.6805, time 4.24ms
+iter 2300: loss 2.6756, time 4.19ms
+iter 2400: loss 2.6908, time 4.18ms
+step 2500: train loss 2.6977, val loss 2.7121, lr 3.3865e-04
+iter 2500: loss 2.7147, time 10.31ms
+iter 2600: loss 2.7052, time 4.22ms
+iter 2700: loss 2.6996, time 4.19ms
+iter 2800: loss 2.6995, time 4.23ms
+iter 2900: loss 2.6954, time 4.20ms
+step 3000: train loss 2.6941, val loss 2.7068, lr 2.5318e-04
+iter 3000: loss 2.7340, time 10.35ms
+iter 3100: loss 2.6946, time 4.22ms
+iter 3200: loss 2.6952, time 4.24ms
+iter 3300: loss 2.6791, time 4.33ms
+iter 3400: loss 2.7262, time 4.22ms
+step 3500: train loss 2.6920, val loss 2.7151, lr 1.7553e-04
+iter 3500: loss 2.6916, time 10.34ms
+iter 3600: loss 2.6437, time 4.23ms
+iter 3700: loss 2.7050, time 4.32ms
+iter 3800: loss 2.6675, time 4.25ms
+iter 3900: loss 2.7073, time 4.20ms
+step 4000: train loss 2.6941, val loss 2.7083, lr 1.1362e-04
+iter 4000: loss 2.7626, time 10.31ms
+iter 4100: loss 2.6857, time 4.21ms
+iter 4200: loss 2.6225, time 4.27ms
+iter 4300: loss 2.6935, time 4.24ms
+iter 4400: loss 2.6359, time 4.26ms
+step 4500: train loss 2.6794, val loss 2.7025, lr 7.3755e-05
+iter 4500: loss 2.6807, time 10.32ms
+iter 4600: loss 2.6837, time 4.19ms
+iter 4700: loss 2.6658, time 4.23ms
+iter 4800: loss 2.6544, time 4.22ms
+iter 4900: loss 2.7082, time 4.24ms
+Checkpoint saved to out_nanogpt/ckpt.pt
+
+Training Complete. Trace saved to nanogpt_train_trace.json
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python train_
+train_nanogpt_cutile.py    train_pytorch_baseline.py
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python train_pytorch_baseline.py
+number of parameters: 10.65M
+Starting PyTorch Baseline Training on shakespeare_char...
+step 0: train loss 4.2831, val loss 4.2805, lr 0.0000e+00
+iter 0: loss 4.2765, time 490.63ms
+step 100: train loss 2.4980, val loss 2.5216, lr 6.0000e-04
+iter 100: loss 2.4731, time 8.75ms
+step 200: train loss 2.4243, val loss 2.4517, lr 5.8372e-04
+iter 200: loss 2.4109, time 8.79ms
+step 300: train loss 2.3199, val loss 2.3667, lr 5.3683e-04
+iter 300: loss 2.2682, time 8.92ms
+step 400: train loss 2.1625, val loss 2.2184, lr 4.6500e-04
+iter 400: loss 2.1869, time 8.92ms
+step 500: train loss 2.0086, val loss 2.0661, lr 3.7689e-04
+iter 500: loss 1.9760, time 8.91ms
+step 600: train loss 1.8539, val loss 1.9741, lr 2.8311e-04
+iter 600: loss 1.8655, time 8.91ms
+step 700: train loss 1.7791, val loss 1.9232, lr 1.9500e-04
+iter 700: loss 1.8189, time 8.96ms
+step 800: train loss 1.7156, val loss 1.8647, lr 1.2317e-04
+iter 800: loss 1.6961, time 8.92ms
+step 900: train loss 1.6687, val loss 1.8336, lr 7.6283e-05
+iter 900: loss 1.6751, time 8.87ms
+
+Baseline Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/out_baseline/ckpt.pt
