@@ -1,22 +1,35 @@
-python compare_implementations.py
-number of parameters: 10.65M
+python test_parity.py
+Testing LayerNorm Parity...
+  Max Diff: 0.000000e+00
+  LayerNorm Parity [PASS]
+Testing Attention Parity...
+  Max Diff: 2.441406e-04
+  Attention Parity [PASS]
+Testing Full Model Forward Parity...
+number of parameters: 3.57M
+  Max Logits Diff: 0.000000e+00
+  Model Forward Parity [PASS]
+ALL TESTS COMPLETED
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python test_parity_expanded.py
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/test_parity_expanded.py", line 15
+    print("
+          ^
+SyntaxError: unterminated string literal (detected at line 15)
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ gedit test_parity_expanded.py
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python test_parity_expanded.py
+--- Testing LayerNorm Expanded Scope ---
+LN Case 1 (T=13, Random W/B): Max Diff = 0.000000e+00 [PASS]
+LN Case 2 (Large batch, C=768): Max Diff = 1.953125e-03 [PASS]
+--- Testing Attention Expanded Scope ---
+Attn Case 1 (T=13): Max Diff = 1.220703e-04 [PASS]
+Attn Case 2 (T=127): Max Diff = 4.882812e-04 [PASS]
+Attn Case 3 (T=257): Max Diff = 4.882812e-04 [PASS]
+--- Testing Full Model Forward (GPT-2 Small Config) ---
+number of parameters: 85.00M
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/compare_implementations.py", line 47, in <module>
-    start_ids = [stoi['']]
-                 ~~~~^^^^
-KeyError: ''
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ gedit compare_implementations.py
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python compare_implementations.py
-number of parameters: 10.65M
---- Comparison: implementation vs implementation (Same Weights) ---
-[ORIGINAL model.py Output]:
-  iingl ive wsh  hishig: fe oond win thht yerelee mo me
-
-
-Isse be terr
-
-
-L trke bu  br thiggethed inn
-==================================================
-[cuTile nanogpt_cutile.py Output]:
-  se  w nd,  ourthhav nd ds llleltano  thon, yomointppindehheleald bengchhid e llls s ll tuets f t nd
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/test_parity_expanded.py", line 102, in <module>
+    test_full_model_parity()
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/test_parity_expanded.py", line 78, in test_full_model_parity
+    conf_ct = Config_CuTile(**config_args)
+              ^^^^^^^^^^^^^
+NameError: name 'Config_CuTile' is not defined
