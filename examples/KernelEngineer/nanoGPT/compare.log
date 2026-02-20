@@ -1,0 +1,19 @@
+python compare_implementations.py
+number of parameters: 10.65M
+--- Comparison: implementation vs implementation (Same Weights) ---
+Max difference after Block 0: 0.000000e+00
+[ORIGINAL model.py Output]:
+   khhrd
+MICld  exond boellimeno birverd isoie uet  c:
+ menhw welit athe shh bor oun ins thoven t ft
+==================================================
+[cuTile nanogpt_cutile.py Output]:
+ a      iuptyst wsunovverpissprguu t nkofo ge tloopntus mee
+LAed;
+
+
+
+
+
+
+Auenoti pe ptl onthhi hey,
