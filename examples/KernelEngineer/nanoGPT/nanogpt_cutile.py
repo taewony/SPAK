@@ -181,6 +181,7 @@ class CausalSelfAttention(nn.Module):
 
         if self.training:
             y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+            y = y.transpose(1, 2).contiguous().view(B, T, C)
         else:
             # Attention forward with padding for T to match TILE_M
             tile_m = self.config_delta["tile_m"]
