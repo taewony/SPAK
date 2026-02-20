@@ -1,0 +1,27 @@
+python test_parity_expanded.py
+--- Testing LayerNorm Expanded Scope ---
+LN Case 1 (T=13, Random W/B): Max Diff = 7.519531e+00 [FAIL]
+  WARNING: LN Case 1 (T=13, Random W/B) exceeds threshold 0.01
+LN Case 2 (Large batch, C=768): Max Diff = 5.187500e+00 [FAIL]
+  WARNING: LN Case 2 (Large batch, C=768) exceeds threshold 0.01
+--- Testing Attention Expanded Scope ---
+Attn Case 1 (T=13): Max Diff = 0.000000e+00 [PASS]
+Attn Case 2 (T=127): Max Diff = 9.550781e-01 [FAIL]
+  WARNING: Attn Case 2 (T=127) exceeds threshold 0.05
+Attn Case 3 (T=257): Max Diff = nan [FAIL]
+--- Testing Full Model Forward (GPT-2 Small Config) ---
+number of parameters: 85.00M
+Full Model Logits (T=150, L=12, D=768): Max Diff = nan [FAIL]
+EXPANDED PARITY TESTS COMPLETED
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python test_parity.py
+Testing LayerNorm Parity...
+  Max Diff: 4.007812e+00
+  LayerNorm Parity [FAIL]
+Testing Attention Parity...
+  Max Diff: 2.441406e-04
+  Attention Parity [PASS]
+Testing Full Model Forward Parity...
+number of parameters: 3.57M
+  Max Logits Diff: 1.142578e+00
+  Model Forward Parity [FAIL]
+ALL TESTS COMPLETED
