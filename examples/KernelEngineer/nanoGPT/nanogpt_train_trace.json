@@ -9,31 +9,31 @@
         "type": "Performance",
         "step": 0,
         "loss": 4.2899627685546875,
-        "step_time_ms": 2088.2933139801025
+        "step_time_ms": 1760.4563236236572
     },
     {
         "type": "Performance",
         "step": 100,
         "loss": 2.930628538131714,
-        "step_time_ms": 4.197275638580322
+        "step_time_ms": 4.622173309326172
     },
     {
         "type": "Performance",
         "step": 200,
         "loss": 2.7731990814208984,
-        "step_time_ms": 4.138226509094238
+        "step_time_ms": 4.194228649139404
     },
     {
         "type": "Performance",
         "step": 300,
         "loss": 2.7000629901885986,
-        "step_time_ms": 4.223356246948242
+        "step_time_ms": 4.268643856048584
     },
     {
         "type": "Performance",
         "step": 400,
         "loss": 2.7500946521759033,
-        "step_time_ms": 4.231317043304443
+        "step_time_ms": 4.2391276359558105
     },
     {
         "type": "Convergence",
@@ -45,31 +45,31 @@
         "type": "Performance",
         "step": 500,
         "loss": 2.7443177700042725,
-        "step_time_ms": 10.301909446716309
+        "step_time_ms": 3.5576367378234863
     },
     {
         "type": "Performance",
         "step": 600,
         "loss": 2.656681776046753,
-        "step_time_ms": 4.231984615325928
+        "step_time_ms": 4.189906120300293
     },
     {
         "type": "Performance",
         "step": 700,
         "loss": 2.676793098449707,
-        "step_time_ms": 4.2230987548828125
+        "step_time_ms": 4.182233810424805
     },
     {
         "type": "Performance",
         "step": 800,
         "loss": 2.629138946533203,
-        "step_time_ms": 4.201855659484863
+        "step_time_ms": 4.21177864074707
     },
     {
         "type": "Performance",
         "step": 900,
         "loss": 2.7026355266571045,
-        "step_time_ms": 4.213404655456543
+        "step_time_ms": 4.232594966888428
     },
     {
         "type": "Convergence",
@@ -81,31 +81,31 @@
         "type": "Performance",
         "step": 1000,
         "loss": 2.639702320098877,
-        "step_time_ms": 10.314574241638184
+        "step_time_ms": 10.341992378234863
     },
     {
         "type": "Performance",
         "step": 1100,
         "loss": 2.6870250701904297,
-        "step_time_ms": 4.196991920471191
+        "step_time_ms": 4.1620683670043945
     },
     {
         "type": "Performance",
         "step": 1200,
         "loss": 2.699552297592163,
-        "step_time_ms": 4.191100597381592
+        "step_time_ms": 4.224753379821777
     },
     {
         "type": "Performance",
         "step": 1300,
         "loss": 2.6813504695892334,
-        "step_time_ms": 4.2311859130859375
+        "step_time_ms": 4.203433990478516
     },
     {
         "type": "Performance",
         "step": 1400,
         "loss": 2.6616077423095703,
-        "step_time_ms": -0.3310704231262207
+        "step_time_ms": 4.145843982696533
     },
     {
         "type": "Convergence",
@@ -117,31 +117,31 @@
         "type": "Performance",
         "step": 1500,
         "loss": 2.6615560054779053,
-        "step_time_ms": 10.391042232513428
+        "step_time_ms": 10.259594917297363
     },
     {
         "type": "Performance",
         "step": 1600,
         "loss": 2.672269105911255,
-        "step_time_ms": 4.1764044761657715
+        "step_time_ms": 4.17069673538208
     },
     {
         "type": "Performance",
         "step": 1700,
         "loss": 2.6622273921966553,
-        "step_time_ms": 4.208574295043945
+        "step_time_ms": 4.177446365356445
     },
     {
         "type": "Performance",
         "step": 1800,
         "loss": 2.697072982788086,
-        "step_time_ms": 4.160323143005371
+        "step_time_ms": 4.186596870422363
     },
     {
         "type": "Performance",
         "step": 1900,
         "loss": 2.645928144454956,
-        "step_time_ms": 4.186041355133057
+        "step_time_ms": 4.1806817054748535
     },
     {
         "type": "Convergence",
@@ -153,31 +153,31 @@
         "type": "Performance",
         "step": 2000,
         "loss": 2.624547004699707,
-        "step_time_ms": 10.265007019042969
+        "step_time_ms": 10.263960361480713
     },
     {
         "type": "Performance",
         "step": 2100,
         "loss": 2.6722145080566406,
-        "step_time_ms": 4.200747013092041
+        "step_time_ms": 4.198696613311768
     },
     {
         "type": "Performance",
         "step": 2200,
         "loss": 2.680508613586426,
-        "step_time_ms": 4.194056987762451
+        "step_time_ms": 4.239630699157715
     },
     {
         "type": "Performance",
         "step": 2300,
         "loss": 2.6755599975585938,
-        "step_time_ms": 4.209187030792236
+        "step_time_ms": 4.18910026550293
     },
     {
         "type": "Performance",
         "step": 2400,
         "loss": 2.6907739639282227,
-        "step_time_ms": 4.185364246368408
+        "step_time_ms": 4.175148010253906
     },
     {
         "type": "Convergence",
@@ -189,31 +189,31 @@
         "type": "Performance",
         "step": 2500,
         "loss": 2.714653730392456,
-        "step_time_ms": 10.346202850341797
+        "step_time_ms": 10.305063724517822
     },
     {
         "type": "Performance",
         "step": 2600,
         "loss": 2.705202102661133,
-        "step_time_ms": 4.222757816314697
+        "step_time_ms": 4.217700958251953
     },
     {
         "type": "Performance",
         "step": 2700,
         "loss": 2.699620246887207,
-        "step_time_ms": 4.189326763153076
+        "step_time_ms": 4.193775653839111
     },
     {
         "type": "Performance",
         "step": 2800,
         "loss": 2.699528455734253,
-        "step_time_ms": 4.2293620109558105
+        "step_time_ms": 4.233789443969727
     },
     {
         "type": "Performance",
         "step": 2900,
         "loss": 2.6954307556152344,
-        "step_time_ms": 4.191503524780273
+        "step_time_ms": 4.201912879943848
     },
     {
         "type": "Convergence",
@@ -225,31 +225,31 @@
         "type": "Performance",
         "step": 3000,
         "loss": 2.7340335845947266,
-        "step_time_ms": 10.386619567871094
+        "step_time_ms": 10.345871448516846
     },
     {
         "type": "Performance",
         "step": 3100,
         "loss": 2.6945674419403076,
-        "step_time_ms": 4.276890754699707
+        "step_time_ms": 4.220495223999023
     },
     {
         "type": "Performance",
         "step": 3200,
         "loss": 2.695202589035034,
-        "step_time_ms": 4.22410249710083
+        "step_time_ms": 4.235961437225342
     },
     {
         "type": "Performance",
         "step": 3300,
         "loss": 2.679133653640747,
-        "step_time_ms": 4.216153621673584
+        "step_time_ms": 4.329884052276611
     },
     {
         "type": "Performance",
         "step": 3400,
         "loss": 2.726214647293091,
-        "step_time_ms": 4.208362102508545
+        "step_time_ms": 4.21677827835083
     },
     {
         "type": "Convergence",
@@ -261,31 +261,31 @@
         "type": "Performance",
         "step": 3500,
         "loss": 2.6915855407714844,
-        "step_time_ms": 10.284731388092041
+        "step_time_ms": 10.338611602783203
     },
     {
         "type": "Performance",
         "step": 3600,
         "loss": 2.6437065601348877,
-        "step_time_ms": 4.183938503265381
+        "step_time_ms": 4.229741096496582
     },
     {
         "type": "Performance",
         "step": 3700,
         "loss": 2.7049648761749268,
-        "step_time_ms": 4.230594635009766
+        "step_time_ms": 4.316954612731934
     },
     {
         "type": "Performance",
         "step": 3800,
         "loss": 2.667475461959839,
-        "step_time_ms": 4.261565208435059
+        "step_time_ms": 4.249677658081055
     },
     {
         "type": "Performance",
         "step": 3900,
         "loss": 2.7072651386260986,
-        "step_time_ms": 4.194064140319824
+        "step_time_ms": 4.203298091888428
     },
     {
         "type": "Convergence",
@@ -297,31 +297,31 @@
         "type": "Performance",
         "step": 4000,
         "loss": 2.7626383304595947,
-        "step_time_ms": 10.272367000579834
+        "step_time_ms": 10.311896800994873
     },
     {
         "type": "Performance",
         "step": 4100,
         "loss": 2.6856558322906494,
-        "step_time_ms": 4.181103706359863
+        "step_time_ms": 4.21191930770874
     },
     {
         "type": "Performance",
         "step": 4200,
         "loss": 2.622495651245117,
-        "step_time_ms": 4.192526340484619
+        "step_time_ms": 4.274766445159912
     },
     {
         "type": "Performance",
         "step": 4300,
         "loss": 2.6934778690338135,
-        "step_time_ms": 4.220147132873535
+        "step_time_ms": 4.23825740814209
     },
     {
         "type": "Performance",
         "step": 4400,
         "loss": 2.635942220687866,
-        "step_time_ms": 4.1759514808654785
+        "step_time_ms": 4.257173538208008
     },
     {
         "type": "Convergence",
@@ -333,30 +333,30 @@
         "type": "Performance",
         "step": 4500,
         "loss": 2.680743455886841,
-        "step_time_ms": 10.278611183166504
+        "step_time_ms": 10.316786766052246
     },
     {
         "type": "Performance",
         "step": 4600,
         "loss": 2.6837451457977295,
-        "step_time_ms": 4.18731689453125
+        "step_time_ms": 4.190583229064941
     },
     {
         "type": "Performance",
         "step": 4700,
         "loss": 2.6657826900482178,
-        "step_time_ms": 4.160647392272949
+        "step_time_ms": 4.234514236450195
     },
     {
         "type": "Performance",
         "step": 4800,
         "loss": 2.65437912940979,
-        "step_time_ms": 4.176473617553711
+        "step_time_ms": 4.215958118438721
     },
     {
         "type": "Performance",
         "step": 4900,
         "loss": 2.708160400390625,
-        "step_time_ms": 4.21175479888916
+        "step_time_ms": 4.239199161529541
     }
 ]

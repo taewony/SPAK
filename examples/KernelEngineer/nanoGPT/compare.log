@@ -1,23 +1,163 @@
-python compare_deep.py
+python compare_implementations.py
+
+============================================================
+--- FOLDER: out_nanogpt ---
+============================================================
+number of parameters: 10.65M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------
+
+>>> MATCH SUCCESS: Both engines produced identical text!
+
+============================================================
+--- FOLDER: out-shakespeare-char ---
+============================================================
 number of parameters: 29.94M
---- Deep Block-by-Block Comparison (T=10) ---
-Embeddings Diff: 0.000000e+00
-Block 0 Diff: 1.953125e-03
-Block 1 Diff: 2.204895e-03
-Block 2 Diff: 2.143860e-03
-Block 3 Diff: 2.258301e-03
-Block 4 Diff: 2.449036e-03
-Block 5 Diff: 2.410889e-03
-Final LN Diff: 1.312971e-03
-Final Logits Diff: 3.906250e-03
---- Greedy Sampling (Top-1) Comparison ---
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/compare_deep.py", line 90, in <module>
-    compare_deep()
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/compare_deep.py", line 81, in compare_deep
-    print(f"Original: {decode(y_orig[0].tolist())}")
-                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/nanoGPT/compare_deep.py", line 79, in <lambda>
-    decode = lambda l: ''.join([meta['itos'][i] for i in l])
-                                ~~~~~~~~~~~~^^^
-KeyError: 44165
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+POUS:
+And the the the the the the the the the the
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+POUS:
+And the the the the the the the the the the
+--------------------
+
+>>> MATCH SUCCESS: Both engines produced identical text!
+
+============================================================
+--- FOLDER: out_baseline ---
+============================================================
+number of parameters: 10.65M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+The shall the shall the shall the shall the shall.
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+The shall the shall the shall the shall the shall.
+--------------------
+
+>>> MATCH SUCCESS: Both engines produced identical text!
