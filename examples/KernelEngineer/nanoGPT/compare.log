@@ -1,0 +1,73 @@
+python compare_implementations.py
+
+============================================================
+--- FOLDER: out_nanogpt ---
+============================================================
+number of parameters: 10.65M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+
+LADY ANNE:
+I will not be there.
+
+GLOUCESTER:
+The
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+
+LADY ANNE:
+I will not be there.
+
+GLOUCESTER:
+The
+--------------------
+
+>>> MATCH SUCCESS: Both engines produced identical text!
+
+============================================================
+--- FOLDER: out-shakespeare-char ---
+============================================================
+number of parameters: 29.94M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+POUS:
+And the the the the the the the the the the
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+POUS:
+And the the the the the the the the the the
+--------------------
+
+>>> MATCH SUCCESS: Both engines produced identical text!
+
+============================================================
+--- FOLDER: out_baseline ---
+============================================================
+number of parameters: 10.65M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+The shall the shall the shall the shall the shall.
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+The shall the shall the shall the shall the shall.
+--------------------
+
+>>> MATCH SUCCESS: Both engines produced identical text!
