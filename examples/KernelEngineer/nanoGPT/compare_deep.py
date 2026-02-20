@@ -42,6 +42,7 @@ def compare_deep():
     x = torch.randint(0, model_args['vocab_size'], (1, T_test), device=device)
     
     print(f"--- Deep Block-by-Block Comparison (T={T_test}) ---")
+    print(f"Vocab Size: {model_args['vocab_size']}")
     
     with torch.no_grad():
         with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
@@ -73,10 +74,18 @@ def compare_deep():
             set_seed(1337)
             y_ct = model_ct.generate(x[:, :1], 20, temperature=1.0, top_k=1)
             
+            # Smart Decoding
             meta_path = os.path.join(os.path.dirname(__file__), 'data', 'shakespeare_char', 'meta.pkl')
-            with open(meta_path, 'rb') as f:
-                meta = pickle.load(f)
-            decode = lambda l: ''.join([meta['itos'][i] for i in l])
+            if model_args['vocab_size'] < 1000 and os.path.exists(meta_path):
+                with open(meta_path, 'rb') as f:
+                    meta = pickle.load(f)
+                decode = lambda l: ''.join([meta['itos'][i] for i in l])
+                print("Decoder: Character-level")
+            else:
+                import tiktoken
+                enc = tiktoken.get_encoding("gpt2")
+                decode = lambda l: enc.decode(l)
+                print("Decoder: BPE (GPT-2)")
             
             print(f"Original: {decode(y_orig[0].tolist())}")
             print(f"CuTile:   {decode(y_ct[0].tolist())}")

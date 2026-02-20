@@ -64,19 +64,26 @@ def run_inference(out_dir):
             diff = (h_orig - h_ct).abs().max().item()
             print(f"[Numerical] Max Diff after Block 0: {diff:.6e}")
 
-            # 2. Sample from Original
+            # 2. Sample from Original (Greedy for Determinism)
             print(f"\n[Inference: ORIGINAL model.py]")
-            y_orig = m_orig.generate(x, 100, temperature=0.8, top_k=200)
+            torch.manual_seed(1337)
+            y_orig = m_orig.generate(x, 50, temperature=1.0, top_k=1)
             print("-" * 20)
             print(decode(y_orig[0].tolist()))
             print("-" * 20)
 
-            # 3. Sample from cuTile
+            # 3. Sample from cuTile (Greedy for Determinism)
             print(f"\n[Inference: cuTile nanogpt_cutile.py]")
-            y_ct = m_ct.generate(x, 100, temperature=0.8, top_k=200)
+            torch.manual_seed(1337)
+            y_ct = m_ct.generate(x, 50, temperature=1.0, top_k=1)
             print("-" * 20)
             print(decode(y_ct[0].tolist()))
             print("-" * 20)
+            
+            if y_orig.equal(y_ct):
+                print("\n>>> MATCH SUCCESS: Both engines produced identical text!")
+            else:
+                print("\n>>> MATCH FAILURE: Outputs diverged.")
 
 if __name__ == "__main__":
     for d in out_dirs:
