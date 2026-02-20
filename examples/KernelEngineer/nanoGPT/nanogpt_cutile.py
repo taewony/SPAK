@@ -78,14 +78,14 @@ def nanogpt_attention_kernel(
         offs_n = j * TILE_N + offs_n_tile
         # Mask both causal and sequence length bounds
         mask = (offs_m >= offs_n) & (offs_n < k_seqlen)
-        qk = qk + ct.where(mask, 0.0, -math.inf)
+        qk = qk + ct.where(mask, 0.0, neg_inf)
 
         # Numerical stability: multiply scale after max to match FMHAv4 and avoid overflow
         m_ij = max(m_i, ct.max(qk, axis=-1, keepdims=True) * qk_scale_log2)
         
-        p = ct.exp2(qk * qk_scale_log2 - m_ij)
+        p = ct.exp2(qk * qk_scale_log2 - m_ij, flush_to_zero=True)
         l_ij = ct.sum(p, axis=-1, keepdims=True)
-        alpha = ct.exp2(m_i - m_ij)
+        alpha = ct.exp2(m_i - m_ij, flush_to_zero=True)
         
         l_i = l_i * alpha + l_ij
         acc = acc * alpha

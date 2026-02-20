@@ -50,6 +50,21 @@ x = torch.tensor(start_ids, dtype=torch.long, device=device)[None, ...]
 print(f"--- Comparison: implementation vs implementation (Same Weights) ---")
 with torch.no_grad():
     with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
+        # Hidden state comparison
+        test_input = x.clone()
+        tok_emb = model_orig.transformer.wte(test_input)
+        pos_emb = model_orig.transformer.wpe(torch.arange(0, 1, device=device))
+        h_orig = model_orig.transformer.drop(tok_emb + pos_emb)
+        h_orig = model_orig.transformer.h[0](h_orig)
+        
+        tok_emb_ct = model_cutile.transformer.wte(test_input)
+        pos_emb_ct = model_cutile.transformer.wpe(torch.arange(0, 1, device=device))
+        h_ct = model_cutile.transformer.drop(tok_emb_ct + pos_emb_ct)
+        h_ct = model_cutile.transformer.h[0](h_ct)
+        
+        diff = (h_orig - h_ct).abs().max().item()
+        print(f"Max difference after Block 0: {diff:.6e}")
+
         print("[ORIGINAL model.py Output]:")
         y_orig = model_orig.generate(x, 100, temperature=0.8, top_k=200)
         print(decode(y_orig[0].tolist()))
