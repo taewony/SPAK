@@ -1,0 +1,154 @@
+python sample_nanogpt_cutile.py
+--- Sampling from resume using cuTile Kernels ---
+
+
+
+
+
+
+
+
+
+RONNNNOUUSSTTOLOUUUCEREE::
+TCEEENNAUS:
+WW:
+O:
+
+SMBRDYIUUUMI:
+VUCAhheeuuuhayyGVCSINNCXENDYaue
+---------------
+
+WIwwhe   heeanstarn  ben he outthetof isthesotharl ndilll,
+
+W ireeest tcin lat Hntililv tt andend n
+---------------
+
+
+
+GDWAANGIIIOUUCINGEERDVIIIHHAUEESNVEERDY:
+SEORMORDIOVUSSyyy:
+
+BPUSIRYBPBEEYUSSCIENVPPD:
+IETARNNGSSS
+---------------
+
+
+
+NRWIIIARDhhhheiinghee  th douris  winghiendst so mower;TEE
+
+AN:
+
+IOOn thirf s ar
+QULOON:
+
+T:
+Iy f
+---------------
+
+MMUEEEOYNNNEPRDDUKKISKINNSHKINLLERRKENNNNY::
+
+W::
+
+WAUSSE:
+
+
+
+BAENNSKNRMINUUU:nyy ry  smoofy  EEENGO
+---------------
+
+Inference complete. Results saved to nanogpt_inference_trace.json
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python sample_baseline.py
+number of parameters: 10.65M
+--- Sampling from Baseline (PyTorch) ---
+
+And the hart cown, which yet that see boar to:
+What the the gat of ber hight us hath be?
+Fentlessan,
+---------------
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$ python compare_implementations.py
+
+============================================================
+--- FOLDER: out_nanogpt ---
+============================================================
+number of parameters: 10.65M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+
+
+
+
+
+
+
+
+MSRYINNNUSTIMFhheeppPREURRIIENTBNOIOROUCOMERYO:
+GOME:
+
+MERIIhe,IIIBOWFFIEShheaikho HHARINRRY
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+
+
+  ste shensoreethomaa IhencthBEO:, d,
+IS:
+Euntond dshalo beinalltinchare be bant iz th  fshe,
+OR:
+
+--------------------
+
+============================================================
+--- FOLDER: out-shakespeare-char ---
+============================================================
+number of parameters: 29.94M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+Which such fere hat,
+By but the hou is a the andfearre.
+
+PROCUTES:
+Whe the lows is In by will, rour
+
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+LOUTES:
+With at ne hater, wan swor to seake; den have offor, use my spord faul ace will
+Basto love s
+--------------------
+
+============================================================
+--- FOLDER: out_baseline ---
+============================================================
+number of parameters: 10.65M
+[Numerical] Max Diff after Block 0: 0.000000e+00
+
+[Inference: ORIGINAL model.py]
+--------------------
+
+he loverder yor milaze bart of entence;
+And not this deat my beals:
+He raditor the give that take-li
+--------------------
+
+[Inference: cuTile nanogpt_cutile.py]
+--------------------
+
+
+Firself, these toin,
+If ward daught who shall wiLes a wound.
+
+WARWICK:
+And, my lord, then from I wi
+--------------------
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/nanoGPT$
