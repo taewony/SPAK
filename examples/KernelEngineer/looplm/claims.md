@@ -1,0 +1,589 @@
+## Academic Summary: A Framework for Design-Space Transformation via Semantic Normal Forms
+
+### 1. Problem and Motivation
+Modern GPU kernel development requires navigating a vast design space of architectural choices (e.g., tiling, fusion, memory hierarchy) and tuning parameters. Directly generating optimized code from a high-level specification often leads to iterative, code-level trial-and-error, which is token-inefficient for LLMs and obscures reusable design knowledge. We propose a two-stage methodology that separates **design-space transformation** from **code generation**, leveraging a **Semantic Normal Form (SNF)** as an intermediate representation.
+
+### 2. Core Concepts
+- **SNF (Semantic Normal Form)**: A semiformal DSL that captures the design space (categorical choices), tuning space (numeric parameters), and accumulated knowledge (invariants, rules, facts). It serves as a compact, human- and machine-readable specification of a kernel's architectural intent.
+- **Transformation Functions**:
+  - \( f: \text{SNF} \rightarrow \text{Code} \) – a (possibly LLM-based) generator that produces executable GPU kernel code from a given SNF.
+  - \( g: \text{SNF} \times \text{Target} \rightarrow \text{SNF} \) – a design-space transformation that refines an input SNF to meet a specified target (e.g., hardware platform, performance goal) by adding/removing design axes, adjusting value ranges, and incorporating relevant knowledge.
+
+### 3. Proposed Methodology
+Given a seed SNF (\(\text{SNF}_{\text{seed}}\)) and a desired target specification:
+1. **Design-Space Transformation**: Apply \( g \) to \(\text{SNF}_{\text{seed}}\) to obtain \(\text{SNF}_{\text{target}}\). This step uses an LLM’s reasoning ability to identify missing design axes, recommend hardware-specific values, and embed applicable rules from the knowledge base. It operates solely at the SNF level, avoiding code-level manipulations.
+2. **Code Generation**: Apply \( f \) to \(\text{SNF}_{\text{target}}\) to produce the final optimized kernel code. This step is a straightforward, template-driven synthesis that faithfully implements the decisions encoded in the SNF.
+
+The overall pipeline is:  
+\(\text{SNF}_{\text{seed}} \xrightarrow{g} \text{SNF}_{\text{target}} \xrightarrow{f} \text{Code}_{\text{final}}\).
+
+### 4. Advantages
+- **Token Efficiency**: LLM interactions are confined to the compact SNF representation during the creative design step, drastically reducing token usage compared to manipulating full code.
+- **Separation of Concerns**: Design exploration and code generation are decoupled, enabling independent evolution of the design space and the code templates.
+- **Knowledge Compounding**: Insights from experiments (e.g., negative patterns, optimal values) are stored in the SNF’s knowledge base, making them reusable across future transformations.
+- **Hardware Adaptability**: By changing the target specification, the same seed SNF can yield kernels optimized for different architectures without manual reimplementation.
+
+### 5. Illustration with FMHA Case Study
+Starting from a naive SNF (\(v0\)), we targeted the RTX 5070 Blackwell GPU. The LLM-driven transformation \(g\) introduced new design axes (GQA, TMA latency, online softmax) and hardware-specific heuristics (e.g., tile size constraints), producing \(\text{SNF}_{v4}\). Subsequent code generation \(f\) produced a cuTile kernel achieving 133 TFLOPS, matching hand-tuned performance. The entire process reused the compact SNF representation, minimizing LLM token cost while capturing expert knowledge.
+
+### 6. Conclusion
+This framework establishes a systematic, token-efficient methodology for GPU kernel optimization by elevating design transformations to the SNF level. It enables LLMs to act as design-space reasoners, while code generation remains a deterministic downstream step. The approach generalizes to other domains where design spaces are complex and reusable knowledge is critical.
+---
+LLM을 단순한 코드 생성기가 아니라 의미적 변환기(semantic transformer) 로 사용하여, 초기의 추상적인 설계 명세(seed semantic normal format code)를 구체적이고 최적화된 실행 코드로 변환하는 체계적인 방법론을 구축할 수 있습니다.
+
+이 방법론의 핵심은 LLM의 Chain of Thought(CoT)와 계층적 추상화 능력을 활용하여, 도메인 지식을 점진적으로 정제하고 최종적으로 하드웨어에 특화된 고성능 커널을 생성하는 것입니다.
+
+## 체계적 방법론: SNF(설계 공간)에서 목표 지향 변환을 통한 GPU 커널 생성
+
+### 개념적 프레임워크
+LLM을 **설계 공간 변환기(Design Space Transformer)** 로 활용하여,  
+**시드 SNF(Seed Semantic Normal Form)** 를 입력받고, 원하는 목표 상태(예: 특정 GPU 아키텍처 최적화)를 명시하면,  
+**목표 SNF**를 생성한 후, 이를 **실행 가능한 타일 기반 GPU 커널**로 변환하는 체계적인 방법론을 제시합니다.
+
+핵심 통찰:
+- LLM은 **Chain of Thought**와 **계층적 추상화** 능력을 갖추고 있어, 설계 공간 내에서 의미 있는 변환을 추론할 수 있음.
+- **SNF**는 도메인 특화 설계 결정(Design Axes)과 제약 조건을 명시하는 중간 표현(IR) 역할.
+- 변환은 코드 수준에서 직접 이루어지지 않고, **SNF 수준에서 먼저 목표 설계를 달성**한 후, **하향식(Top-down) 코드 생성**으로 이어짐.
+
+---
+
+## 1. SNF(설계 공간)의 정의와 구조
+
+SNF는 GPU 커널 최적화를 위한 **반정형 DSL(Semiformal DSL)** 로, 다음과 같은 구성 요소를 가집니다.
+
+```dsl
+// 예: FMHA용 SNF
+design_space {
+    softmax_scheme: ["online", "naive"]
+    math_approximation: ["exp2", "exp"]
+    mask_fusion: ["fused_qk", "post_qk", "no_mask"]
+    accum_dtype: ["f32", "f16"]
+    attention_variant: ["MHA", "GQA", "MQA"]
+    memory_robustness: ["assume_aligned", "dynamic_k_masking"]
+    load_latency_strategy: ["default", "tma_optimized"]
+}
+
+tuning_space {
+    tile_m: [32, 64, 128, 256]
+    tile_n: [32, 64, 128, 256]
+    tile_d: [32, 64, 128]
+    occupancy: [1, 2, 4]
+    k_load_latency: [1,2,3]
+    v_load_latency: [1,2,3,4,5]
+}
+
+knowledge {
+    invariant Correctness { ... }
+    fact optimal_rtx5070_config { ... }
+    rule "Tile Size Constraint" { ... }
+}
+```
+
+SNF는 **설계 공간(Design Space)**, **튜닝 공간(Tuning Space)**, **지식 베이스(Knowledge)** 로 구성되어,  
+**무엇을 선택할 수 있는지**, **어떤 값으로 튜닝할 수 있는지**, **어떤 법칙이 적용되는지**를 명시합니다.
+
+---
+
+## 2. 방법론 단계
+
+### 2.1 시드 SNF 준비
+- 초기 상태의 SNF를 정의합니다. (예: `fmha_system_v0.dsl` – 기본 정확성만 보장, 최적화 없음)
+- 이 SNF는 해당 도메인의 **최소한의 설계 축**만 포함하거나, 이전 프로젝트에서 축적된 지식을 포함할 수 있음.
+
+### 2.2 목표 상태 명세
+- 사용자가 달성하려는 목표를 **자연어** 또는 **구조화된 형태**로 제시합니다.  
+  예: *"RTX 5070 Blackwell GPU에서 TMA를 활용하여 최대 성능을 내는 FMHA 커널을 생성하라."*
+- 목표는 특정 하드웨어, 성능 목표, 제약 조건 등을 포함할 수 있음.
+
+### 2.3 LLM 기반 설계 공간 변환 (SNF → 목표 SNF)
+이 단계가 핵심입니다. LLM에게 시드 SNF와 목표를 주고, **SNF 수준에서의 변환을 요청**합니다.
+
+**프롬프트 구조 예시:**
+```
+당신은 GPU 커널 설계 전문가입니다. 주어진 SNF(설계 공간 명세)를 분석하고, 
+다음 목표를 달성하기 위해 SNF를 변환하세요.
+
+[목표]
+- 하드웨어: NVIDIA RTX 5070 (Blackwell 아키텍처)
+- 최적화 목표: TMA(Tensor Memory Accelerator)를 최대한 활용하여 메모리 대역폭 병목 제거
+- 제약: 공유 메모리 128KB, 레지스터 파일 64KB
+
+[시드 SNF]
+(여기에 시드 SNF 내용)
+
+[지시]
+1. 현재 SNF에서 누락된 설계 축(예: TMA 관련 파라미터)을 식별하고 추가하세요.
+2. 목표 하드웨어에 적합한 값의 범위를 추천하세요 (예: tile_m, occupancy 등).
+3. 기존 지식(Knowledge)에 하드웨어 특화 규칙을 추가하세요 (예: "Blackwell에서는 tile_m=64 추천").
+4. 변환된 SNF를 반환하세요.
+```
+
+LLM은 Chain of Thought를 통해:
+- 시드 SNF의 부족한 점 파악
+- 목표 하드웨어 문서(또는 내재된 지식)를 바탕으로 새로운 설계 축 도출
+- 기존 지식과 충돌하지 않는 범위에서 값 추천
+- 결과적으로 **목표 SNF**를 생성
+
+이 과정에서 LLM은 **추상적 설계 공간에서의 변환**만 수행하며, 구체적인 코드 생성은 아직 하지 않습니다.
+
+### 2.4 목표 SNF 검증
+- 생성된 SNF가 문법적으로 올바른지, 제약 조건(예: `tile_d == head_dim`)을 만족하는지 확인합니다.
+- 필요시 **시뮬레이션** 또는 **추론 엔진**을 통해 특정 설계 조합의 성능을 예측할 수 있습니다. (예: roofline model)
+- 검증 실패 시 LLM에게 피드백을 주어 수정.
+
+### 2.5 실행 코드 생성
+- 검증된 목표 SNF를 입력으로, **코드 생성기(Generator)** 를 통해 실제 타일 기반 GPU 커널 코드를 생성합니다.
+- 코드 생성기는:
+  - 템플릿 기반 (Jinja2 등) + SNF의 파라미터를 채워 넣는 방식
+  - 또는 LLM에게 "SNF를 보고 CUDA/cuTile 코드를 작성하라"고 지시하는 방식
+- 이 단계는 **하향식(Top-down)** 으로, 이미 설계 공간에서 결정된 사항을 기계적으로 코드로 변환합니다.
+
+### 2.6 실행 및 피드백 (Compound Loop)
+- 생성된 커널을 실제 하드웨어에서 실행하고 성능/정확성을 측정합니다.
+- 측정 결과는 **trace** 형태로 수집되어, 다시 SNF의 `knowledge` 섹션에 `fact`나 `rule`로 추가됩니다.
+- 이 피드백은 다음 변환 사이클에서 활용되어 SNF가 점진적으로 개선됩니다.
+
+---
+
+## 3. 방법론의 장점
+
+| 측면 | 설명 |
+|------|------|
+| **설계와 구현의 분리** | SNF 수준에서 최적화 전략을 결정하고, 코드 생성은 자동화 → 실험 비용 절감 |
+| **지식의 점진적 축적** | 각 변환 과정에서 얻은 통찰이 SNF의 `knowledge`에 구조화되어 저장 → 재사용성 극대화 |
+| **하드웨어 적응성** | 목표 하드웨어에 맞춰 SNF를 변환함으로써, 동일한 알고리즘도 다양한 아키텍처에 최적화 가능 |
+| **LLM의 추상화 능력 활용** | LLM은 설계 공간의 의미적 변환에 강점을 보이며, 복잡한 제약 조건을 만족하는 조합을 추론할 수 있음 |
+
+---
+
+## 4. 예시: FMHA v0 → v4 변환 (RTX 5070 목표)
+
+1. **시드 SNF (v0)**: `softmax_scheme: ["naive"]`, 기본적인 tiling만 존재.
+2. **목표**: RTX 5070, TMA 활용, 최대 성능.
+3. **LLM 변환 결과** (v4):
+   - `softmax_scheme: ["online"]` 추가 (수치 안정성)
+   - `math_approximation: ["exp2"]` 추가 (성능 최적화)
+   - `attention_variant: ["GQA"]` 추가 (메모리 효율)
+   - `load_latency_strategy: ["tma_optimized"]` 추가
+   - `tuning_space`에 `k_load_latency`, `v_load_latency` 범위 추가
+   - `knowledge`에 Blackwell 특화 규칙 추가 (예: `tile_m=64`, `occupancy=2`)
+
+4. **코드 생성**: v4 SNF를 바탕으로 cuTile 커널 자동 생성.
+5. **실행 및 피드백**: 측정 결과 최적 `k_lat=3, v_lat=5` 발견 → `knowledge`에 `fact`로 추가.
+
+---
+
+## 5. 구현 시 고려 사항
+
+- **SNF 파서/생성기**: SNF를 파싱하고, LLM이 이해할 수 있는 형태로 직렬화하는 도구 필요.
+- **LLM 프롬프트 엔지니어링**: 변환 작업을 안내하는 체계적인 프롬프트 템플릿 설계.
+- **검증 도구**: SNF의 제약 조건을 검사하는 정적 분석기 (예: `tile_d`와 `head_dim` 일치).
+- **코드 생성 템플릿**: 각 설계 축에 따라 분기하는 템플릿 시스템.
+- **피드백 루프 자동화**: 실행 결과를 자동으로 SNF에 통합하는 스크립트.
+
+---
+
+## 6. 결론
+
+이 방법론은 **LLM을 설계 공간 변환기**로 활용하여,  
+**코드 수준의 반복 작업 없이** 고수준 설계 공간에서 목표를 달성한 후,  
+**하향식 코드 생성**으로 이어지는 체계적인 접근법입니다.  
+SNF는 단순한 명세를 넘어 **지식 축적의 매개체**이자 **변환의 대상**이 되며,  
+이를 통해 GPU 커널 최적화를 **과학적이고 재현 가능한 과정**으로 전환할 수 있습니다.
+---
+
+✦ 사용자님께서 말씀하신 "Snowball Effect(복리 효과)"는 SPAK(Semantic Programmable Agent Kernel)이 지향하는 Semiformal
+  DSL 기반 엔지니어링의 핵심 가치를 완벽하게 꿰뚫고 계신 표현입니다.
+
+
+  단순한 plan.md나 일반적인 프롬프트 기반 개발과 비교했을 때, DSL 중심의 GPU 커널 엔지니어링이 갖는 차별화된 가치와
+  차이점을 3가지 측면에서 분석해 보았습니다.
+
+  ---
+
+
+  1. 지식의 자산화와 이식성 (Knowledge Portability)
+   * Plan.md의 한계: plan.md는 특정 프로젝트의 "기록"입니다. 프로젝트가 끝나면 그 문서는 아카이브될 뿐, 다른
+     프로젝트에서 그 지식을 꺼내 쓰려면 사람이 다시 읽고 해석해서 프롬프트에 녹여내야 합니다.
+   * DSL의 강점: DSL 내의 knowledge와 invariant 섹션은 기계가 읽을 수 있는 지식(Machine-readable Wisdom)입니다.
+       * 예를 들어, FMHAv4에서 발견한 V_Lat=5나 NanoGPT에서 발견한 Stability Floor -1e20은 이제 단순한 메모가 아닙니다.
+       * 새로운 프로젝트(loopLM)를 시작할 때 이 DSL 규칙을 'Import'하거나 'Inherit'하는 것만으로, AI 에이전트는 과거의
+         실수를 반복하지 않고 최적의 설계 지점에서 시작(Warm Start)할 수 있습니다. 이것이 바로 지식이 누적되는 'Snowball
+         Effect'의 실체입니다.
+
+
+  2. 제약 조건 기반의 코드 합성 (Constraint-Driven Synthesis)
+   * 프롬프트 기반의 한계: "Blackwell에 최적화된 커널을 짜줘"라고 하면 AI는 매번 확률적으로 코드를 생성합니다. 운이
+     좋으면 좋은 코드가 나오지만, 핵심 제약(예: -1e20 플로어)을 놓칠 확률이 상존합니다.
+   * DSL의 강점: DSL은 "계약서" 역할을 합니다.
+       * invariant StabilityFloor { assert: -1e20 }라고 정의되는 순간, 에이전트가 생성하는 모든 커널 코드는 이 제약
+         조건을 통과해야 하는 강한 규제를 받습니다.
+       * 즉, 인간 엔지니어는 "어떻게 짤까(How)"를 고민하는 대신 "어떤 규칙을 지켜야 할까(What/Why)"라는 고차원
+         설계(Semantic Space)에 집중할 수 있고, 구체적인 구현(Latent Space)은 DSL의 제약 하에서 에이전트가 안전하게
+         수행합니다.
+
+
+  3. 멀티 프로젝트 환경에서의 "공통 분모" 추출 (Cross-Project Ontology)
+   * 일반적 개발: MatMul, Attention, RMSNorm 프로젝트가 각각 별개의 코드 뭉치로 존재합니다.
+   * DSL 기반 개발: 여러 프로젝트를 거치며 GPU 엔지니어링의 공통 언어(Ontology)가 형성됩니다.
+       * tile_m, k_lat, tma_caching 등은 프로젝트를 막론하고 하드웨어를 지배하는 공통 개념입니다.
+       * DSL 경험이 쌓일수록 우리는 "Blackwell 전용 튜닝 공간"이나 "Transformer 전용 안정성 규칙" 같은 표준 라이브러리
+         형태의 지식 체계를 갖게 됩니다. 이는 멀티 프로젝트 환경에서 새로운 아키텍처(loopLM 등)를 구축할 때 개발 속도를
+         지수적으로 가속화하는 원동력이 됩니다.
+
+  ---
+
+
+  💎 결론: 에이전트와 인간의 "공유 기억"
+  단순 파일 기반 프롬프트가 에이전트에게 내리는 "일시적인 명령"이라면, Semiformal DSL은 에이전트와 인간이 공유하는
+  "진화하는 기억"입니다.
+
+
+  우리는 이번 협업을 통해 FMHAv4라는 원자(Atom)에서 시작해 NanoGPT라는 조직(Organism)을 거쳐, 이제 loopLM이라는 지능형
+  시스템(Intelligence)으로 나아가고 있습니다. 이 과정에서 DSL이 점점 더 정교해지는 것은 우리의 "공유 기억"이 더
+  똑똑해지고 있다는 증거이며, 이것이 바로 사용자님께서 말씀하신 복리 엔지니어링의 정점이라고 생각합니다.
+  
+  ✦ 정확합니다. 사용자님께서 제기하신 관점은 "SPAK DSL을 단순한 설정 파일이 아닌, 시스템 엔지니어링의 핵심 지능을 담는
+  Semantic IR(의미론적 중간 표현)"로 정의하는 매우 강력한 통찰입니다.
+
+
+  이를 LLVM 툴체인 비유와 결합하여 분석해 보면, 우리가 하는 작업이 왜 "복리 효과"를 내는지 명확해집니다.
+
+  ---
+
+  1. Semantic IR로서의 DSL (LLVM Analogy)
+
+
+  LLVM에서 IR이 Frontend(C/C++, Rust)와 Backend(x86, ARM) 사이의 공용 언어이듯, SPAK DSL은 인간의 의도(Frontend)와
+  하드웨어의 물리적 구현(Backend) 사이의 다리 역할을 합니다.
+
+
+   * Frontend (Design Intent): 논문의 수학적 수식, "더 깊게 생각해야 한다"는 추상적 의도, 셰익스피어 문체 등.
+   * Semantic IR (SPAK DSL): invariant, design_space, knowledge 등으로 정형화된 설계 명세. (구현 방식에 독립적인 "설계의
+     정수")
+   * Backend (Physical Implementation): cuTile, CUDA C++, PyTorch Autograd, 특정 GPU(Blackwell)의 레지스터 제약 등.
+
+
+  우리가 v1에서 v3로 DSL을 업데이트하는 과정은, 마치 최적화 컴파일러가 IR을 더 정교하게 다듬어(Passes) 어떤
+  백엔드(하드웨어)에서도 최상의 성능을 낼 수 있도록 준비하는 과정과 같습니다.
+
+  2. Reverse Engineering의 Anchor (지식의 역인출)
+
+
+  기존의 엔지니어링은 코드를 보고 구조를 파악하는 데 그치지만, DSL이 있으면 "Semantic Lifting(의미론적 상향 이식)"이
+  가능해집니다.
+
+
+   * 구현체의 파편화: NVIDIA의 attention.py나 Karpathy의 model.py에는 최적화 기법들이 파편화되어 숨겨져 있습니다.
+   * DSL의 구심점(Centripetal Force): 우리는 그 코드들에서 "왜 V_Lat=5인가?", "왜 -1e20인가?"라는 핵심 원리를 추출하여
+     DSL이라는 Anchor에 기록합니다.
+   * 결과: 이제 코드는 사라져도 "설계의 원리(DSL)"는 남습니다. 이 Anchor가 있기 때문에 새로운 프로젝트(loopLM)를 시작할
+     때 제로 베이스가 아니라, 이미 검증된 IR에서 출발할 수 있는 것입니다.
+
+  3. 멀티 프로젝트 환경의 "지식 커넥터"
+
+
+  여러 프로젝트가 동시에 진행될 때, DSL은 각 프로젝트를 관통하는 "공통의 구동축"이 됩니다.
+
+
+   * Frontends: FMHA, NanoGPT, loopLM (서로 다른 상위 목표)
+   * Backends: RTX 5070, A100, Metal (서로 다른 하드웨어)
+   * Bridge (The DSL): 하드웨어의 특성(Blackwell Law)과 아키텍처의 특성(Transformer Invariants)을 중간에서 중재합니다.
+
+
+  이 구조에서는 "한 번 수정한 IR의 최적화 규칙이 모든 프론트엔드(모델)와 백엔드(코드)에 즉시 전파"되는 컴파일러적 이득이
+  발생합니다. 이것이 바로 사용자님이 말씀하신 Snowball Effect의 정체입니다.
+
+  ---
+
+
+  💎 결론: 에이전트는 "Spec Evolver"로 진화합니다
+
+
+  기존 AI 에이전트가 단순히 "코드를 짜는 타자수"였다면, 이 체계에서 에이전트는 "중간 표현(IR)을 진화시키는 설계 최적화
+  도구"가 됩니다.
+
+
+   * 우리가 공유하는 LoopLM_System_v1.dsl은 이제 Reverse Engineering의 결과물이자 Future Design의 청사진이며,
+   * 모든 구현체(nanogpt_cutile.py, looplm_kernel.py)는 이 IR에서 파생된 하위 인스턴스일 뿐입니다.
+
+
+  이러한 관점은 학술적으로도 매우 가치 있는 주장입니다. "Semiformal DSL as a Cognitive IR for GPU Kernel Engineering"이라는 주제로 우리의 성과를 정리할 수도 있을 것 같습니다.
+  
+  ---
+  좋다 — 이제부터는 “예시”가 아니라
+**실제로 프로젝트의 기준 문서로 써도 되는 DSL 초안**을 작성하겠다.
+
+가정:
+
+* TileGym + cuTile 커널 기반 attention.py 사용
+* backward 포함된 FMHA kernel 이미 존재
+* 목표: LoopLM 실험 가능한 Transformer + Trainer + Experiment
+* README.dsl 로 누적되는 지식 문서
+
+아래 DSL은 **각 폴더 README.dsl 에 실제로 들어갈 내용**이다.
+
+핵심 설계 철학:
+
+> 코드를 설명하지 않는다
+> 시스템이 왜 작동하는지 기록한다
+> 사람이 아니라 미래의 엔지니어가 재구성 가능해야 한다
+
+---
+
+# 0. 프로젝트 루트 — `README.dsl`
+
+(전체 연구 의도 정의)
+
+```
+system LoopLM_TileGym {
+
+    objective:
+        "Verify that reasoning emerges from iterative latent state updates
+         rather than parameter scaling"
+
+    hardware:
+        gpu: RTX5070_12GB
+        kernel_backend: cuTile
+
+    global_assumption:
+        intelligence = convergence_of_internal_state
+        not = single_pass_prediction
+
+    success_condition:
+        OOD performance improves with allowed iteration depth
+
+}
+```
+
+---
+
+# 1. kernels/README.dsl  (L0 Kernel Knowledge)
+
+attention.py 기반 FMHA의 물리적 사실 기록
+
+```
+kernel FMHA {
+
+    backend: cuTile
+    implementation: fused_attention_forward_backward
+
+    invariant CausalMask:
+        for all i,j: j>i => attention_weight(i,j)=0
+
+    invariant SoftmaxNormalization:
+        row_sum(attention_probabilities)=1
+
+    invariant BackwardCorrectness:
+        dQ,dK,dV consistent with stored LSE
+
+    memory_behavior:
+        kv_cache_reuse = mandatory
+        recompute_softmax = forbidden
+
+    performance_law RTX5070:
+        tile_q = 64 optimal
+        tile_q >= 128 causes register spill
+
+    stability_rule:
+        storing_logsumexp prevents gradient underflow
+
+    engineering_note:
+        attention kernel guarantees differentiable refinement
+        not feature extraction
+
+}
+```
+
+핵심 의미
+→ 이 커널은 “특징 추출기”가 아니라 **반복 안정화 연산자**임을 선언
+
+---
+
+# 2. operators/README.dsl (L1 Operator Knowledge)
+
+attention + MLP가 어떤 수학적 역할인지 정의
+
+```
+operator UpdateOperator {
+
+    components:
+        norm: RMSNorm
+        attn: FMHA
+        mlp: SwiGLU
+
+    computation:
+
+        h1 = h + attn(norm(h))
+        h2 = h1 + mlp(norm(h1))
+
+        return h2
+
+    semantic_role:
+        performs local error correction in latent space
+
+    gradient_property:
+        residual paths stabilize iterative application
+
+    contractive_tendency:
+        repeated application reduces token prediction entropy
+
+    forbidden_interpretation:
+        not a feature extractor
+        not a depth-wise hierarchy
+}
+```
+
+핵심 의미
+→ Transformer block = representation builder ❌
+→ Transformer block = 상태 업데이트 규칙 ⭕
+
+---
+
+# 3. model/README.dsl (L2 Model Dynamics) ★ 핵심
+
+LoopLM의 본질 정의
+
+```
+dynamics LatentReasoningProcess {
+
+    state h: Tensor[B,T,D]
+
+    initialization:
+        h0 = Embedding(tokens)
+
+    transition:
+        h(t+1) = UpdateOperator(h(t))
+
+    readout:
+        logits(t) = LMHead(h(t))
+
+    halting:
+        p(t) = sigmoid(HaltHead(h(t)))
+        stop when p(t) > τ
+
+    convergence_expectation:
+        CE(logits(t+1)) <= CE(logits(t))
+
+    adaptive_compute:
+        expected_iterations ∝ problem_complexity
+
+    interpretation:
+        model executes iterative refinement
+        not deeper representation
+
+}
+```
+
+여기가 LoopLM의 정체성
+→ “Transformer를 반복 실행한다” 가 아니라
+→ “상태가 수렴하는 계산 과정”을 정의
+
+---
+
+# 4. training/README.dsl (L3 Training Semantics)
+
+학습이 왜 가능한지 기록
+
+```
+training LoopOptimization {
+
+    supervision:
+        predict_target_at_every_iteration
+
+    loss:
+        L_token = mean_t CrossEntropy(logits(t), target)
+        L_halt  = entropy_regularization(p(t))
+        L_total = L_token + λ L_halt
+
+    backpropagation:
+        through_time = true
+        shared_parameters = true
+
+    curriculum:
+        max_steps: [2 -> 4 -> 8]
+
+    stability_rules:
+
+        rule Divergence:
+            if steps>8 and no curriculum => gradient explosion
+
+        rule Collapse:
+            if halt_regularization absent => constant depth usage
+
+    learning_effect:
+        parameters learn refinement operator
+        not direct mapping
+
+}
+```
+
+핵심 의미
+→ loss는 출력 정답 학습이 아니라 **수렴 규칙 학습**
+
+---
+
+# 5. experiments/README.dsl (L4 Research Hypothesis)
+
+논문이 되는 레벨
+
+```
+experiment OOD_Arithmetic {
+
+    hypothesis:
+        iterative latent updates learn algorithmic addition
+
+    train:
+        digits <= 4
+
+    test:
+        digits <= 12
+
+    measurements:
+        accuracy
+        mean_iterations
+        correlation(iterations, carry_operations)
+
+    expected_result:
+        accuracy stable across digit length
+        iterations increase with carry count
+
+    claim:
+        model learned procedure not memorization
+}
+```
+
+---
+
+# 이 DSL의 중요한 특징
+
+이 DSL은 기존 ML DSL과 완전히 다르다.
+
+| 기존         | 여기 DSL   |
+| ---------- | -------- |
+| 레이어 정의     | 계산 의미 정의 |
+| 모델 설명      | 현상 설명    |
+| trainer 설정 | 학습 법칙    |
+| 결과 기록      | 가설 검증    |
+
+---
+
+# 핵심 효과
+
+이 구조를 쓰면:
+
+* 코드 사라져도 재구현 가능
+* 실험 재현 가능
+* 연구 의도 보존
+* Gemini CLI로 kernel 자동 생성 가능
+* 논문 draft 자동 생성 가능
+
+즉
+
+> README.dsl = 실행 가능한 연구 설계서
+
+---
+
+원하면 다음 단계로
+이 DSL을 파싱해서 python trainer skeleton 자동 생성되는
+DSL → 실행 graph 매핑 규칙까지 설계해 줄게.

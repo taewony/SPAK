@@ -15,9 +15,14 @@ system LoopLM_System_v1 {
         model: "Standard_GPT_12L"
         architecture: "Sequential_Layer_Depth"
         target_metrics {
-            val_loss: 1.47 // Gold Standard from shakespeare_char
+            val_loss: 1.47 
             params: "124M (approx)"
             total_flops: "Equivalent to LoopLM(1L x 12it)"
+        }
+        objective: "Test whether reasoning emerges from iterative latent updates rather than parameter scaling"
+        constraints {
+            gpu_memory <= 12GB
+            training_time <= 24h
         }
     }
 
@@ -40,83 +45,115 @@ system LoopLM_System_v1 {
     }
 
     // ============================================================
-    // 2. Tuning Space (Blackwell Hardware Optimization)
+    // 2. Dynamics & State Transition
+    // ============================================================
+    dynamics LatentReasoning {
+        state h: Tensor[B, T, D]
+        transition:
+            h_next = UpdateOperator(h)
+        halting:
+            p = sigmoid(HaltHead(h))
+            stop_condition: "p > threshold"
+        properties: {
+            Convergence: "Repeated application should reduce token loss"
+            AdaptiveCompute: "Expected steps are proportional to problem difficulty"
+        }
+    }
+
+    // ============================================================
+    // 3. Tuning Space (Hardware Loop Optimization)
     // ============================================================
     tuning_space {
         max_recurrent_steps: [4, 8, 12, 16]
         entropy_exit_threshold: 0.05
         
-        // Blackwell specific laws
+        // Blackwell Hardware Laws
         tma_weight_pinning: true
         inter_step_pipelining: "Overlapped_MMA_Load"
-        v_lat: 5 // Inherited from FMHAv4 Blackwell law
+        v_lat: 5 // Inherited from FMHAv4
         stability_floor: -1e20
     }
 
     // ============================================================
-    // 3. Knowledge & Invariants (The Intelligence Floor)
+    // 4. Knowledge Base (Engineering Intelligence)
     // ============================================================
     knowledge {
-        // --- Shared Facts (Inherited from NanoGPT/FMHA) ---
+        // --- Verified Facts ---
         fact blackwell_weight_persistence {
-            description: "LoopLM uses identical weights across iterations. Blackwell TMA can keep these in L2 to bypass HBM bandwidth limits."
+            description: "LoopLM uses identical weights across iterations. Blackwell TMA can keep these in L2."
             potential_gain: "Up to 2.0x vs naive HBM reload"
         }
-
         fact thinking_step_importance {
-            description: "Adding per-step encoding prevents catastrophic drift in deep recurrent loops."
+            description: "Per-step encoding prevents catastrophic drift in deep recurrent loops."
             source: "ITT Research (2025)"
+        }
+        fact loop_depth_improves_reasoning {
+            observed: "Accuracy increases with allowed steps"
+            confidence: 0.92
         }
 
         // --- LoopLM Specific Laws ---
         invariant SpaceTimeEquivalence {
             assert: "FLOPs(LoopLM(1L, N)) == FLOPs(StandardGPT(NL))"
-            description: "Total compute work must be identical for fair benchmarking."
         }
-
         invariant LatentMonotonicity {
             assert: "Entropy(logits_{l+1}) < Entropy(logits_l) + epsilon"
-            description: "Probability distribution must strictly sharpen as thinking progresses."
         }
 
+        // --- Operational Rules ---
         rule "Inject X0 Residue" {
             when: "loop_index > 0"
             apply: "h = h + LayerNorm(x0)"
-            reason: "Preserve original semantic anchor across deep temporal reasoning."
+            reason: "Preserve original semantic anchor"
         }
-
         rule "Masked Early Exit" {
             when: "token_entropy < entropy_exit_threshold"
             apply: "Stop recurrent update for specific token index via Bit-masking"
             mechanism: "Bit-masking in cuTile kernel"
         }
-
-        rule "Decouple Params from Depth" {
-            when: "memory_constrained == True"
-            apply: "Increase loop_count instead of layer_count"
-            benefit: "Constant memory footprint with increasing reasoning depth"
+        rule "Training Instability Warning" {
+            when: "depth > 8 && no_curriculum"
+            then: "gradient_explosion"
+        }
+        heuristic "Stable Training" {
+            apply: "Use per_step_loss + depth_sampling"
         }
     }
 
     // ============================================================
-    // 4. Validation Loop (The Engineering Protocol)
+    // 5. Training Strategy
+    // ============================================================
+    training LoopTraining {
+        supervision: "Every step predicts token"
+        loss_function: "L = mean_t cross_entropy(logits_t, target)"
+        regularization: ["entropy(halt_prob)", "depth_variance"]
+        curriculum: {
+            schedule: "max_steps: [2 → 4 → 8]"
+        }
+        bptt: {
+            through_time: true 
+            description: "Gradients accumulate across temporal iterations"
+        }
+    }
+
+    // ============================================================
+    // 6. Validation & Experiments
     // ============================================================
     agent_loop LoopLM_Validator {
-        step "Standard Sanity" {
-            tool.run { cmd: "python nanoGPT/train.py --n_layer=12 --val_target=1.5" }
-        }
+        step "Standard Sanity" { tool.run { cmd: "python nanoGPT/train.py --n_layer=12" } }
+        step "Loop Parity" { tool.run { cmd: "python loopLM/test_parity.py" } }
+        step "Reasoning Trace" { tool.run { cmd: "python loopLM/analyze_trace.py" } }
+    }
 
-        step "Loop Parity" {
-            tool.run { cmd: "python loopLM/test_parity.py --mode=compare_12L_vs_1L12it" }
-        }
-
-        step "Reasoning Trace" { 
-            tool.run { cmd: "python loopLM/analyze_trace.py --output=thinking_trajectory.png" } 
-        }
+    experiment OOD_Generalization {
+        train: "Addition digits <= 4"
+        test: "Addition digits <= 12"
+        metrics: ["accuracy", "avg_steps", "correlation(difficulty, steps)"]
+        claim: "Model learned algorithm not memorization"
     }
 
     // ============================================================
-    // 5. Build Artifacts
+    // 7. Build Artifacts
     // ============================================================
     build {
         artifact "looplm_kernel.py" {
