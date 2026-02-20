@@ -1,51 +1,70 @@
-# loopLM: 잠재적 추론(Latent Reasoning)을 위한 반복형 언어 모델 설계
+# loopLM: 잠재적 추론(Latent Reasoning)을 위한 반복형 언어 모델 설계 및 검증 전략
 
-**loopLM**은 고정된 깊이(Depth)의 트랜스포머를 넘어, 동일한 디코더 블록을 여러 번 반복(Loop)하여 계산 깊이를 "시간" 차원으로 확장함으로써 **잠재적 추론 능력**을 확보하는 차세대 아키텍처입니다. SPAK의 FMHA, MicroGPT, NanoGPT 엔지니어링을 통해 축적된 지식은 loopLM을 실현하는 핵심 기반이 됩니다.
-
----
-
-### 1. 설계 비전: 공간(Space)에서 시간(Time)으로의 확장
-
-기존 모델이 층(Layer)을 쌓아 파라미터를 늘리는 데 집중했다면, loopLM은 **동일한 파라미터를 반복 재사용**하여 추론의 깊이를 더합니다.
-
-*   **재귀적 정교화 (Recursive Refinement)**: 입력을 한 번에 처리하지 않고, 잠재 공간(Latent Space)에서 여러 번 순환시키며 표현을 정교화합니다.
-*   **가변적 연산량 (Adaptive Compute)**: 쉬운 문제는 적은 반복으로, 복잡한 추론이 필요한 문제는 더 많은 반복을 할당하여 효율성을 극대화합니다.
-*   **지식의 고밀도화**: NanoGPT에서 증명된 고성능 커널들을 반복 구조에 통합하여, 적은 파라미터로도 거대 모델에 필적하는 추론 성능을 목표로 합니다.
+**loopLM**은 고정된 깊이(Depth)의 트랜스포머를 넘어, 동일한 디코더 블록을 여러 번 반복(Loop)하여 계산 깊이를 "시간" 차원으로 확장함으로써 **잠재적 추론 능력**을 확보하는 차세대 아키텍처입니다.
 
 ---
 
-### 2. SPAK 엔지니어링 지식의 전이 (Knowledge Transfer)
+### 1. 설계 및 검증 로드맵 (Hierarchical Roadmap)
 
-지금까지 축적된 지식은 loopLM의 물리적 구현과 수치적 안정성을 보장합니다.
+참조 구현체가 없는 새로운 아키텍처이므로, 검증된 **Standard GPT(12L)**를 기준으로 단계별 등가성과 추론 이득을 증명합니다.
 
-| 축적된 지식 (Asset) | loopLM 적용 시나리오 | 기대 효과 |
+#### **Step 0: Standard Baseline Sanity (The Gold Standard)**
+*   **목표**: 12개 레이어를 쌓은 표준 트랜스포머(`GPT-12L`)의 무결성 확보.
+*   **실행**: `nanoGPT/train.py`를 통해 셰익스피어 데이터셋에서 `Val Loss < 1.5` 달성.
+*   **의의**: 모든 `loopLM` 실험의 수치적, 성능적 기준점(Anchor)이 됨.
+
+#### **Step 1: Space-Time 등가성 테스트 (The Architectural Bridge)**
+*   **목표**: `Standard GPT(12L)` vs `loopLM(1L x 12it)` 비교.
+*   **검증**: 파라미터는 1/12이지만 연산량(FLOPs)이 동일한 두 모델의 손실값 수렴 곡선을 대조.
+*   **핵심 지표**: 동일한 FLOPs 환경에서 `loopLM`이 `GPT-1L`보다는 우수하고 `GPT-12L`에 얼마나 근접하는지 측정.
+
+#### **Step 2: 잠재 궤적 분석 (Latent Trajectory Analysis)**
+*   **목표**: 반복에 따른 "생각의 정교화"를 수치화.
+*   **Entropy Decay**: 각 루프 단계의 Logits 엔트로피가 감소하는지 확인 (불확실성 해소).
+*   **State Delta**: 루프 간 Hidden State 변화량 $\|h_{l+1} - h_l\|$이 특정 지점에서 수렴하는지 분석.
+
+---
+
+### 2. SPAK 엔지니어링 지식의 핵심 적용
+
+| 축적된 지식 (Asset) | loopLM 검증 및 구현 적용 | 기대 효과 |
 | :--- | :--- | :--- |
-| **Blackwell TMA Laws ($V_{Lat}=5$)** | 반복되는 블록 내에서 가중치(Weights)의 **지속성(Persistence)** 활용 | HBM 대역폭 낭비 최소화 및 레이턴시 은폐 |
-| **Stability Floor ($-1e20$)** | 수십 번의 반복 루프에서 발생할 수 있는 **수치적 발산 방지** | 깊은 재귀 구조에서도 안정적인 학습 및 추론 |
-| **Pow2-Masking LayerNorm** | 표준 임베딩 차원(384/768)에서의 고속 정규화 유지 | 반복 마다 발생하는 정규화 오버헤드 최소화 |
-| **GQA/Causal Fusion** | 루프 간 KV 캐시 관리 및 어텐션 연산 가속 | 반복적인 컨텍스트 참조의 효율성 극대화 |
+| **Blackwell TMA Laws** | 반복 루프 내 가중치 **L2 캐시 고정(Pinning)** | HBM 재로드 제거로 연산 밀도 극대화 |
+| **Stability Floor ($-1e20$)** | 수십 회 반복 시 발생할 수 있는 **Logits 폭주 방지** | 심층 재귀 구조에서의 수치적 발산 제어 |
+| **Hierarchical Parity** | `L1(Kernel) -> L2(Loop) -> L3(Full Model)` 검증 | 새로운 아키텍처의 수학적 무결성 조기 확보 |
+| **Autograd Hybrid Mode** | 학습 시 Autograd 보장, 추론 시 cuTile 반복 가속 | 학습 안정성과 실행 성능의 공존 |
 
 ---
 
-### 3. loopLM을 위한 핵심 엔지니어링 전략
+### 3. 잠재적 추론 능력(Thinking) 검증 프로토콜
 
-#### 3.1. 지속적 가중치 캐싱 (Persistent Weight Caching)
-loopLM은 동일한 가중치를 반복해서 사용합니다. Blackwell 아키텍처의 TMA를 활용하여, 루프가 시작될 때 가중치를 L2 캐시나 공유 메모리에 **고정(Pinning)**하고, 전체 반복 동안 재로드 없이 사용하는 전략을 취합니다. 이는 기존 NanoGPT 대비 메모리 액세스 비용을 획기적으로 낮춥니다.
+`loopLM`이 실제로 "생각"하고 있는지 판단하기 위한 3대 지표입니다.
 
-#### 3.2. 루프 간 파이프라이닝 (Inter-Loop Pipelining)
-$n$번째 루프의 연산(MMA)이 진행되는 동안, $n+1$번째 루프에서 필요한 데이터를 미리 로드하는 **이중 버퍼링(Double Buffering)** 기술을 FMHA 최적화 경험을 바탕으로 구현합니다.
+1.  **Linear Probing (생각의 깊이 측정)**:
+    *   각 루프 단계($l=1 \dots 12$)의 출력에 고정된 분류기를 붙여 정답을 얼마나 일찍 맞히는지 측정.
+    *   루프가 진행될수록 분류 성능이 향상된다면, 잠재 공간에서 정보가 고도화되고 있음을 의미.
 
-#### 3.3. 적응형 정지 규칙 (Adaptive Stopping Rule)
-SPAK의 **Outer Loop (Strategic Agent)**를 활용하여, 잠재 공간의 엔트로피나 변화량을 모니터링하고 최적의 반복 횟수를 결정하는 '정지 정책(Stop Policy)'을 DSL 수준에서 진화시킵니다.
+2.  **Fixed-Point Convergence (사고의 멈춤)**:
+    *   잠재 표현의 변화량이 임계값($\epsilon$) 이하로 떨어지는 지점을 측정.
+    *   복잡한 문장 구조에서 더 늦게 수렴한다면 모델이 난이도를 인지하고 "더 깊이 생각"하는 것임.
+
+3.  **Cross-Architecture Baseline**:
+    *   `loopLM`과 동일한 파라미터 수를 가진 `GPT-1L` (공간적 얕음) 대비 성능 우위가 뚜렷한지 확인.
 
 ---
 
-### 4. 로드맵: 원자에서 지능으로
+### 4. 핵심 엔지니어링 접근법
 
-1.  **Step 1 (Atom)**: NanoGPT의 디코더 블록을 단일 루프 커널로 캡슐화 (loopLM_v1.dsl).
-2.  **Step 2 (Molecule)**: 고정 반복 횟수(Fixed Loops) 환경에서 수렴 안정성 및 Blackwell TMA 캐싱 효율 검증.
-3.  **Step 3 (Organism)**: "Reasoning with Latent Thoughts" 논문의 기법을 적용하여, 잠재 공간에서의 사고(Thinking) 과정을 추적하고 성능 측정.
+#### **4.1. 지속적 가중치 캐싱 (Persistent Weights)**
+`loopLM`은 동일한 가중치를 반복 호출하므로, `ct.load` 시 `latency` 최적화와 더불어 가중치를 공유 메모리에 상주시키는 전용 커널 설계가 필수적입니다.
 
-### 💎 결론: 추론하는 시스템으로의 진화
+#### **4.2. 가변적 깊이 제어 (Adaptive Depth)**
+SPAK **Outer Loop**가 잠재 공간의 변화율을 모니터링하여 `break` 시점을 결정하는 동적 루프 로직을 DSL 수준에서 정의합니다.
 
-loopLM은 단순한 모델이 아니라, 우리가 지금까지 쌓아온 **"하드웨어 최적화 지식"**과 **"시스템 아키텍처"**가 결합되어 탄생하는 **지능적 실행체**입니다. NanoGPT가 성능의 한계를 보여주었다면, loopLM은 그 성능을 바탕으로 모델이 어떻게 "생각"할 수 있는지를 보여주는 첫 번째 사례가 될 것입니다.
+---
+
+### 💎 결론: 시스템적 진화의 정점
+
+`loopLM` 개발은 단순히 모델을 만드는 과정이 아닙니다. **"Standard GPT(12L)"라는 거인**을 기준으로 세우고, 우리가 NanoGPT에서 배운 **계층적 등가성 검증**과 **Blackwell 하드웨어 법칙**을 결합하여 "적은 자원으로 깊은 사고를 하는" 지능형 시스템을 구축하는 과정입니다. 
+
+우리의 첫 번째 임무는 **표준 12레이어 GPT의 무결성을 완벽히 확보**하는 것에서 시작합니다.
