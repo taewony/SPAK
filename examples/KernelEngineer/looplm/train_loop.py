@@ -33,7 +33,11 @@ min_lr = 1e-4
 beta2 = 0.99
 # -----------------------------------------------------------------------------
 config_keys = [k for k,v in globals().items() if not k.startswith('_') and isinstance(v, (int, float, bool, str))]
-exec(open('looplm/configurator.py').read()) 
+# Robust path resolution for configurator.py
+_configurator_path = os.path.join(os.path.dirname(__file__), 'configurator.py')
+if not os.path.exists(_configurator_path):
+    _configurator_path = 'configurator.py' # Fallback
+exec(open(_configurator_path).read()) 
 config = {k: globals()[k] for k in config_keys}
 # -----------------------------------------------------------------------------
 
