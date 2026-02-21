@@ -18,18 +18,15 @@ def generate_addition_data():
         n1 = random.randint(0, 10**d1 - 1)
         n2 = random.randint(0, 10**d2 - 1)
         
-        # Format: "12+34=46
-"
-        example = f"{n1}+{n2}={n1+n2}
-"
+        # Format: "12+34=46"
+        example = f"{n1}+{n2}={n1+n2}"
         dataset.append(example)
     
     # Shuffle
     random.shuffle(dataset)
     text = "".join(dataset)
     
-    # Vocabulary (Characters: 0-9, +, =, 
-)
+    # Vocabulary (Characters: 0-9, +, =, )
     chars = sorted(list(set(text)))
     vocab_size = len(chars)
     stoi = { ch:i for i,ch in enumerate(chars) }
