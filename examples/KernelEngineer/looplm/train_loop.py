@@ -120,7 +120,7 @@ def estimate_loss():
         for k in range(eval_iters):
             X, Y = get_batch(split)
             with ctx:
-                _, loss = model(X, Y)
+                _, loss, _ = model(X, Y)
             losses[k] = loss.item()
         out[split] = losses.mean().item()
     model.train()
@@ -159,7 +159,7 @@ for iter_num in range(max_iters):
 
     X, Y = get_batch('train')
     with ctx:
-        _, loss = model(X, Y)
+        _, loss, _ = model(X, Y)
     
     scaler.scale(loss).backward()
     scaler.unscale_(optimizer)
