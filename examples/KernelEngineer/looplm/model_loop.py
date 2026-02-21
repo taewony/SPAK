@@ -53,65 +53,94 @@ class LoopGPT(nn.Module):
         pos_emb = self.transformer.wpe(pos)
         x0 = self.transformer.drop(tok_emb + pos_emb)
         
-        # 1. Pinned State Setup (Architecture-level Fix)
-        tile_size_m = 4
-        M_padded = math.ceil(M / tile_size_m) * tile_size_m
+        h = x0
+        loops = num_loops if num_loops is not None else self.num_loops
         N = self.config.n_embd
         V = self.config.vocab_size
-        tile_n = next_pow2(N)
-        tile_v = next_pow2(V)
 
-        # Main State Buffers
-        h_state_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
-        h_state_padded[:M, :N] = x0.view(M, N)
-        active_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
-        active_mask[:M, 0] = 1.0 
-        steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
-        
-        # Persistent X0 for Injection
-        x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
-        x0_padded[:M, :N] = x0.view(M, N)
-
-        # Auxiliary Pinned Buffers
-        h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
-        logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
-        
-        loops = num_loops if num_loops is not None else self.num_loops
-        
-        # Training Mode: Trajectory List for Full BPTT
+        # --- Training Mode (Trajectory List for full BPTT) ---
         if self.training:
             all_states = [h]
             for l in range(loops):
-                h_current = all_states[-1]
-                
-                # Rule: Inject X0 Residue + Step Encoding
-                h_input = h_current + x0
+                h_curr = all_states[-1]
+                h_input = h_curr + x0
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
                 h_input = h_input + step_enc
                 
-                # Shared Transformer Block
                 h_next = self.transformer.h(h_input)
                 all_states.append(h_next)
             
-            # Final Readout from all steps for supervision
             all_logits = []
-            for state in all_states[1:]: # Skip initial x0 state
+            for state in all_states[1:]:
                 h_out = self.transformer.ln_f(state)
                 all_logits.append(self.lm_head(h_out))
                 
             if targets is not None:
-                # Mean loss over all time steps (Strong Supervision)
                 losses = [F.cross_entropy(lg.view(-1, V), targets.view(-1), ignore_index=-1) for lg in all_logits]
                 loss = torch.stack(losses).mean()
-                logits = all_logits[-1] # Return last logits for metrics
+                logits = all_logits[-1]
             else:
                 logits = all_logits[-1]
                 loss = None
-                
-            # Dummy steps for training return signature
-            return logits, loss, torch.zeros_like(active_mask).view(b, t)
+            
+            dummy_steps = torch.zeros((b, t), device=device, dtype=torch.int32)
+            return logits, loss, dummy_steps
 
-        # Inference Mode: Pinned State Optimization (cuTile)
+        # --- Inference Mode (Pinned-State cuTile Optimization) ---
         else:
-            # ... (Existing Pinned State Logic for Inference) ...
+            tile_size_m = 4
+            M_padded = math.ceil(M / tile_size_m) * tile_size_m
+            tile_n = next_pow2(N)
+            tile_v = next_pow2(V)
+
+            # Permanent Buffers
+            h_state_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
+            h_state_padded[:M, :N] = x0.view(M, N)
+            
+            active_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
+            active_mask[:M, 0] = 1.0 # Only real tokens start active
+            
+            steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
+            
+            x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
+            x0_padded[:M, :N] = x0.view(M, N)
+
+            h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
+            logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
+
             for l in range(loops):
+                if halt_threshold is not None:
+                    if not (active_mask[:M] > 0.5).any(): break
+                
+                h_current = h_state_padded[:M, :N].view(b, t, N)
+                x0_current = x0_padded[:M, :N].view(b, t, N)
+                
+                h_input = h_current + x0_current
+                step_enc = self.step_embedding(torch.tensor([l], device=device))
+                h_input = h_input + step_enc
+                
+                h_next = self.transformer.h(h_input)
+                h_next_flat = h_next.view(M, N)
+                
+                if halt_threshold is not None:
+                    with torch.no_grad():
+                        h_next_padded.zero_()
+                        logits_padded.fill_(-float('inf'))
+                        
+                        logits_step = self.lm_head(self.transformer.ln_f(h_next))
+                        logits_padded[:M, :V] = logits_step.view(M, V)
+                        h_next_padded[:M, :N] = h_next_flat
+                        
+                        grid_x = M_padded // tile_size_m
+                        ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
+                                 (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
+                                  halt_threshold, tile_size_m, tile_n, tile_v))
+                else:
+                    h_state_padded[:M, :N] = h_next_flat
+                    steps_taken[:M] += 1
+            
+            h_final = h_state_padded[:M, :N].view(b, t, N)
+            h_final = self.transformer.ln_f(h_final)
+            logits = self.lm_head(h_final[:, [-1], :])
+            
+            return logits, None, steps_taken[:M].view(b, t)
