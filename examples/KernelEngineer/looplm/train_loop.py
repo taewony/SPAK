@@ -100,7 +100,15 @@ if os.path.exists(init_from_path):
     print(f"Initializing from existing LoopLM checkpoint: {init_from_path}")
     checkpoint = torch.load(init_from_path, map_location=device)
     state_dict = checkpoint['model']
-    # Filter state dict to handle potential architecture changes
+    
+    # Check for vocab mismatch
+    ckpt_vocab_size = state_dict['lm_head.weight'].shape[0]
+    if ckpt_vocab_size != vocab_size:
+        print(f"Vocab mismatch: Ckpt({ckpt_vocab_size}) vs Dataset({vocab_size}).")
+        print("Resetting lm_head and wte weights for new task.")
+        del state_dict['lm_head.weight']
+        del state_dict['transformer.wte.weight']
+    
     model.load_state_dict(state_dict, strict=False)
 else:
     print("No previous checkpoint found. Starting from scratch.")
