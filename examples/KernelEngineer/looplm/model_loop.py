@@ -46,6 +46,7 @@ class LoopGPT(nn.Module):
     def forward(self, idx, targets=None, num_loops=None, halt_threshold=None):
         device = idx.device
         b, t = idx.size()
+        M = b * t
         pos = torch.arange(0, t, dtype=torch.long, device=device)
         
         tok_emb = self.transformer.wte(idx)
@@ -55,58 +56,53 @@ class LoopGPT(nn.Module):
         h = x0
         loops = num_loops if num_loops is not None else self.num_loops
         
-        # State tensors for kernel management
-        active_mask = torch.ones((b * t, 1), device=device, dtype=torch.float32)
-        steps_taken = torch.zeros((b * t, 1), device=device, dtype=torch.int32)
+        # 1. Determine Padded Shapes (M and N/V)
+        tile_size_m = 4
+        M_padded = math.ceil(M / tile_size_m) * tile_size_m
+        N = self.config.n_embd
+        V = self.config.vocab_size
+        tile_n = next_pow2(N)
+        tile_v = next_pow2(V)
+
+        # 2. Initialize State Tensors with M-padding
+        active_mask = torch.ones((M_padded, 1), device=device, dtype=torch.float32)
+        steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
         
         for l in range(loops):
             if not self.training and halt_threshold is not None:
-                if not (active_mask > 0.5).any(): 
+                if not (active_mask[:M] > 0.5).any(): 
                     break
                 
-            # Rule: Inject X0 Residue + Step Encoding
             h_input = h + x0 
             step_enc = self.step_embedding(torch.tensor([l], device=device))
             h_input = h_input + step_enc
             
-            # Compute next state
             h_next = self.transformer.h(h_input)
             
-            # Phase 2: cuTile Halt Update Kernel (Inference only)
             if halt_threshold is not None and not self.training:
                 with torch.no_grad():
-                    # 1. Determine Power-of-Two Shapes
-                    N = self.config.n_embd
-                    V = self.config.vocab_size
-                    tile_n = next_pow2(N)
-                    tile_v = next_pow2(V)
+                    # Flatten and M-Pad states
+                    h_flat = h.view(M, N)
+                    h_next_flat = h_next.view(M, N)
+                    h_padded = F.pad(h_flat, (0, tile_n - N, 0, M_padded - M))
+                    h_next_padded = F.pad(h_next_flat, (0, tile_n - N, 0, M_padded - M))
                     
-                    # 2. Flatten and Pad
-                    h_flat = h.view(-1, N)
-                    h_next_flat = h_next.view(-1, N)
-                    
-                    # Compute logits temporarily for halting decision
+                    # Compute and pad logits
                     logits_step = self.lm_head(self.transformer.ln_f(h_next))
-                    logits_flat = logits_step.view(-1, V)
+                    logits_flat = logits_step.view(M, V)
+                    logits_padded = F.pad(logits_flat, (0, tile_v - V, 0, M_padded - M), value=-float('inf'))
                     
-                    # Pad to Power-of-Two
-                    h_padded = F.pad(h_flat, (0, tile_n - N))
-                    h_next_padded = F.pad(h_next_flat, (0, tile_n - N))
-                    # Pad logits with -inf so max() correctly identifies valid confidence
-                    logits_padded = F.pad(logits_flat, (0, tile_v - V), value=-float('inf'))
-                    
-                    # 3. Launch cuTile Kernel for Atomic Halt & Update
-                    grid = ( (b * t + 3) // 4, ) # TILE_M=4
+                    # 3. Launch cuTile Kernel
+                    grid = (M_padded // tile_size_m,)
                     ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
                              (h_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
-                              halt_threshold, 4, tile_n, tile_v))
+                              halt_threshold, tile_size_m, tile_n, tile_v))
                     
                     # 4. Unpad and Update
-                    # The kernel updates h_padded in-place (H_current)
-                    h = h_padded[:, :N].view(b, t, -1)
+                    h = h_padded[:M, :N].view(b, t, -1)
             else:
                 h = h_next
-                steps_taken += active_mask.int()
+                steps_taken[:M] += active_mask[:M].int()
             
         h = self.transformer.ln_f(h)
         if targets is not None:
@@ -116,4 +112,4 @@ class LoopGPT(nn.Module):
             logits = self.lm_head(h[:, [-1], :])
             loss = None
 
-        return logits, loss, steps_taken.view(b, t)
+        return logits, loss, steps_taken[:M].view(b, t)
