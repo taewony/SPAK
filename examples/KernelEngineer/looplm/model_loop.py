@@ -102,10 +102,11 @@ class LoopGPT(nn.Module):
                               halt_threshold, 4, tile_n, tile_v))
                     
                     # 4. Unpad and Update
+                    # The kernel updates h_padded in-place (H_current)
                     h = h_padded[:, :N].view(b, t, -1)
             else:
                 h = h_next
-                steps_taken += 1
+                steps_taken += active_mask.int()
             
         h = self.transformer.ln_f(h)
         if targets is not None:

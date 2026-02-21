@@ -74,33 +74,41 @@ def looplm_halt_update_kernel(
     Steps_Taken,  # (M, 1)
     Threshold: float,
     TILE_SIZE_M: ConstInt,
-    TILE_SIZE_N: ConstInt, # Power of two embedding dim
-    TILE_SIZE_V: ConstInt  # Power of two vocab dim
+    TILE_SIZE_N: ConstInt,
+    TILE_SIZE_V: ConstInt
 ):
     bid = ct.bid(0)
-    # Use power-of-two shapes for ct.load
     h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
     h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
     mask = ct.load(Active_Mask, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     steps = ct.load(Steps_Taken, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     
-    # Load padded logits. TMA handles PaddingMode.ZERO by default or as specified.
-    # Note: If logits were padded with -inf in PyTorch, max() here is safe.
+    # Load padded logits. Padding with -inf is assumed for correct max/sum.
     logits = ct.load(Logits, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_V), padding_mode=ct.PaddingMode.ZERO)
     
-    # Calculate Confidence (Max Prob Proxy)
-    max_val = ct.max(logits, axis=1, keepdims=True)
+    # 1. Calculate Actual Max Probability
+    # max_prob = exp(max_logit - max_logit) / sum(exp(logits - max_logit))
+    #          = 1 / sum(exp(logits - max_logit))
+    max_logit = ct.max(logits, axis=1, keepdims=True)
+    logits_centered = logits - max_logit
+    # Use natural exp for standard softmax comparison
+    exp_logits = ct.exp(logits_centered)
+    sum_exp = ct.sum(exp_logits, axis=1, keepdims=True)
+    max_prob = 1.0 / sum_exp
     
-    # Rule: Masked Early Exit
-    # if confidence > threshold, stop updating. mask > 0.5 means still active.
-    is_active = (max_val < Threshold) & (mask > 0.5)
+    # 2. Determine Activation Status
+    was_active = mask > 0.5
+    # If prob < threshold, we want to stay active for the NEXT step.
+    is_active_next = (max_prob < Threshold) & was_active
     
-    # Update state only for active tokens
-    h_new = ct.where(is_active, h_next, h_curr)
-    mask_new = ct.astype(is_active, ct.float32)
-    steps_new = steps + ct.astype(is_active, ct.int32)
+    # 3. Update State and Metrics
+    # If we WERE active this step, we MUST take the h_next result.
+    h_updated = ct.where(was_active, h_next, h_curr)
+    mask_updated = ct.astype(is_active_next, ct.float32)
+    # Increment steps for tokens that were active during THIS iteration
+    steps_updated = steps + ct.astype(was_active, ct.int32)
     
-    # Store back (must use full tile shape used in load)
-    ct.store(H_current, index=(bid * TILE_SIZE_M, 0), tile=h_new)
-    ct.store(Active_Mask, index=(bid * TILE_SIZE_M, 0), tile=mask_new)
-    ct.store(Steps_Taken, index=(bid * TILE_SIZE_M, 0), tile=steps_new)
+    # 4. Store back
+    ct.store(H_current, index=(bid * TILE_SIZE_M, 0), tile=h_updated)
+    ct.store(Active_Mask, index=(bid * TILE_SIZE_M, 0), tile=mask_updated)
+    ct.store(Steps_Taken, index=(bid * TILE_SIZE_M, 0), tile=steps_updated)
