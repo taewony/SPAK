@@ -89,12 +89,12 @@ model_args = dict(n_layer=1, n_head=n_head, n_embd=n_embd, block_size=block_size
 gptconf = GPTConfig(**model_args)
 model = LoopGPT(gptconf, num_loops=num_loops)
 
-# Warm Start Logic: Try to load from previous LoopLM run if available
-# Primary: looplm/out_looplm/ckpt.pt
-init_from_path = os.path.join(script_dir, 'out_looplm', 'ckpt.pt')
+# Warm Start Logic: Prioritize addition checkpoint, fallback to shakespeare looplm
+# Primary: looplm/out_addition/ckpt.pt
+init_from_path = os.path.join(script_dir, 'out_addition', 'ckpt.pt')
 if not os.path.exists(init_from_path):
-    # Fallback: project_root/looplm/out_looplm/ckpt.pt
-    init_from_path = os.path.join(script_dir, '..', 'looplm', 'out_looplm', 'ckpt.pt')
+    # Fallback 1: looplm/out_looplm/ckpt.pt (Transfer from Shakespeare)
+    init_from_path = os.path.join(script_dir, 'out_looplm', 'ckpt.pt')
 
 if os.path.exists(init_from_path):
     print(f"Initializing from existing LoopLM checkpoint: {init_from_path}")

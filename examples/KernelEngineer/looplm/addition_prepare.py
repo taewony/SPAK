@@ -27,6 +27,12 @@ def generate_addition_data():
     
     # Shuffle
     random.shuffle(dataset)
+    
+    print("\n--- Sample Data (First 5) ---")
+    for i in range(5):
+        print(dataset[i].strip())
+    print("-----------------------------\n")
+    
     text = "".join(dataset)
     
     # Vocabulary (Characters: 0-9, +, =, )
