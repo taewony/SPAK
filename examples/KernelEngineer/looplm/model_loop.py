@@ -66,10 +66,16 @@ class LoopGPT(nn.Module):
 
         # 2. Initialize State Tensors with M-padding
         active_mask = torch.ones((M_padded, 1), device=device, dtype=torch.float32)
+        # Fix: Zero out padding rows in active_mask immediately
+        real_tokens_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
+        real_tokens_mask[:M, 0] = 1.0
+        active_mask = active_mask * real_tokens_mask
+        
         steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
         
         for l in range(loops):
             if not self.training and halt_threshold is not None:
+                # Use the mask to check only real tokens
                 if not (active_mask[:M] > 0.5).any(): 
                     break
                 
@@ -98,11 +104,15 @@ class LoopGPT(nn.Module):
                              (h_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                               halt_threshold, tile_size_m, tile_n, tile_v))
                     
+                    # Fix: Re-apply real_tokens_mask to active_mask to keep padding silent
+                    active_mask = active_mask * real_tokens_mask
+                    
                     # 4. Unpad and Update
                     h = h_padded[:M, :N].view(b, t, -1)
             else:
                 h = h_next
-                steps_taken[:M] += active_mask[:M].int()
+                # Fix: Only increment steps for real tokens
+                steps_taken = steps_taken + (active_mask * real_tokens_mask).int()
             
         h = self.transformer.ln_f(h)
         if targets is not None:

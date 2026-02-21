@@ -43,7 +43,12 @@ config = {k: globals()[k] for k in config_keys}
 
 script_dir = os.path.dirname(__file__)
 if script_dir == '': script_dir = '.'
-full_out_dir = out_dir 
+
+# Robust out_dir resolution
+if not out_dir.startswith(script_dir):
+    full_out_dir = os.path.join(script_dir, os.path.basename(out_dir))
+else:
+    full_out_dir = out_dir
 
 os.makedirs(full_out_dir, exist_ok=True)
 
@@ -55,9 +60,11 @@ ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torc
 ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype)
 
 # Data loader setup
-data_dir = os.path.join('nanoGPT', 'data', dataset)
+# 1. Try script-relative path
+data_dir = os.path.join(script_dir, 'data', dataset)
 if not os.path.exists(data_dir):
-    data_dir = os.path.join('data', dataset)
+    # 2. Try nanoGPT relative path
+    data_dir = os.path.join(script_dir, '..', 'nanoGPT', 'data', dataset)
 
 train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
 val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
@@ -83,7 +90,12 @@ gptconf = GPTConfig(**model_args)
 model = LoopGPT(gptconf, num_loops=num_loops)
 
 # Warm Start Logic: Try to load from previous LoopLM run if available
+# Primary: looplm/out_looplm/ckpt.pt
 init_from_path = os.path.join(script_dir, 'out_looplm', 'ckpt.pt')
+if not os.path.exists(init_from_path):
+    # Fallback: project_root/looplm/out_looplm/ckpt.pt
+    init_from_path = os.path.join(script_dir, '..', 'looplm', 'out_looplm', 'ckpt.pt')
+
 if os.path.exists(init_from_path):
     print(f"Initializing from existing LoopLM checkpoint: {init_from_path}")
     checkpoint = torch.load(init_from_path, map_location=device)

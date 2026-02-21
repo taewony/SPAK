@@ -5,8 +5,11 @@ import random
 
 # Configuration
 num_samples = 50000
-max_digits = 4 # Training on up to 4 digits
-out_dir = 'looplm/data/addition'
+max_digits = 4 
+# Get absolute path to the directory where this script is located
+script_dir = os.path.dirname(__file__)
+if script_dir == '': script_dir = '.'
+out_dir = os.path.join(script_dir, 'data', 'addition')
 os.makedirs(out_dir, exist_ok=True)
 
 def generate_addition_data():
