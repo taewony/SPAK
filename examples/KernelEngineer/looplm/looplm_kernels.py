@@ -67,32 +67,40 @@ def looplm_attention_kernel(
 
 @ct.kernel
 def looplm_halt_update_kernel(
-    H_current,    # (M, N)
-    H_next,       # (M, N)
-    Logits,       # (M, V)
+    H_current,    # (M, TILE_N) - Padded to power of two
+    H_next,       # (M, TILE_N) - Padded to power of two
+    Logits,       # (M, TILE_V) - Padded to power of two
     Active_Mask,  # (M, 1)
     Steps_Taken,  # (M, 1)
     Threshold: float,
     TILE_SIZE_M: ConstInt,
-    N_EMBD: ConstInt, # Added: explicit constant for embedding dim
-    V_SIZE: ConstInt
+    TILE_SIZE_N: ConstInt, # Power of two embedding dim
+    TILE_SIZE_V: ConstInt  # Power of two vocab dim
 ):
     bid = ct.bid(0)
-    # Use N_EMBD constant for fixed shape
-    h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, N_EMBD))
-    h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, N_EMBD))
+    # Use power-of-two shapes for ct.load
+    h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
+    h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
     mask = ct.load(Active_Mask, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     steps = ct.load(Steps_Taken, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     
-    logits = ct.load(Logits, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, V_SIZE), padding_mode=ct.PaddingMode.ZERO)
+    # Load padded logits. TMA handles PaddingMode.ZERO by default or as specified.
+    # Note: If logits were padded with -inf in PyTorch, max() here is safe.
+    logits = ct.load(Logits, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_V), padding_mode=ct.PaddingMode.ZERO)
     
+    # Calculate Confidence (Max Prob Proxy)
     max_val = ct.max(logits, axis=1, keepdims=True)
+    
+    # Rule: Masked Early Exit
+    # if confidence > threshold, stop updating. mask > 0.5 means still active.
     is_active = (max_val < Threshold) & (mask > 0.5)
     
+    # Update state only for active tokens
     h_new = ct.where(is_active, h_next, h_curr)
     mask_new = ct.astype(is_active, ct.float32)
     steps_new = steps + ct.astype(is_active, ct.int32)
     
+    # Store back (must use full tile shape used in load)
     ct.store(H_current, index=(bid * TILE_SIZE_M, 0), tile=h_new)
     ct.store(Active_Mask, index=(bid * TILE_SIZE_M, 0), tile=mask_new)
     ct.store(Steps_Taken, index=(bid * TILE_SIZE_M, 0), tile=steps_new)
