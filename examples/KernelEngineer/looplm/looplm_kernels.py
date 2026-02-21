@@ -70,36 +70,29 @@ def looplm_halt_update_kernel(
     H_current,    # (M, N)
     H_next,       # (M, N)
     Logits,       # (M, V)
-    Active_Mask,  # (M, 1) - float32 or int32 for masking
+    Active_Mask,  # (M, 1)
     Steps_Taken,  # (M, 1)
     Threshold: float,
     TILE_SIZE_M: ConstInt,
+    N_EMBD: ConstInt, # Added: explicit constant for embedding dim
     V_SIZE: ConstInt
 ):
     bid = ct.bid(0)
-    # Load current row block
-    h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, H_current.shape[1]))
-    h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, H_current.shape[1]))
+    # Use N_EMBD constant for fixed shape
+    h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, N_EMBD))
+    h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, N_EMBD))
     mask = ct.load(Active_Mask, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     steps = ct.load(Steps_Taken, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     
-    # Load Logits to check confidence
     logits = ct.load(Logits, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, V_SIZE), padding_mode=ct.PaddingMode.ZERO)
     
-    # Calculate Confidence (Max Prob)
-    # Note: Simplified max(logits) as proxy for entropy
     max_val = ct.max(logits, axis=1, keepdims=True)
-    
-    # Rule: Masked Early Exit
-    # If confidence > threshold, stop updating
     is_active = (max_val < Threshold) & (mask > 0.5)
     
-    # Update state only for active tokens
     h_new = ct.where(is_active, h_next, h_curr)
     mask_new = ct.astype(is_active, ct.float32)
     steps_new = steps + ct.astype(is_active, ct.int32)
     
-    # Store back
     ct.store(H_current, index=(bid * TILE_SIZE_M, 0), tile=h_new)
     ct.store(Active_Mask, index=(bid * TILE_SIZE_M, 0), tile=mask_new)
     ct.store(Steps_Taken, index=(bid * TILE_SIZE_M, 0), tile=steps_new)
