@@ -1,4 +1,4 @@
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python analyze_thinking.py
+ python analyze_thinking.py
 To be, or not to be, that is the question
 --- Phase 2: Thinking Trace Analysis ---
 Input: 'To be, or not to be, that is the question'
