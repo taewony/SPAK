@@ -1,6 +1,58 @@
-python train_baseline_12l.py
+python analyze_thinking.py
+--- Phase 2: Thinking Trace Analysis ---
+Input: 'To be, or not to be, that is the question'
+Confidence Threshold: 0.9
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_baseline_12l.py", line 35, in <module>
-    exec(open('looplm/configurator.py').read()) # overrides from command line or config file
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: 'looplm/configurator.py'
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/analyze_thinking.py", line 71, in <module>
+    analyze_thinking()
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/analyze_thinking.py", line 53, in analyze_thinking
+    logits, _, steps = model(x, halt_threshold=0.9)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/model_loop.py", line 131, in forward
+    ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 225, in __call__
+    lib = compile_tile(self.pyfunc, pyfunc_args, self.compiler_options, tile_context)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 70, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 152, in compile_tile
+    func_ir = _get_final_ir(pyfunc, args, context)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_compile.py", line 78, in _get_final_ir
+    func_ir = infer_types_pass(func_ir, ir_args, pyfunc, tile_context)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 368, in infer_types_pass
+    return infer_types_in_func(context, func, args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 358, in infer_types_in_func
+    infer_types_in_block(context, func.root_block)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 322, in infer_types_in_block
+    i += infer_types_for_op(context, block, i)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 305, in infer_types_for_op
+    _replace_call_or_const(block, i)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_passes/typeinfer.py", line 250, in _replace_call_or_const
+    result = op_implementations[callee](*arg_list)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 56, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/ops.py", line 1900, in tile_load_impl
+    shape = require_constant_shape(shape, allow_single_int=True, expected_rank=array_ty.ndim,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 187, in require_constant_shape
+    shape = require_constant_int_tuple(var, allow_single_int=allow_single_int)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/cuda/tile/_ir/op_impl.py", line 162, in require_constant_int_tuple
+    raise _make_type_error("Expected a constant integer tuple,"
+cuda.tile._exception.TileTypeError: Invalid argument "shape" of load(): Expected a constant integer tuple, but given value is not constant
+  In file "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/looplm_kernels.py", line 81, col 14--102:
+        h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, H_current.shape[1]))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

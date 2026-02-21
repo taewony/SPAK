@@ -130,7 +130,7 @@ class LoopGPT(nn.Module):
                     grid = ( (b * t + 3) // 4, ) # TILE_M=4
                     ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
                              (h_flat, h_next_flat, logits_flat, active_mask, steps_taken, 
-                              halt_threshold, 4, self.config.vocab_size))
+                              halt_threshold, 4, self.config.n_embd, self.config.vocab_size))
                     
                     h = h_flat.view(b, t, -1)
             else:
