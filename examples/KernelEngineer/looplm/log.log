@@ -1,4 +1,22 @@
- python analyze_thinking.py
+python analyze_thinking_addition.py
+--- Phase 2: Thinking Trace Analysis (ADDITION) ---
+Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Input: '123+456='
+Confidence Threshold: 0.9
+Token-wise Reasoning Depth (Addition carry logic):
+Char | Steps | Visual
+------------------------------
+ '1'  |  12   | ************
+ '2'  |  12   | ************
+ '3'  |  12   | ************
+ '+'  |  12   | ************
+ '4'  |   0   |
+ '5'  |   0   |
+ '6'  |   0   |
+ '='  |   0   |
+Average Reasoning Depth: 6.00 iterations
+Theoretical Efficiency Gain: 50.0%
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python analyze_thinking.py
 To be, or not to be, that is the question
 --- Phase 2: Thinking Trace Analysis ---
 Input: 'To be, or not to be, that is the question'
@@ -51,4 +69,3 @@ Char | Steps | Visual
 
 Average Reasoning Depth: 0.59 iterations
 Theoretical Efficiency Gain: 95.1%
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$

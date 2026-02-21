@@ -1,8 +1,15 @@
 python train_loop.py
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Starting LoopLM Training on addition...
+Config: 12 loops over 1 layer block
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 8, in <module>
-    from model_loop import LoopGPT
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/model_loop.py", line 117
-    for l in range(loops):
-                          ^
-IndentationError: expected an indented block after 'for' statement on line 117
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 151, in <module>
+    losses = estimate_loss()
+             ^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 124, in estimate_loss
+    losses[k] = loss.item()
+                ^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'item'
