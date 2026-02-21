@@ -58,41 +58,34 @@ class LoopGPT(nn.Module):
         N = self.config.n_embd
         V = self.config.vocab_size
 
-        # --- Training Mode (Trajectory List for full BPTT) ---
+        # --- Training Mode (Refined for Reasoning) ---
         if self.training:
-            all_states = [h]
+            # Trajectory List for full BPTT
+            h_curr = h
             for l in range(loops):
-                h_curr = all_states[-1]
                 h_input = h_curr + x0
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
-                h_input = h_input + step_enc
-                
-                h_next = self.transformer.h(h_input)
-                all_states.append(h_next)
+                h_next = self.transformer.h(h_input + step_enc)
+                h_curr = h_next
             
-            all_logits = []
-            for state in all_states[1:]:
-                h_out = self.transformer.ln_f(state)
-                all_logits.append(self.lm_head(h_out))
-                
+            # Supervise only the FINAL state to allow latent thinking
+            h_final = self.transformer.ln_f(h_curr)
+            logits = self.lm_head(h_final)
+            
             if targets is not None:
-                losses = [F.cross_entropy(lg.view(-1, V), targets.view(-1), ignore_index=-1) for lg in all_logits]
-                loss = torch.stack(losses).mean()
-                logits = all_logits[-1]
+                loss = F.cross_entropy(logits.view(-1, V), targets.view(-1), ignore_index=-1)
             else:
-                logits = all_logits[-1]
                 loss = None
             
             return logits, loss, torch.zeros((b, t), device=device, dtype=torch.int32)
 
-        # --- Inference Mode (Pinned-State cuTile Optimization) ---
+        # --- Inference Mode (Pinned-State cuTile) ---
         else:
             tile_size_m = 4
             M_padded = math.ceil(M / tile_size_m) * tile_size_m
             tile_n = next_pow2(N)
             tile_v = next_pow2(V)
 
-            # Permanent State Buffers
             h_state_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             h_state_padded[:M, :N] = x0.view(M, N)
             active_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
@@ -102,7 +95,6 @@ class LoopGPT(nn.Module):
             x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             x0_padded[:M, :N] = x0.view(M, N)
 
-            # Auxiliary Buffers
             h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
 
@@ -110,15 +102,12 @@ class LoopGPT(nn.Module):
                 if halt_threshold is not None:
                     if not (active_mask[:M] > 0.5).any(): break
                 
-                h_current = h_state_padded[:M, :N].view(b, t, N)
-                x0_current = x0_padded[:M, :N].view(b, t, N)
+                h_current_view = h_state_padded[:M, :N].view(b, t, N)
+                x0_current_view = x0_padded[:M, :N].view(b, t, N)
                 
-                h_input = h_current + x0_current
+                h_input = h_current_view + x0_current_view
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
-                h_input = h_input + step_enc
-                
-                h_next = self.transformer.h(h_input)
-                h_next_flat = h_next.view(M, N)
+                h_next = self.transformer.h(h_input + step_enc)
                 
                 if halt_threshold is not None:
                     with torch.no_grad():
@@ -127,15 +116,14 @@ class LoopGPT(nn.Module):
                         
                         logits_step = self.lm_head(self.transformer.ln_f(h_next))
                         logits_padded[:M, :V] = logits_step.view(M, V)
-                        h_next_padded[:M, :N] = h_next_flat
+                        h_next_padded[:M, :N] = h_next.view(M, N)
                         
-                        # Use explicit M_padded grid
                         grid_x = M_padded // tile_size_m
                         ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
                                  (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                                   halt_threshold, tile_size_m, tile_n, tile_v))
                 else:
-                    h_state_padded[:M, :N] = h_next_flat
+                    h_state_padded[:M, :N] = h_next.view(M, N)
                     steps_taken[:M] += 1
             
             h_final = h_state_padded[:M, :N].view(b, t, N)
