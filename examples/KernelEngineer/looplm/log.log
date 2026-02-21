@@ -1,48 +1,54 @@
-# 수정된 코드에 대한 cross-check points
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python analyze_thinking.py
+To be, or not to be, that is the question
+--- Phase 2: Thinking Trace Analysis ---
+Input: 'To be, or not to be, that is the question'
+Confidence Threshold: 0.9
 
-현재 구조는:
+Token-wise Reasoning Depth:
+Char | Steps | Visual
+------------------------------
+ 'T'  |  12   | ************
+ 'o'  |   2   | **
+ ' '  |   1   | *
+ 'b'  |   1   | *
+ 'e'  |   0   |
+ ','  |   0   |
+ ' '  |   0   |
+ 'o'  |   0   |
+ 'r'  |   0   |
+ ' '  |   0   |
+ 'n'  |   0   |
+ 'o'  |   0   |
+ 't'  |   0   |
+ ' '  |   0   |
+ 't'  |   0   |
+ 'o'  |   0   |
+ ' '  |   1   | *
+ 'b'  |   1   | *
+ 'e'  |   1   | *
+ ','  |   1   | *
+ ' '  |   0   |
+ 't'  |   0   |
+ 'h'  |   0   |
+ 'a'  |   0   |
+ 't'  |   0   |
+ ' '  |   0   |
+ 'i'  |   0   |
+ 's'  |   0   |
+ ' '  |   0   |
+ 't'  |   0   |
+ 'h'  |   0   |
+ 'e'  |   0   |
+ ' '  |   1   | *
+ 'q'  |   1   | *
+ 'u'  |   1   | *
+ 'e'  |   1   | *
+ 's'  |   0   |
+ 't'  |   0   |
+ 'i'  |   0   |
+ 'o'  |   0   |
+ 'n'  |   0   |
 
-> "Functional correctness + major structural fix 완료"
-
-그러나
-
-> "Allocator-level 최적화는 아직 미완"
-
----
-
-# 🚀 추천 수정 (완전한 설계 완성)
-
-루프 외부에 추가:
-
-```python
-h_next_padded = torch.zeros((M_padded, tile_n), ...)
-logits_padded = torch.full((M_padded, tile_v), -float('inf'), ...)
-```
-
-루프 내부에서 in-place reset:
-
-```python
-h_next_padded.zero_()
-logits_padded.fill_(-float('inf'))
-```
-
-이렇게 하면:
-
-* 완전 pinned
-* CUDA allocator 호출 0
-* deterministic memory behavior
-* kernel trace 안정성 증가
-
----
-
-# 🧠 이 수정이 왜 중요한가?
-LoopLM은 "depth unrolled dynamical system"입니다.
-상태가 매번 다른 주소로 바뀌면:
-
-* tracing 어려움
-* kernel debug 어려움
-* memory fragmentation 발생
-* reproducibility 저하
-
-> 당신의 수정은 구조적으로 거의 완성 단계입니다.
-> 다만 완전한 pinned-state 설계를 위해 보조 padded tensor도 루프 외부로 빼는 것을 강력히 권장합니다.
+Average Reasoning Depth: 0.59 iterations
+Theoretical Efficiency Gain: 95.1%
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$

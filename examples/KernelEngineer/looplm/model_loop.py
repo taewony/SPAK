@@ -109,9 +109,6 @@ class LoopGPT(nn.Module):
                              (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                               halt_threshold, tile_size_m, tile_n, tile_v))
             else:
-                h_state_padded[:M, :N] = h_next_flat
-                steps_taken[:M] += active_mask[:M].int()
-            else:
                 # Training or Fixed Loop mode
                 h_state_padded[:M, :N] = h_next_flat
                 steps_taken[:M] += active_mask[:M].int()
