@@ -145,11 +145,17 @@ system LoopLM_System_v1 {
         step "Reasoning Trace" { tool.run { cmd: "python loopLM/analyze_trace.py" } }
     }
 
-    experiment OOD_Generalization {
-        train: "Addition digits <= 4"
-        test: "Addition digits <= 12"
-        metrics: ["accuracy", "avg_steps", "correlation(difficulty, steps)"]
-        claim: "Model learned algorithm not memorization"
+    experiment Addition_OOD_Reasoning {
+        objective: "Learn the carry-propagation algorithm via temporal loops"
+        train_task: "Addition digits <= 4"
+        test_task: "Addition digits <= 12 (Out-of-Distribution)"
+        metrics: ["Digit_Accuracy", "Avg_Steps_per_Carry"]
+        success_condition: "LoopLM(4 digits) generalizes to 12 digits by increasing loops"
+    }
+
+    agent_loop Addition_Trainer {
+        step "Data Gen" { tool.run { cmd: "python looplm/addition_prepare.py" } }
+        step "Warm Start" { tool.run { cmd: "python looplm/train_loop.py --init_from=looplm/out_looplm/ckpt.pt --dataset=addition" } }
     }
 
     // ============================================================

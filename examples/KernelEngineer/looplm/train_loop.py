@@ -9,9 +9,9 @@ from model_loop import LoopGPT
 from model import GPTConfig
 
 # -----------------------------------------------------------------------------
-# default config values
-dataset = 'shakespeare_char'
-out_dir = 'looplm/out_looplm'
+# default config values for Addition Experiment
+dataset = 'addition'
+out_dir = 'looplm/out_addition'
 batch_size = 64
 block_size = 256
 n_embd = 384
@@ -20,7 +20,7 @@ num_loops = 12
 dropout = 0.2
 bias = False
 learning_rate = 1e-3
-max_iters = 5000
+max_iters = 2000
 eval_interval = 250
 eval_iters = 200
 log_interval = 10
@@ -28,7 +28,7 @@ device = 'cuda'
 dtype = 'float16' 
 decay_lr = True
 warmup_iters = 100
-lr_decay_iters = 5000
+lr_decay_iters = 2000
 min_lr = 1e-4
 beta2 = 0.99
 # -----------------------------------------------------------------------------
@@ -81,6 +81,18 @@ model_args = dict(n_layer=1, n_head=n_head, n_embd=n_embd, block_size=block_size
                   bias=bias, vocab_size=vocab_size, dropout=dropout)
 gptconf = GPTConfig(**model_args)
 model = LoopGPT(gptconf, num_loops=num_loops)
+
+# Warm Start Logic: Try to load from previous LoopLM run if available
+init_from_path = os.path.join(script_dir, 'out_looplm', 'ckpt.pt')
+if os.path.exists(init_from_path):
+    print(f"Initializing from existing LoopLM checkpoint: {init_from_path}")
+    checkpoint = torch.load(init_from_path, map_location=device)
+    state_dict = checkpoint['model']
+    # Filter state dict to handle potential architecture changes
+    model.load_state_dict(state_dict, strict=False)
+else:
+    print("No previous checkpoint found. Starting from scratch.")
+
 model.to(device)
 
 # Optimizer
