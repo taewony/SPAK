@@ -7,10 +7,10 @@ Confidence Threshold: 0.9
 Token-wise Reasoning Depth:
 Char | Steps | Visual
 ------------------------------
- 'T'  |   0   |
- 'o'  |   0   |
- ' '  |   0   |
- 'b'  |   0   |
+ 'T'  |  12   | ************
+ 'o'  |   2   | **
+ ' '  |   1   | *
+ 'b'  |   1   | *
  'e'  |   0   |
  ','  |   0   |
  ' '  |   0   |
@@ -23,10 +23,10 @@ Char | Steps | Visual
  ' '  |   0   |
  't'  |   0   |
  'o'  |   0   |
- ' '  |   0   |
- 'b'  |   0   |
- 'e'  |   0   |
- ','  |   0   |
+ ' '  |   1   | *
+ 'b'  |   1   | *
+ 'e'  |   1   | *
+ ','  |   1   | *
  ' '  |   0   |
  't'  |   0   |
  'h'  |   0   |
@@ -39,15 +39,15 @@ Char | Steps | Visual
  't'  |   0   |
  'h'  |   0   |
  'e'  |   0   |
- ' '  |   0   |
- 'q'  |   0   |
- 'u'  |   0   |
- 'e'  |   0   |
+ ' '  |   1   | *
+ 'q'  |   1   | *
+ 'u'  |   1   | *
+ 'e'  |   1   | *
  's'  |   0   |
  't'  |   0   |
  'i'  |   0   |
  'o'  |   0   |
  'n'  |   0   |
 
-Average Reasoning Depth: 0.00 iterations
-Theoretical Efficiency Gain: 100.0%
+Average Reasoning Depth: 0.59 iterations
+Theoretical Efficiency Gain: 95.1%
