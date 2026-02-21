@@ -138,5 +138,26 @@ NanoGPT의 교훈을 바탕으로 안정적인 학습 환경을 구축합니다.
   ---
 
   실행 시 주의사항
-   * 데이터 위치: nanoGPT/data/shakespeare_char 폴더에 train.bin과 meta.pkl이 이미 준비되어 있어야 합니다. (없다면 python nanoGPT/data/shakespeare_char/prepare.py 먼저 실행)
-   * 메모리: RTX 5070(12GB)에서 768 dim, Batch 64 설정은 충분히 돌아가지만, 만약 OOM이 발생하면 train_baseline_12l.py와 train_loop.py의 batch_size를 32로 줄여주세요.
+   * 데이터 위치: nanoGPT/data/shakespeare_char 폴더에 train.bin과 meta.pkl이 이미 준비되어 있어야 합니다.
+   
+✦ loopLM 프로젝트에 Phase 2 전용 커널들을 성공적으로 통합했습니다. (looplm/model_loop.py에 Adaptive Halting 로직을 성공적으로 통합했습니다. 이제 모델은 각 토큰별로 확신도(Confidence)를 측정하여 추론을 멈출 수 있습니다.)
+
+  이제 모델은 단순히 Python 수준에서 마스킹을 처리하는 것이 아니라, `looplm_halt_update_kernel`을 통해 GPU에서
+  원자적으로(Atomically) 상태 업데이트와 조기 종료를 결정합니다.
+
+  최종 구성 요소:
+   1. `looplm/looplm_kernels.py`:
+       * looplm_attention_kernel: X0 주입 및 수치 안정성 강화.
+       * looplm_halt_update_kernel: 엔트로피 기반 조건부 업데이트 (ct.where 활용).
+   2. `looplm/model_loop.py`:
+       * 추론 모드(eval)에서 halt_threshold가 주어지면 자동으로 cuTile 커널을 호출하여 연산을 가속합니다.
+
+   cd looplm
+   # 커널 기반 Thinking Trace 분석 실행
+   python analyze_thinking.py
+
+  검증 포인트 (Expected Outcome):
+   1. 가변적 깊이: 쉬운 문자(예: 공백, 마침표 뒤의 첫 글자)는 적은 단계(2~4 steps)에서 멈추고, 문맥적으로 어려운 위치의
+      문자는 더 많은 단계(8~12 steps)를 사용하는지 확인합니다.
+   2. 효율성 측정: 모든 토큰이 12번 돌 때 대비 연산량이 얼마나 절감되었는지(Theoretical Efficiency Gain) 수치로
+      확인합니다.
