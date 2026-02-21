@@ -67,9 +67,9 @@ def looplm_attention_kernel(
 
 @ct.kernel
 def looplm_halt_update_kernel(
-    H_current,    # (M, TILE_N) - Padded to power of two
-    H_next,       # (M, TILE_N) - Padded to power of two
-    Logits,       # (M, TILE_V) - Padded to power of two
+    H_current,    # (M, TILE_N) 
+    H_next,       # (M, TILE_N) 
+    Logits,       # (M, TILE_V) 
     Active_Mask,  # (M, 1)
     Steps_Taken,  # (M, 1)
     Threshold: float,
@@ -78,37 +78,32 @@ def looplm_halt_update_kernel(
     TILE_SIZE_V: ConstInt
 ):
     bid = ct.bid(0)
-    h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
-    h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
-    mask = ct.load(Active_Mask, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
-    steps = ct.load(Steps_Taken, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
+    # Restore to tile-based indexing: (bid, 0)
+    h_curr = ct.load(H_current, index=(bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
+    h_next = ct.load(H_next, index=(bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
+    mask = ct.load(Active_Mask, index=(bid, 0), shape=(TILE_SIZE_M, 1))
+    steps = ct.load(Steps_Taken, index=(bid, 0), shape=(TILE_SIZE_M, 1))
     
-    # Load padded logits. Padding with -inf is assumed for correct max/sum.
-    logits = ct.load(Logits, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_V), padding_mode=ct.PaddingMode.ZERO)
+    # Load padded logits using tile index
+    logits = ct.load(Logits, index=(bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_V), padding_mode=ct.PaddingMode.ZERO)
     
     # 1. Calculate Actual Max Probability
-    # max_prob = exp(max_logit - max_logit) / sum(exp(logits - max_logit))
-    #          = 1 / sum(exp(logits - max_logit))
     max_logit = ct.max(logits, axis=1, keepdims=True)
     logits_centered = logits - max_logit
-    # Use natural exp for standard softmax comparison
     exp_logits = ct.exp(logits_centered)
     sum_exp = ct.sum(exp_logits, axis=1, keepdims=True)
     max_prob = 1.0 / sum_exp
     
     # 2. Determine Activation Status
     was_active = mask > 0.5
-    # If prob < threshold, we want to stay active for the NEXT step.
     is_active_next = (max_prob < Threshold) & was_active
     
-    # 3. Update State and Metrics
-    # If we WERE active this step, we MUST take the h_next result.
+    # 3. Update State and Metrics (Correct State Persistence)
     h_updated = ct.where(was_active, h_next, h_curr)
     mask_updated = ct.astype(is_active_next, ct.float32)
-    # Increment steps for tokens that were active during THIS iteration
     steps_updated = steps + ct.astype(was_active, ct.int32)
     
-    # 4. Store back
-    ct.store(H_current, index=(bid * TILE_SIZE_M, 0), tile=h_updated)
-    ct.store(Active_Mask, index=(bid * TILE_SIZE_M, 0), tile=mask_updated)
-    ct.store(Steps_Taken, index=(bid * TILE_SIZE_M, 0), tile=steps_updated)
+    # 4. Store back using tile index
+    ct.store(H_current, index=(bid, 0), tile=h_updated)
+    ct.store(Active_Mask, index=(bid, 0), tile=mask_updated)
+    ct.store(Steps_Taken, index=(bid, 0), tile=steps_updated)
