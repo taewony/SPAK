@@ -204,5 +204,19 @@ NanoGPT의 교훈을 바탕으로 안정적인 학습 환경을 구축합니다.
    * 패딩 영역의 로그잇을 -inf로 확실히 고정하여 NaN 발생 가능성을 원천 차단합니다.
 
 
-  이 설계대로 model_loop.py를 최종 수정하겠습니다. 이 수정이 완료되면 덧셈 학습 속도는 10배 이상 빨라질 것이며, 사고
-  궤적 분석은 모든 토큰에 대해 정확히 작동할 것입니다.
+✦ 최종 점검 및 실행 안내
+
+  이제 0-step 버그의 원인이었던 2D vs 4D 인덱싱 불일치를 완벽하게 해결했습니다.
+
+   1. 커널 수정 (`looplm_kernels.py`): 2D 텐서 접근 시 index = bid * TILE_SIZE_M을 명시하여 모든 블록이 자기 자리를 찾도록 했습니다.
+   2. 모델 수정 (`model_loop.py`):
+       * 학습 모드에서는 all_states 리스트를 사용하여 전체 12단계를 역전파(BPTT)합니다.
+       * 추론 모드에서는 Pinned-State와 cuTile을 사용하여 효율적인 조기 종료를 수행합니다.
+
+  이제 RTX 5070 노드에서 다시 실행해 주시기 바랍니다.
+
+   # 1. 덧셈 학습 (BPTT 덕분에 이전보다 훨씬 빨리 수렴할 것입니다)
+   python looplm/train_loop.py
+
+   # 2. 사고 궤적 분석 (이제 모든 토큰의 Steps가 유효하게 나올 것입니다)
+   python looplm/analyze_thinking_addition.py

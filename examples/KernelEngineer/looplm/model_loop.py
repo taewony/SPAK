@@ -5,7 +5,7 @@ from torch.nn import functional as F
 from dataclasses import dataclass
 import cuda.tile as ct
 
-# Reuse shared logic from standard model
+# Reuse shared logic
 from model import Block, LayerNorm, GPTConfig
 from looplm_kernels import looplm_halt_update_kernel
 
@@ -83,8 +83,7 @@ class LoopGPT(nn.Module):
                 logits = all_logits[-1]
                 loss = None
             
-            dummy_steps = torch.zeros((b, t), device=device, dtype=torch.int32)
-            return logits, loss, dummy_steps
+            return logits, loss, torch.zeros((b, t), device=device, dtype=torch.int32)
 
         # --- Inference Mode (Pinned-State cuTile Optimization) ---
         else:
@@ -93,18 +92,17 @@ class LoopGPT(nn.Module):
             tile_n = next_pow2(N)
             tile_v = next_pow2(V)
 
-            # Permanent Buffers
+            # Permanent State Buffers
             h_state_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             h_state_padded[:M, :N] = x0.view(M, N)
-            
             active_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
-            active_mask[:M, 0] = 1.0 # Only real tokens start active
-            
+            active_mask[:M, 0] = 1.0 
             steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
             
             x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             x0_padded[:M, :N] = x0.view(M, N)
 
+            # Auxiliary Buffers
             h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
 
@@ -131,6 +129,7 @@ class LoopGPT(nn.Module):
                         logits_padded[:M, :V] = logits_step.view(M, V)
                         h_next_padded[:M, :N] = h_next_flat
                         
+                        # Use explicit M_padded grid
                         grid_x = M_padded // tile_size_m
                         ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
                                  (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 

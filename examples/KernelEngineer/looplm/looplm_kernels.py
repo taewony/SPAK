@@ -8,12 +8,12 @@ ConstInt = ct.Constant[int]
 ConstBool = ct.Constant[bool]
 
 # ============================================================
-# 1. LoopLM Optimized Attention Kernel (with X0 & Stability)
+# 1. LoopLM Optimized Attention Kernel (4D Tiling Law)
 # ============================================================
 
 @ct.kernel(occupancy=2)
 def looplm_attention_kernel(
-    Q, K, V, Out, X0, 
+    Q, K, V, Out,
     qk_scale_log2: float, neg_inf: float,
     TILE_D: ConstInt, H: ConstInt,
     TILE_M: ConstInt, TILE_N: ConstInt,
@@ -29,16 +29,16 @@ def looplm_attention_kernel(
     offs_m = bid_x * TILE_M + ct.arange(TILE_M, dtype=ct.int32)[:, None]
     offs_n_tile = ct.arange(TILE_N, dtype=ct.int32)[None, :]
 
-    # Rule: Inject X0 Residue (Inlined in Load/Update if needed)
-    # Here we load Q and X0. In LoopLM, we often do h = h + LN(x0) before attn.
-    q = ct.load(Q, index=(batch_idx, head_idx, bid_x * TILE_M, 0), shape=(1, 1, TILE_M, TILE_D), padding_mode=ct.PaddingMode.ZERO).reshape((TILE_M, TILE_D))
+    # 4D LAW: index uses tile-unit (bid_x)
+    q = ct.load(Q, index=(batch_idx, head_idx, bid_x, 0), shape=(1, 1, TILE_M, TILE_D), padding_mode=ct.PaddingMode.ZERO).reshape((TILE_M, TILE_D))
     
     k_seqlen = K.shape[2]
     m_end = (bid_x + 1) * TILE_M
     Tc = ct.cdiv(min(m_end, k_seqlen), TILE_N)
 
     for j in range(0, Tc):
-        k = ct.load(K, index=(batch_idx, head_idx, 0, j * TILE_N), shape=(1, 1, TILE_D, TILE_N), order=(0,1,3,2), latency=K_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_D, TILE_N))
+        # 4D LAW: index uses tile-unit (j)
+        k = ct.load(K, index=(batch_idx, head_idx, 0, j), shape=(1, 1, TILE_D, TILE_N), order=(0,1,3,2), latency=K_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_D, TILE_N))
         qk = ct.full((TILE_M, TILE_N), 0.0, dtype=ct.float32)
         qk = ct.mma(q, k, qk)
 
@@ -54,22 +54,24 @@ def looplm_attention_kernel(
         l_i = l_i * alpha + l_ij
         acc = acc * alpha
 
-        v = ct.load(V, index=(batch_idx, head_idx, j * TILE_N, 0), shape=(1, 1, TILE_N, TILE_D), latency=V_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_N, TILE_D))
+        # 4D LAW: index uses tile-unit (j)
+        v = ct.load(V, index=(batch_idx, head_idx, j, 0), shape=(1, 1, TILE_N, TILE_D), latency=V_LAT, padding_mode=ct.PaddingMode.ZERO).reshape((TILE_N, TILE_D))
         acc = ct.mma(p.astype(Q.dtype), v, acc)
         m_i = m_ij
 
     acc = ct.truediv(acc, l_i)
-    ct.store(Out, index=(batch_idx, head_idx, bid_x * TILE_M, 0), tile=acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype))
+    # 4D LAW: index uses tile-unit (bid_x)
+    ct.store(Out, index=(batch_idx, head_idx, bid_x, 0), tile=acc.reshape((1, 1, TILE_M, TILE_D)).astype(Out.dtype))
 
 # ============================================================
-# 2. LoopLM Halting & State Update Kernel (Phase 2 Core)
+# 2. LoopLM Halting Kernel (2D Offset Law)
 # ============================================================
 
 @ct.kernel
 def looplm_halt_update_kernel(
-    H_current,    # (M, TILE_N) 
-    H_next,       # (M, TILE_N) 
-    Logits,       # (M, TILE_V) 
+    H_current,    # (M, TILE_N)
+    H_next,       # (M, TILE_N)
+    Logits,       # (M, TILE_V)
     Active_Mask,  # (M, 1)
     Steps_Taken,  # (M, 1)
     Threshold: float,
@@ -78,32 +80,29 @@ def looplm_halt_update_kernel(
     TILE_SIZE_V: ConstInt
 ):
     bid = ct.bid(0)
-    # Restore to tile-based indexing: (bid, 0)
-    h_curr = ct.load(H_current, index=(bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
-    h_next = ct.load(H_next, index=(bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
-    mask = ct.load(Active_Mask, index=(bid, 0), shape=(TILE_SIZE_M, 1))
-    steps = ct.load(Steps_Taken, index=(bid, 0), shape=(TILE_SIZE_M, 1))
+    # 2D LAW: index must use EXPLICIT ELEMENT OFFSET (bid * TILE_SIZE_M)
+    # This is because these tensors are treated as flat row-major pools
+    h_curr = ct.load(H_current, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
+    h_next = ct.load(H_next, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_N))
+    mask = ct.load(Active_Mask, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
+    steps = ct.load(Steps_Taken, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, 1))
     
-    # Load padded logits using tile index
-    logits = ct.load(Logits, index=(bid, 0), shape=(TILE_SIZE_M, TILE_SIZE_V), padding_mode=ct.PaddingMode.ZERO)
+    logits = ct.load(Logits, index=(bid * TILE_SIZE_M, 0), shape=(TILE_SIZE_M, TILE_SIZE_V), padding_mode=ct.PaddingMode.ZERO)
     
-    # 1. Calculate Actual Max Probability
+    # Calculate Max Probability correctly
     max_logit = ct.max(logits, axis=1, keepdims=True)
-    logits_centered = logits - max_logit
-    exp_logits = ct.exp(logits_centered)
+    exp_logits = ct.exp(logits - max_logit)
     sum_exp = ct.sum(exp_logits, axis=1, keepdims=True)
     max_prob = 1.0 / sum_exp
     
-    # 2. Determine Activation Status
     was_active = mask > 0.5
     is_active_next = (max_prob < Threshold) & was_active
     
-    # 3. Update State and Metrics (Correct State Persistence)
+    # Update and Store
     h_updated = ct.where(was_active, h_next, h_curr)
     mask_updated = ct.astype(is_active_next, ct.float32)
     steps_updated = steps + ct.astype(was_active, ct.int32)
     
-    # 4. Store back using tile index
-    ct.store(H_current, index=(bid, 0), tile=h_updated)
-    ct.store(Active_Mask, index=(bid, 0), tile=mask_updated)
-    ct.store(Steps_Taken, index=(bid, 0), tile=steps_updated)
+    ct.store(H_current, index=(bid * TILE_SIZE_M, 0), tile=h_updated)
+    ct.store(Active_Mask, index=(bid * TILE_SIZE_M, 0), tile=mask_updated)
+    ct.store(Steps_Taken, index=(bid * TILE_SIZE_M, 0), tile=steps_updated)
