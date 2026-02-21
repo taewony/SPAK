@@ -1,19 +1,8 @@
-python addition_prepare.py
-Dataset size: 502672 chars
-Vocab size: 12, chars: +0123456789=
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ gedit train_loop.py
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python train_loop.py
-No previous checkpoint found. Starting from scratch.
-Starting LoopLM Training on addition...
-Config: 12 loops over 1 layer block
+python train_loop.py
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 151, in <module>
-    losses = estimate_loss()
-             ^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 123, in estimate_loss
-    _, loss = model(X, Y)
-    ^^^^^^^
-ValueError: too many values to unpack (expected 2)
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 8, in <module>
+    from model_loop import LoopGPT
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/model_loop.py", line 117
+    for l in range(loops):
+                          ^
+IndentationError: expected an indented block after 'for' statement on line 117

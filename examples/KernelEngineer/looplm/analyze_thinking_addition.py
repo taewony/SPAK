@@ -49,8 +49,7 @@ def analyze_thinking_addition():
     text = "123+456="
     x = torch.tensor([stoi[c] for c in text if c in stoi], dtype=torch.long, device=device)[None, ...]
     
-    print("
---- Phase 2: Thinking Trace Analysis (ADDITION) ---")
+    print("--- Phase 2: Thinking Trace Analysis (ADDITION) ---")
     print(f"Checkpoint: {ckpt_path}")
     print(f"Input: '{text}'")
     print("Confidence Threshold: 0.9")
@@ -62,8 +61,7 @@ def analyze_thinking_addition():
     steps = steps[0].cpu().numpy()
     chars = [c for c in text if c in stoi]
     
-    print("
-Token-wise Reasoning Depth (Addition carry logic):")
+    print("Token-wise Reasoning Depth (Addition carry logic):")
     print("Char | Steps | Visual")
     print("-" * 30)
     for c, s in zip(chars, steps):
@@ -71,8 +69,7 @@ Token-wise Reasoning Depth (Addition carry logic):")
         print(f" '{c}'  |  {s:2d}   | {visual}")
 
     avg_depth = steps.mean()
-    print(f"
-Average Reasoning Depth: {avg_depth:.2f} iterations")
+    print(f"Average Reasoning Depth: {avg_depth:.2f} iterations")
     print(f"Theoretical Efficiency Gain: {((12 - avg_depth)/12)*100:.1f}%")
 
 if __name__ == "__main__":
