@@ -43,6 +43,7 @@ def analyze_thinking():
 
     # Test phrase
     text = "To be, or not to be, that is the question"
+    print(text)
     x = torch.tensor([stoi[c] for c in text if c in stoi], dtype=torch.long, device=device)[None, ...]
     
     print("--- Phase 2: Thinking Trace Analysis ---")
