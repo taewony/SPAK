@@ -53,10 +53,7 @@ class LoopGPT(nn.Module):
         pos_emb = self.transformer.wpe(pos)
         x0 = self.transformer.drop(tok_emb + pos_emb)
         
-        h = x0
-        loops = num_loops if num_loops is not None else self.num_loops
-        
-        # 1. Determine Padded Shapes (M and N/V)
+        # 1. Permanent State Setup (Pre-padded for the entire loop)
         tile_size_m = 4
         M_padded = math.ceil(M / tile_size_m) * tile_size_m
         N = self.config.n_embd
@@ -64,62 +61,71 @@ class LoopGPT(nn.Module):
         tile_n = next_pow2(N)
         tile_v = next_pow2(V)
 
-        # 2. Initialize State Tensors with M-padding
-        active_mask = torch.ones((M_padded, 1), device=device, dtype=torch.float32)
-        # Fix: Zero out padding rows in active_mask immediately
-        real_tokens_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
-        real_tokens_mask[:M, 0] = 1.0
-        active_mask = active_mask * real_tokens_mask
+        # Create persistent buffers that will stay in memory
+        h_state_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
+        # Initialize with x0
+        h_state_padded[:M, :N] = x0.view(M, N)
+        
+        active_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
+        active_mask[:M, 0] = 1.0 # Only real tokens start active
         
         steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
         
+        # We also need a persistent x0 for injection
+        x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
+        x0_padded[:M, :N] = x0.view(M, N)
+        
+        loops = num_loops if num_loops is not None else self.num_loops
+        
         for l in range(loops):
+            # Check for global halt
             if not self.training and halt_threshold is not None:
-                # Use the mask to check only real tokens
-                if not (active_mask[:M] > 0.5).any(): 
-                    break
-                
-            h_input = h + x0 
+                if not (active_mask > 0.5).any(): break
+            
+            # Extract current state for the shared block
+            h_current = h_state_padded[:M, :N].view(b, t, N)
+            x0_current = x0_padded[:M, :N].view(b, t, N)
+            
+            # Update Step: h = h + x0 + step_enc
+            h_input = h_current + x0_current
             step_enc = self.step_embedding(torch.tensor([l], device=device))
             h_input = h_input + step_enc
             
+            # Shared Transformer Block
             h_next = self.transformer.h(h_input)
+            h_next_flat = h_next.view(M, N)
             
+            # cuTile Halt & Update Kernel
             if halt_threshold is not None and not self.training:
                 with torch.no_grad():
-                    # Flatten and M-Pad states
-                    h_flat = h.view(M, N)
-                    h_next_flat = h_next.view(M, N)
-                    h_padded = F.pad(h_flat, (0, tile_n - N, 0, M_padded - M))
-                    h_next_padded = F.pad(h_next_flat, (0, tile_n - N, 0, M_padded - M))
-                    
-                    # Compute and pad logits
+                    # Temporary Logits for decision
                     logits_step = self.lm_head(self.transformer.ln_f(h_next))
-                    logits_flat = logits_step.view(M, V)
-                    logits_padded = F.pad(logits_flat, (0, tile_v - V, 0, M_padded - M), value=-float('inf'))
+                    logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=logits_step.dtype)
+                    logits_padded[:M, :V] = logits_step.view(M, V)
                     
-                    # 3. Launch cuTile Kernel
+                    # h_next must also be padded to match kernel's TILE_SIZE_N
+                    h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=h_next.dtype)
+                    h_next_padded[:M, :N] = h_next_flat
+                    
+                    # Launch: Kernels update h_state_padded, active_mask, and steps_taken IN-PLACE
                     grid = (M_padded // tile_size_m,)
                     ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
-                             (h_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
+                             (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                               halt_threshold, tile_size_m, tile_n, tile_v))
-                    
-                    # Fix: Re-apply real_tokens_mask to active_mask to keep padding silent
-                    active_mask = active_mask * real_tokens_mask
-                    
-                    # 4. Unpad and Update
-                    h = h_padded[:M, :N].view(b, t, -1)
             else:
-                h = h_next
-                # Fix: Only increment steps for real tokens
-                steps_taken = steps_taken + (active_mask * real_tokens_mask).int()
+                # Training or Fixed Loop mode
+                h_state_padded[:M, :N] = h_next_flat
+                steps_taken[:M] += active_mask[:M].int()
             
-        h = self.transformer.ln_f(h)
+        # Final Readout
+        h_final = h_state_padded[:M, :N].view(b, t, N)
+        h_final = self.transformer.ln_f(h_final)
+        
         if targets is not None:
-            logits = self.lm_head(h)
+            logits = self.lm_head(h_final)
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         else:
-            logits = self.lm_head(h[:, [-1], :])
+            logits = self.lm_head(h_final[:, [-1], :])
             loss = None
 
         return logits, loss, steps_taken[:M].view(b, t)
