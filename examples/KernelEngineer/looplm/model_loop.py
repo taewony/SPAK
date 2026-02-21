@@ -9,6 +9,9 @@ import cuda.tile as ct
 from model import Block, LayerNorm, GPTConfig
 from looplm_kernels import looplm_halt_update_kernel
 
+def next_pow2(n):
+    return 2**(n - 1).bit_length()
+
 class LoopGPT(nn.Module):
     def __init__(self, config, num_loops=12):
         super().__init__()
@@ -72,20 +75,34 @@ class LoopGPT(nn.Module):
             # Phase 2: cuTile Halt Update Kernel (Inference only)
             if halt_threshold is not None and not self.training:
                 with torch.no_grad():
-                    h_flat = h.view(-1, self.config.n_embd)
-                    h_next_flat = h_next.view(-1, self.config.n_embd)
+                    # 1. Determine Power-of-Two Shapes
+                    N = self.config.n_embd
+                    V = self.config.vocab_size
+                    tile_n = next_pow2(N)
+                    tile_v = next_pow2(V)
+                    
+                    # 2. Flatten and Pad
+                    h_flat = h.view(-1, N)
+                    h_next_flat = h_next.view(-1, N)
                     
                     # Compute logits temporarily for halting decision
                     logits_step = self.lm_head(self.transformer.ln_f(h_next))
-                    logits_flat = logits_step.view(-1, self.config.vocab_size)
+                    logits_flat = logits_step.view(-1, V)
                     
-                    # Launch cuTile Kernel for Atomic Halt & Update
+                    # Pad to Power-of-Two
+                    h_padded = F.pad(h_flat, (0, tile_n - N))
+                    h_next_padded = F.pad(h_next_flat, (0, tile_n - N))
+                    # Pad logits with -inf so max() correctly identifies valid confidence
+                    logits_padded = F.pad(logits_flat, (0, tile_v - V), value=-float('inf'))
+                    
+                    # 3. Launch cuTile Kernel for Atomic Halt & Update
                     grid = ( (b * t + 3) // 4, ) # TILE_M=4
                     ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
-                             (h_flat, h_next_flat, logits_flat, active_mask, steps_taken, 
-                              halt_threshold, 4, self.config.n_embd, self.config.vocab_size))
+                             (h_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
+                              halt_threshold, 4, tile_n, tile_v))
                     
-                    h = h_flat.view(b, t, -1)
+                    # 4. Unpad and Update
+                    h = h_padded[:, :N].view(b, t, -1)
             else:
                 h = h_next
                 steps_taken += 1
