@@ -77,41 +77,62 @@ class LoopGPT(nn.Module):
         logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
         
         loops = num_loops if num_loops is not None else self.num_loops
+        all_logits = [] 
         
-        # Training Mode: Trajectory List for Full BPTT
-        if self.training:
-            all_states = [h]
-            for l in range(loops):
-                h_current = all_states[-1]
-                
-                # Rule: Inject X0 Residue + Step Encoding
-                h_input = h_current + x0
-                step_enc = self.step_embedding(torch.tensor([l], device=device))
-                h_input = h_input + step_enc
-                
-                # Shared Transformer Block
-                h_next = self.transformer.h(h_input)
-                all_states.append(h_next)
+        for l in range(loops):
+            if not self.training and halt_threshold is not None:
+                if not (active_mask[:M] > 0.5).any(): break
             
-            # Final Readout from all steps for supervision
-            all_logits = []
-            for state in all_states[1:]: # Skip initial x0 state
-                h_out = self.transformer.ln_f(state)
-                all_logits.append(self.lm_head(h_out))
+            h_current = h_state_padded[:M, :N].view(b, t, N)
+            x0_current = x0_padded[:M, :N].view(b, t, N)
+            
+            # Update Step
+            h_input = h_current + x0_current
+            step_enc = self.step_embedding(torch.tensor([l], device=device))
+            h_input = h_input + step_enc
+            
+            h_next = self.transformer.h(h_input)
+            h_next_flat = h_next.view(M, N)
+            
+            if not self.training and halt_threshold is not None:
+                with torch.no_grad():
+                    h_next_padded.zero_()
+                    logits_padded.fill_(-float('inf'))
+                    
+                    logits_step = self.lm_head(self.transformer.ln_f(h_next))
+                    logits_padded[:M, :V] = logits_step.view(M, V)
+                    h_next_padded[:M, :N] = h_next_flat
+                    
+                    # Launch Kernel with explicit M_padded grid
+                    grid_x = M_padded // tile_size_m
+                    ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
+                             (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
+                              halt_threshold, tile_size_m, tile_n, tile_v))
+            else:
+                # Update logic for Training or Fixed-loop inference
+                # During training, we bypass the halting kernel to maintain Autograd graph
+                h_state_padded[:M, :N] = h_next_flat
+                steps_taken[:M] += 1
                 
-            if targets is not None:
-                # Mean loss over all time steps (Strong Supervision)
+                if self.training:
+                    logits_l = self.lm_head(self.transformer.ln_f(h_next))
+                    all_logits.append(logits_l)
+            
+        # Final Readout
+        h_final = h_state_padded[:M, :N].view(b, t, N)
+        h_final = self.transformer.ln_f(h_final)
+        
+        if targets is not None:
+            if len(all_logits) > 0:
+                # Multi-step Supervision: loss across all iterations
                 losses = [F.cross_entropy(lg.view(-1, V), targets.view(-1), ignore_index=-1) for lg in all_logits]
                 loss = torch.stack(losses).mean()
-                logits = all_logits[-1] # Return last logits for metrics
             else:
-                logits = all_logits[-1]
-                loss = None
-                
-            # Dummy steps for training return signature
-            return logits, loss, torch.zeros_like(active_mask).view(b, t)
-
-        # Inference Mode: Pinned State Optimization (cuTile)
+                logits = self.lm_head(h_final)
+                loss = F.cross_entropy(logits.view(-1, V), targets.view(-1), ignore_index=-1)
+            logits = self.lm_head(h_final) 
         else:
-            # ... (Existing Pinned State Logic for Inference) ...
-            for l in range(loops):
+            logits = self.lm_head(h_final[:, [-1], :])
+            loss = None
+
+        return logits, loss, steps_taken[:M].view(b, t)
