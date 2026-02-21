@@ -53,7 +53,7 @@ class LoopGPT(nn.Module):
         pos_emb = self.transformer.wpe(pos)
         x0 = self.transformer.drop(tok_emb + pos_emb)
         
-        # 1. Permanent State Setup (Pre-padded for the entire loop)
+        # 1. Pinned State Setup (Architecture-level Fix)
         tile_size_m = 4
         M_padded = math.ceil(M / tile_size_m) * tile_size_m
         N = self.config.n_embd
@@ -72,11 +72,12 @@ class LoopGPT(nn.Module):
         x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
         x0_padded[:M, :N] = x0.view(M, N)
 
-        # Auxiliary Pinned Buffers (Zero Allocator overhead in loop)
+        # Auxiliary Pinned Buffers
         h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
         logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
         
         loops = num_loops if num_loops is not None else self.num_loops
+        all_logits = [] 
         
         for l in range(loops):
             if not self.training and halt_threshold is not None:
@@ -85,6 +86,7 @@ class LoopGPT(nn.Module):
             h_current = h_state_padded[:M, :N].view(b, t, N)
             x0_current = x0_padded[:M, :N].view(b, t, N)
             
+            # Update Step
             h_input = h_current + x0_current
             step_enc = self.step_embedding(torch.tensor([l], device=device))
             h_input = h_input + step_enc
@@ -92,34 +94,43 @@ class LoopGPT(nn.Module):
             h_next = self.transformer.h(h_input)
             h_next_flat = h_next.view(M, N)
             
-            if halt_threshold is not None and not self.training:
+            if not self.training and halt_threshold is not None:
                 with torch.no_grad():
-                    # 2. In-place reset of pinned buffers
                     h_next_padded.zero_()
                     logits_padded.fill_(-float('inf'))
                     
-                    # 3. Fast projection and population
                     logits_step = self.lm_head(self.transformer.ln_f(h_next))
                     logits_padded[:M, :V] = logits_step.view(M, V)
                     h_next_padded[:M, :N] = h_next_flat
                     
-                    # 4. Launch cuTile Kernel (In-place update of main states)
-                    grid = (M_padded // tile_size_m,)
-                    ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
+                    # Launch Kernel with explicit M_padded grid
+                    grid_x = M_padded // tile_size_m
+                    ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
                              (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                               halt_threshold, tile_size_m, tile_n, tile_v))
             else:
-                # Training or Fixed Loop mode
+                # Update logic for Training or Fixed-loop inference
+                # During training, we bypass the halting kernel to maintain Autograd graph
                 h_state_padded[:M, :N] = h_next_flat
-                steps_taken[:M] += active_mask[:M].int()
+                steps_taken[:M] += 1
+                
+                if self.training:
+                    logits_l = self.lm_head(self.transformer.ln_f(h_next))
+                    all_logits.append(logits_l)
             
         # Final Readout
         h_final = h_state_padded[:M, :N].view(b, t, N)
         h_final = self.transformer.ln_f(h_final)
         
         if targets is not None:
-            logits = self.lm_head(h_final)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
+            if len(all_logits) > 0:
+                # Multi-step Supervision: loss across all iterations
+                losses = [F.cross_entropy(lg.view(-1, V), targets.view(-1), ignore_index=-1) for lg in all_logits]
+                loss = torch.stack(losses).mean()
+            else:
+                logits = self.lm_head(h_final)
+                loss = F.cross_entropy(logits.view(-1, V), targets.view(-1), ignore_index=-1)
+            logits = self.lm_head(h_final) 
         else:
             logits = self.lm_head(h_final[:, [-1], :])
             loss = None
