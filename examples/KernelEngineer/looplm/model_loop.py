@@ -61,57 +61,56 @@ class LoopGPT(nn.Module):
         tile_n = next_pow2(N)
         tile_v = next_pow2(V)
 
-        # Create persistent buffers that will stay in memory
+        # Main State Buffers
         h_state_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
-        # Initialize with x0
         h_state_padded[:M, :N] = x0.view(M, N)
-        
         active_mask = torch.zeros((M_padded, 1), device=device, dtype=torch.float32)
-        active_mask[:M, 0] = 1.0 # Only real tokens start active
-        
+        active_mask[:M, 0] = 1.0 
         steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
         
-        # We also need a persistent x0 for injection
+        # Persistent X0 for Injection
         x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
         x0_padded[:M, :N] = x0.view(M, N)
+
+        # Auxiliary Pinned Buffers (Zero Allocator overhead in loop)
+        h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
+        logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
         
         loops = num_loops if num_loops is not None else self.num_loops
         
         for l in range(loops):
-            # Check for global halt
             if not self.training and halt_threshold is not None:
-                if not (active_mask > 0.5).any(): break
+                if not (active_mask[:M] > 0.5).any(): break
             
-            # Extract current state for the shared block
             h_current = h_state_padded[:M, :N].view(b, t, N)
             x0_current = x0_padded[:M, :N].view(b, t, N)
             
-            # Update Step: h = h + x0 + step_enc
             h_input = h_current + x0_current
             step_enc = self.step_embedding(torch.tensor([l], device=device))
             h_input = h_input + step_enc
             
-            # Shared Transformer Block
             h_next = self.transformer.h(h_input)
             h_next_flat = h_next.view(M, N)
             
-            # cuTile Halt & Update Kernel
             if halt_threshold is not None and not self.training:
                 with torch.no_grad():
-                    # Temporary Logits for decision
-                    logits_step = self.lm_head(self.transformer.ln_f(h_next))
-                    logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=logits_step.dtype)
-                    logits_padded[:M, :V] = logits_step.view(M, V)
+                    # 2. In-place reset of pinned buffers
+                    h_next_padded.zero_()
+                    logits_padded.fill_(-float('inf'))
                     
-                    # h_next must also be padded to match kernel's TILE_SIZE_N
-                    h_next_padded = torch.zeros((M_padded, tile_n), device=device, dtype=h_next.dtype)
+                    # 3. Fast projection and population
+                    logits_step = self.lm_head(self.transformer.ln_f(h_next))
+                    logits_padded[:M, :V] = logits_step.view(M, V)
                     h_next_padded[:M, :N] = h_next_flat
                     
-                    # Launch: Kernels update h_state_padded, active_mask, and steps_taken IN-PLACE
+                    # 4. Launch cuTile Kernel (In-place update of main states)
                     grid = (M_padded // tile_size_m,)
                     ct.launch(torch.cuda.current_stream(), grid, looplm_halt_update_kernel,
                              (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                               halt_threshold, tile_size_m, tile_n, tile_v))
+            else:
+                h_state_padded[:M, :N] = h_next_flat
+                steps_taken[:M] += active_mask[:M].int()
             else:
                 # Training or Fixed Loop mode
                 h_state_padded[:M, :N] = h_next_flat
