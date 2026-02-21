@@ -1,0 +1,8 @@
+ython test_loop_parity.py
+Testing LoopLM Structural Integrity...
+  Logits shape: torch.Size([1, 1, 65])
+  Structural Integrity [PASS]
+Testing 1-step LoopLM vs 1-layer GPT...
+number of parameters: 1.80M
+  1-step Max Diff: 1.471181e+00
+  Note: 1-step diff is expected due to X0 injection rule.

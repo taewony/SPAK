@@ -125,11 +125,7 @@ while not exit:
 
 즉
 
-* 모델 크기 대신
-* 반복 계산을 통해
-* 점진적으로 상태를 정제(refinement)
-
-이건 사실상 **neural iterative inference** 입니다.
+* 모델 크기 대신, 반복 계산을 통해 점진적으로 상태를 정제(refinement), **neural iterative inference**.
 
 ---
 
@@ -175,36 +171,27 @@ LLM loop → 추론 시 recurrence
 # 3. Exit 조건이 생기면 뭐가 달라지나
 
 여기서 핵심이 나옵니다.
-
 모델이 “얼마나 생각할지” 결정 가능해집니다.
-
 즉:
-
 > difficulty dependent compute
-
 쉬운 문제 → 1 step
 어려운 문제 → 30 step
 
 ---
 
 ## 결과: 능력 변화
-
 ### 1) 추론 능력 상승 (reasoning depth 증가)
 
 작은 모델도 복잡한 문제를 풉니다.
-
 왜냐하면:
-
 Transformer는 본질적으로 shallow circuit
 Loop는 deep circuit
 
 즉:
-
 ```
 단일 호출 = 1-layer 사고
 loop 호출 = multi-step 사고
 ```
-
 → algorithmic reasoning 가능
 
 ---
@@ -214,13 +201,11 @@ loop 호출 = multi-step 사고
 한 번에 답을 맞추는 모델은 패턴 매칭에 가깝고
 loop는 **계산 과정 자체를 구성**합니다.
 
-그래서:
+그래서 아래 성능이 급증합니다.
 
 * arithmetic
 * planning
 * symbolic reasoning
-
-성능이 급증합니다.
 
 ---
 
@@ -229,17 +214,14 @@ loop는 **계산 과정 자체를 구성**합니다.
 매우 중요한 부분입니다.
 
 큰 모델:
-
 > memorization 필요
 
 loop 모델:
-
 > procedure 학습
 
 즉 파라미터 대신 **시간으로 capacity 확보**
 
 이를 계산 이론 관점에서 보면:
-
 | 구조                | 계산 능력                    |
 | ----------------- | ------------------------ |
 | single forward    | bounded circuit          |
@@ -250,11 +232,9 @@ loop 모델:
 # 4. 왜 작은 모델이 강해지나 (핵심 원리)
 
 작은 모델은 원래:
-
 > 한 번에 긴 계산을 표현할 capacity가 부족
 
 하지만 loop를 쓰면:
-
 ```
 복잡한 함수 F(x)
 = 작은 함수 f를 여러 번 합성
@@ -266,14 +246,7 @@ loop 모델:
 F ≈ f ∘ f ∘ f ∘ f ∘ ...
 ```
 
-이건 수학적으로
-
-> 깊이 = 표현력
-
-입니다.
-
-Transformer는 width 기반
-Loop는 depth 기반
+이건 수학적으로 깊이 = 표현력 입니다.
 
 ---
 
@@ -326,10 +299,7 @@ replanning 가능
 # 7. 이걸 한 줄로 정리하면
 
 LLM은 원래 함수 근사기였는데
-
-Loop를 주면
-
-> 과정 생성기(process generator)가 된다
+Loop를 주면, 과정 생성기(process generator)가 된다
 
 즉:
 
@@ -345,11 +315,9 @@ Loop LLM = 사고
 이건 scaling 패러다임 자체를 바꿉니다.
 
 기존:
-
 > intelligence = parameter count
 
 새로운 관점:
-
 > intelligence = adaptive computation
 
 ---
@@ -463,14 +431,6 @@ OOD 훈련 데이터:
 * 핵심은 “작동하는 프레임워크”가 아니라
   → **연구용 실험 커널 구조를 설계하는 것**
 
-즉 PyTorch 대체가 아니라
-
-> LoopLM을 실험하기 위한 최소 학습 OS를 만든다
-
-로 접근해야 한다.
-
-아래는 실제 연구 코드가 무너지지 않게 만드는 **모듈 분해 설계 순서**다.
-
 ---
 
 # 전체 아키텍처 개념
@@ -542,14 +502,11 @@ ops/
 여기서 중요한 점:
 
 LoopLM은 gradient가 시간축으로 누적된다.
-
 따라서 일반 backward가 아니라
-
 ```
 for t=T..1:
     grad_state[t-1] += J_f^T * grad_state[t]
 ```
-
 즉 RNN backward가 가능해야 한다.
 
 ---
@@ -651,7 +608,6 @@ loss/
 # 단계 5 — Dataset (연구용 데이터)
 
 여기서 일반 NLP dataset 쓰면 실패한다.
-
 ```
 dataset/
     addition.py
@@ -661,13 +617,11 @@ dataset/
 ```
 
 각 샘플은:
-
 ```
 (problem, solution_tokens)
 ```
 
-중요:
-sequence length가 아니라 **reasoning depth**가 커지는 문제여야 한다.
+중요: sequence length가 아니라 **reasoning depth**가 커지는 문제여야 한다.
 
 ---
 
@@ -768,12 +722,4 @@ cutile_looplm/
 
 > loop_executor가 곧 모델이다
 
-Transformer는 단순한 연산자고
-지능은 trajectory dynamics에서 나온다.
-
----
-
-원하면
-다음 단계로 “가장 먼저 구현해야 하는 최소 코드 5개 파일”을
-실제 구현 순서 기준으로 구체화해 줄게.
-(이게 시작점이 된다)
+Transformer는 단순한 연산자, LOOPLM 지능은 trajectory dynamics에서 나온다.

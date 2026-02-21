@@ -1,0 +1,26 @@
+step 4750: train loss 0.0876, val loss 3.3556, lr 1.0577e-04
+iter 4750: loss 0.1365, time 2816.68ms
+iter 4760: loss 0.1366, time 200.97ms
+iter 4770: loss 0.1383, time 201.04ms
+iter 4780: loss 0.1331, time 201.05ms
+iter 4790: loss 0.1421, time 201.00ms
+iter 4800: loss 0.1346, time 198.50ms
+iter 4810: loss 0.1310, time 198.40ms
+iter 4820: loss 0.1349, time 198.37ms
+iter 4830: loss 0.1334, time 198.36ms
+iter 4840: loss 0.1332, time 197.90ms
+iter 4850: loss 0.1326, time 197.82ms
+iter 4860: loss 0.1355, time 197.82ms
+iter 4870: loss 0.1304, time 197.95ms
+iter 4880: loss 0.1325, time 201.06ms
+iter 4890: loss 0.1355, time 201.45ms
+iter 4900: loss 0.1238, time 201.44ms
+iter 4910: loss 0.1306, time 368.97ms
+iter 4920: loss 0.1351, time 205.34ms
+iter 4930: loss 0.1315, time 205.77ms
+iter 4940: loss 0.1296, time 205.66ms
+iter 4950: loss 0.1336, time 203.98ms
+iter 4960: loss 0.1326, time 188.97ms
+iter 4970: loss 0.1237, time 189.00ms
+iter 4980: loss 0.1271, time 196.66ms
+iter 4990: loss 0.1318, time 200.62ms
