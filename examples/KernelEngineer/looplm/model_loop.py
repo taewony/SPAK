@@ -60,21 +60,27 @@ class LoopGPT(nn.Module):
 
         # --- Training Mode (Refined for Reasoning) ---
         if self.training:
-            # Trajectory List for full BPTT
             h_curr = h
+            supervised_logits = []
             for l in range(loops):
+                # Persistent Injection: h = Block(h + x0)
+                # (Note: Phase 4 can test removing + x0 for pure dynamics)
                 h_input = h_curr + x0
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
                 h_next = self.transformer.h(h_input + step_enc)
                 h_curr = h_next
-            
-            # Supervise only the FINAL state to allow latent thinking
-            h_final = self.transformer.ln_f(h_curr)
-            logits = self.lm_head(h_final)
+                
+                # Supervise second half for stability
+                if l >= loops // 2:
+                    lg = self.lm_head(self.transformer.ln_f(h_next))
+                    supervised_logits.append(lg)
             
             if targets is not None:
-                loss = F.cross_entropy(logits.view(-1, V), targets.view(-1), ignore_index=-1)
+                losses = [F.cross_entropy(lg.view(-1, V), targets.view(-1), ignore_index=-1) for lg in supervised_logits]
+                loss = torch.stack(losses).mean()
+                logits = supervised_logits[-1]
             else:
+                logits = self.lm_head(self.transformer.ln_f(h_curr))
                 loss = None
             
             return logits, loss, torch.zeros((b, t), device=device, dtype=torch.int32)
@@ -119,9 +125,10 @@ class LoopGPT(nn.Module):
                         h_next_padded[:M, :N] = h_next.view(M, N)
                         
                         grid_x = M_padded // tile_size_m
+                        # Pass actual vocab_size V as REAL_V for internal masking
                         ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
                                  (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
-                                  halt_threshold, tile_size_m, tile_n, tile_v))
+                                  halt_threshold, tile_size_m, tile_n, tile_v, V))
                 else:
                     h_state_padded[:M, :N] = h_next.view(M, N)
                     steps_taken[:M] += 1
