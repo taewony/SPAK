@@ -141,6 +141,12 @@ class LoopGPT(nn.Module):
             
             h_final = h_state_padded[:M, :N].view(b, t, N)
             h_final = self.transformer.ln_f(h_final)
-            logits = self.lm_head(h_final[:, [-1], :])
             
-            return logits, None, steps_taken[:M].view(b, t)
+            if targets is not None:
+                logits = self.lm_head(h_final)
+                loss = F.cross_entropy(logits.view(-1, V), targets.view(-1), ignore_index=-1)
+            else:
+                logits = self.lm_head(h_final[:, [-1], :])
+                loss = None
+            
+            return logits, loss, steps_taken[:M].view(b, t)
