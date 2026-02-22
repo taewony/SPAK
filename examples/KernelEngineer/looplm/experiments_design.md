@@ -17,19 +17,25 @@
 
 ## 3. 평가 메트릭 (Metrics)
 
-### 3.1. Bucketized OOD Accuracy
-- 테스트 데이터를 자릿수별(5, 6, 8, 10, 12)로 분류하여 각 버킷에서의 정답률(Exact Match)을 측정.
-- **Key Insight**: 어떤 지점에서 모델의 논리가 붕괴되는지 파악.
+## 3. 평가 메트릭 (Metrics for Intelligence)
 
-### 3.2. Complexity-Loop Correlation
-- **Baseline**: 모든 문제에 대해 12 레이어 고정 소모.
-- **LoopLM**: 문제의 난이도에 따라 소모된 `Avg Steps` 기록.
-- **상관관계 공식**: $Corr(Digits, Steps)$ 가 1에 가까울수록 지능적임.
+### 3.1. Compute-Efficiency Score (CES)
+- **정의**: $(Accuracy_{OOD} / Total\_FLOPs)$. 
+- **주장**: LoopLM은 표준 GPT와 동일한 최대 연산 기회를 가졌을 때, 실제로는 평균적으로 더 적은 연산을 사용하여 더 높은 정확도를 달성함을 증명.
 
-### 3.3. Generalization Gap
-- $Loss_{train}$ 과 $Accuracy_{OOD}$ 사이의 간격 측정 (Grokking 발현 여부 판단).
+### 3.2. Step-Complexity Elasticity
+- **정의**: 자릿수 증가($\Delta Digits$)에 따른 사고 단계 증가($\Delta Steps$)의 민감도.
+- **Normal vs Reverse**: 
+    - **Normal**: 모든 자릿수에서 Max Steps 소모 (불안으로 인한 연산 포화).
+    - **Reverse**: 자릿수/난이도에 비례하여 Steps가 선형적으로 증가 (지능적 연산 배분).
 
-## 4. 데이터셋 세부 사양 (Data Generation Strategy)
+## 4. 최종 리포트 핵심 Claim: "The Reverse-Adaptive Synergy"
+
+실험 결과가 다음과 같이 나올 경우, 우리는 **"지능형 알고리즘 에이전트"**의 탄생을 선언한다.
+
+1.  **동등 연산 비교**: GPT-12L(85M)의 12층 연산량과 LoopLM(7M)의 평균 12회 루프 연산량이 동일할 때, LoopLM의 OOD 성적이 압도적으로 높음.
+2.  **연산 방향의 기적**: Reverse 데이터셋을 사용할 때만 `Avg Steps`가 난이도에 따라 탄력적으로 변함 (Wait-to-Think의 실질적 발현).
+3.  **파라미터 경제성**: 12배 적은 파라미터로도 시간적 반복을 통해 고차원 논리 구조를 형성함.
 
 Master Report의 신뢰성을 위해 두 가지 서로 다른 논리 구조의 데이터셋을 생성하여 사용한다. 모든 데이터셋은 `Grokking` 유도를 위해 **Bridge Data** 전략을 공통적으로 채택한다.
 

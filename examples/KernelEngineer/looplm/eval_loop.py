@@ -120,7 +120,13 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     
     overall_avg_steps = total_steps / total_tokens_generated if total_tokens_generated > 0 else 0
     print(f"\nOverall OOD Accuracy: {accuracy*100:.2f}%")
-    return {"accuracy": accuracy, "correct": correct, "total": total, "avg_steps": overall_avg_steps}
+    return {
+        "accuracy": accuracy,
+        "correct": correct,
+        "total": total,
+        "avg_steps": overall_avg_steps,
+        "buckets": buckets # Added for Master Report
+    }
 
 if __name__ == "__main__":
     import sys
