@@ -1,13 +1,13 @@
 [
     {
         "experiment": "P4_X0_Baseline",
-        "timestamp": "2026-02-22 15:07:49",
+        "timestamp": "2026-02-22 16:20:16",
         "config": "--n_embd=256 --n_head=4 --num_loops=16 --inject_x0=True --max_iters=5000",
         "ood_metrics": {
-            "accuracy": 0.005,
-            "correct": 1,
-            "total": 200,
-            "avg_steps": 15.960227272727273
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 16.0
         },
         "paths": {
             "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/P4_X0_Baseline/ckpt.pt",
@@ -16,12 +16,12 @@
     },
     {
         "experiment": "P4_Pure_Dynamics",
-        "timestamp": "2026-02-22 15:14:18",
+        "timestamp": "2026-02-22 16:20:25",
         "config": "--n_embd=256 --n_head=4 --num_loops=16 --inject_x0=False --max_iters=5000",
         "ood_metrics": {
             "accuracy": 0.0,
             "correct": 0,
-            "total": 200,
+            "total": 2,
             "avg_steps": 16.0
         },
         "paths": {
@@ -31,12 +31,12 @@
     },
     {
         "experiment": "P4_Deep_Grok",
-        "timestamp": "2026-02-22 15:33:31",
+        "timestamp": "2026-02-22 16:20:38",
         "config": "--n_embd=256 --n_head=4 --num_loops=24 --inject_x0=True --max_iters=10000 --dropout=0.3",
         "ood_metrics": {
-            "accuracy": 0.005,
-            "correct": 1,
-            "total": 200,
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
             "avg_steps": 24.0
         },
         "paths": {
