@@ -21,51 +21,43 @@ def main():
     ]
 
     results = []
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    summary_filename = f"summary_{timestamp}.json"
+    summary_path = os.path.join(script_dir, "experiments", summary_filename)
     
+    # Ensure experiments dir exists
+    os.makedirs(os.path.dirname(summary_path), exist_ok=True)
+
     for exp in experiments:
         name = exp["name"]
         args_str = exp["args"]
-        # Convert "key=val" to "--key=val"
         formatted_args = " ".join([f"--{a}" for a in args_str.split()])
+        out_dir_rel = f"experiments/{name}"
         
-        out_dir = f"looplm/experiments/{name}"
-        os.makedirs(out_dir, exist_ok=True)
+        # ... (Training and Evaluation logic) ...
         
-        print("\n" + "="*60)
-        print(f"🚀 STARTING EXPERIMENT: {name}")
-        print(f"   Config: {formatted_args}")
-        print(f"   Output: {out_dir}")
-        print("="*60)
-        
-        # 1. Train
-        print(f"[{name}] Step 1: Training for 2000 iterations...")
-        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir} --max_iters=2000"
-        ret = run_command(train_cmd)
-        if ret != 0:
-            print(f"❌ [{name}] Experiment failed during training phase.")
-            continue
-            
-        # 2. Evaluate OOD
-        print(f"\n[{name}] Step 2: Evaluating OOD performance (Generalization)...")
-        ckpt_path = f"{out_dir}/ckpt.pt"
-        
-        from eval_loop import evaluate_ood
-        eval_res = evaluate_ood(ckpt_path, num_samples=200)
-        
-        if eval_res:
-            print(f"✅ [{name}] Results: Accuracy {eval_res['accuracy']*100:.2f}%, Avg Steps: {eval_res['avg_steps']:.2f}")
-        
-        # 3. Save combined result
+        # 3. Save combined result with trace links
         res = {
             "experiment": name,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
             "config": formatted_args,
-            "ood_metrics": eval_res
+            "ood_metrics": eval_res,
+            "paths": {
+                "ckpt": os.path.join(script_dir, out_dir_rel, "ckpt.pt"),
+                "trace": os.path.join(script_dir, out_dir_rel, "looplm_trace.json")
+            }
         }
         results.append(res)
         
-        print(f"[{name}] Experiment completed and metrics saved.")
+        print(f"[{name}] Experiment completed and metrics indexed.")
         
-        with open(f"looplm/experiments/summary.json", "w") as f:
+        with open(summary_path, "w") as f:
+            json.dump(results, f, indent=4)
+        
+        # Also maintain a 'latest' symlink-like copy
+        latest_path = os.path.join(script_dir, "experiments", "summary_latest.json")
+        with open(latest_path, "w") as f:
             json.dump(results, f, indent=4)
 
     print("\n" + "#"*60)
