@@ -24,19 +24,22 @@ def main():
     
     for exp in experiments:
         name = exp["name"]
-        args = exp["args"]
+        args_str = exp["args"]
+        # Convert "key=val" to "--key=val"
+        formatted_args = " ".join([f"--{a}" for a in args_str.split()])
+        
         out_dir = f"looplm/experiments/{name}"
         os.makedirs(out_dir, exist_ok=True)
         
         print("\n" + "="*60)
         print(f"🚀 STARTING EXPERIMENT: {name}")
-        print(f"   Config: {args}")
+        print(f"   Config: {formatted_args}")
         print(f"   Output: {out_dir}")
         print("="*60)
         
         # 1. Train
         print(f"[{name}] Step 1: Training for 2000 iterations...")
-        train_cmd = f"python looplm/train_loop.py {args} out_dir={out_dir} max_iters=2000"
+        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir} --max_iters=2000"
         ret = run_command(train_cmd)
         if ret != 0:
             print(f"❌ [{name}] Experiment failed during training phase.")
@@ -55,7 +58,7 @@ def main():
         # 3. Save combined result
         res = {
             "experiment": name,
-            "config": args,
+            "config": formatted_args,
             "ood_metrics": eval_res
         }
         results.append(res)
