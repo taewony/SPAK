@@ -1,0 +1,590 @@
+[
+    {
+        "type": "Convergence",
+        "step": 0,
+        "train_loss": 2.7257697582244873,
+        "val_loss": 2.726762056350708
+    },
+    {
+        "type": "Performance",
+        "step": 0,
+        "loss": 2.7138614654541016,
+        "step_time_ms": 7455.530881881714
+    },
+    {
+        "type": "Performance",
+        "step": 100,
+        "loss": 2.4403152465820312,
+        "step_time_ms": 49.64425563812256
+    },
+    {
+        "type": "Performance",
+        "step": 200,
+        "loss": 2.4384288787841797,
+        "step_time_ms": 50.2640962600708
+    },
+    {
+        "type": "Convergence",
+        "step": 250,
+        "train_loss": 2.402459144592285,
+        "val_loss": 2.401994228363037
+    },
+    {
+        "type": "Performance",
+        "step": 300,
+        "loss": 2.3718631267547607,
+        "step_time_ms": 47.84595966339111
+    },
+    {
+        "type": "Performance",
+        "step": 400,
+        "loss": 2.2572126388549805,
+        "step_time_ms": 45.40238380432129
+    },
+    {
+        "type": "Convergence",
+        "step": 500,
+        "train_loss": 2.053165912628174,
+        "val_loss": 2.0528759956359863
+    },
+    {
+        "type": "Performance",
+        "step": 500,
+        "loss": 2.115457057952881,
+        "step_time_ms": 696.048641204834
+    },
+    {
+        "type": "Performance",
+        "step": 600,
+        "loss": 2.0661187171936035,
+        "step_time_ms": 48.0940580368042
+    },
+    {
+        "type": "Performance",
+        "step": 700,
+        "loss": 2.043954610824585,
+        "step_time_ms": 45.70667743682861
+    },
+    {
+        "type": "Convergence",
+        "step": 750,
+        "train_loss": 1.996213674545288,
+        "val_loss": 1.9959423542022705
+    },
+    {
+        "type": "Performance",
+        "step": 800,
+        "loss": 2.0545554161071777,
+        "step_time_ms": 47.64447212219238
+    },
+    {
+        "type": "Performance",
+        "step": 900,
+        "loss": 2.0193064212799072,
+        "step_time_ms": 48.13437461853027
+    },
+    {
+        "type": "Convergence",
+        "step": 1000,
+        "train_loss": 1.961448311805725,
+        "val_loss": 1.9612902402877808
+    },
+    {
+        "type": "Performance",
+        "step": 1000,
+        "loss": 2.0067996978759766,
+        "step_time_ms": 784.5170021057129
+    },
+    {
+        "type": "Performance",
+        "step": 1100,
+        "loss": 2.006795883178711,
+        "step_time_ms": 47.43330478668213
+    },
+    {
+        "type": "Performance",
+        "step": 1200,
+        "loss": 1.9960508346557617,
+        "step_time_ms": 47.26870059967041
+    },
+    {
+        "type": "Convergence",
+        "step": 1250,
+        "train_loss": 1.9481953382492065,
+        "val_loss": 1.9477899074554443
+    },
+    {
+        "type": "Performance",
+        "step": 1300,
+        "loss": 1.9911830425262451,
+        "step_time_ms": 47.678494453430176
+    },
+    {
+        "type": "Performance",
+        "step": 1400,
+        "loss": 1.993829607963562,
+        "step_time_ms": 47.3874568939209
+    },
+    {
+        "type": "Convergence",
+        "step": 1500,
+        "train_loss": 1.9357479810714722,
+        "val_loss": 1.9352772235870361
+    },
+    {
+        "type": "Performance",
+        "step": 1500,
+        "loss": 1.9862042665481567,
+        "step_time_ms": 744.331169128418
+    },
+    {
+        "type": "Performance",
+        "step": 1600,
+        "loss": 1.9792696237564087,
+        "step_time_ms": 50.07197856903076
+    },
+    {
+        "type": "Performance",
+        "step": 1700,
+        "loss": 1.9840823411941528,
+        "step_time_ms": 50.02262592315674
+    },
+    {
+        "type": "Convergence",
+        "step": 1750,
+        "train_loss": 1.9338864088058472,
+        "val_loss": 1.934024691581726
+    },
+    {
+        "type": "Performance",
+        "step": 1800,
+        "loss": 1.9834625720977783,
+        "step_time_ms": 49.65245723724365
+    },
+    {
+        "type": "Performance",
+        "step": 1900,
+        "loss": 1.9724256992340088,
+        "step_time_ms": 49.463820457458496
+    },
+    {
+        "type": "Convergence",
+        "step": 2000,
+        "train_loss": 1.930861234664917,
+        "val_loss": 1.9306082725524902
+    },
+    {
+        "type": "Performance",
+        "step": 2000,
+        "loss": 1.9759924411773682,
+        "step_time_ms": 721.2415933609009
+    },
+    {
+        "type": "Performance",
+        "step": 2100,
+        "loss": 1.9707834720611572,
+        "step_time_ms": 47.18785285949707
+    },
+    {
+        "type": "Performance",
+        "step": 2200,
+        "loss": 1.9723925590515137,
+        "step_time_ms": 48.418545722961426
+    },
+    {
+        "type": "Convergence",
+        "step": 2250,
+        "train_loss": 1.9324455261230469,
+        "val_loss": 1.9316595792770386
+    },
+    {
+        "type": "Performance",
+        "step": 2300,
+        "loss": 1.9681081771850586,
+        "step_time_ms": 49.985504150390625
+    },
+    {
+        "type": "Performance",
+        "step": 2400,
+        "loss": 1.9742897748947144,
+        "step_time_ms": 46.372342109680176
+    },
+    {
+        "type": "Convergence",
+        "step": 2500,
+        "train_loss": 1.9241020679473877,
+        "val_loss": 1.924047589302063
+    },
+    {
+        "type": "Performance",
+        "step": 2500,
+        "loss": 1.9732435941696167,
+        "step_time_ms": 749.5810270309448
+    },
+    {
+        "type": "Performance",
+        "step": 2600,
+        "loss": 1.9639519453048706,
+        "step_time_ms": 47.988224029541016
+    },
+    {
+        "type": "Performance",
+        "step": 2700,
+        "loss": 1.9714818000793457,
+        "step_time_ms": 47.654080390930176
+    },
+    {
+        "type": "Convergence",
+        "step": 2750,
+        "train_loss": 1.9153600931167603,
+        "val_loss": 1.9153038263320923
+    },
+    {
+        "type": "Performance",
+        "step": 2800,
+        "loss": 1.970327377319336,
+        "step_time_ms": 47.30842113494873
+    },
+    {
+        "type": "Performance",
+        "step": 2900,
+        "loss": 1.9740345478057861,
+        "step_time_ms": 47.423624992370605
+    },
+    {
+        "type": "Convergence",
+        "step": 3000,
+        "train_loss": 1.9173290729522705,
+        "val_loss": 1.917016863822937
+    },
+    {
+        "type": "Performance",
+        "step": 3000,
+        "loss": 1.9592711925506592,
+        "step_time_ms": 721.704626083374
+    },
+    {
+        "type": "Performance",
+        "step": 3100,
+        "loss": 1.9672856330871582,
+        "step_time_ms": 50.008583068847656
+    },
+    {
+        "type": "Performance",
+        "step": 3200,
+        "loss": 1.961850643157959,
+        "step_time_ms": 49.92396831512451
+    },
+    {
+        "type": "Convergence",
+        "step": 3250,
+        "train_loss": 1.9171133041381836,
+        "val_loss": 1.9173157215118408
+    },
+    {
+        "type": "Performance",
+        "step": 3300,
+        "loss": 1.9640556573867798,
+        "step_time_ms": 48.77614974975586
+    },
+    {
+        "type": "Performance",
+        "step": 3400,
+        "loss": 1.962081789970398,
+        "step_time_ms": 47.632503509521484
+    },
+    {
+        "type": "Convergence",
+        "step": 3500,
+        "train_loss": 1.9370094537734985,
+        "val_loss": 1.9374074935913086
+    },
+    {
+        "type": "Performance",
+        "step": 3500,
+        "loss": 1.9740686416625977,
+        "step_time_ms": 702.9096126556396
+    },
+    {
+        "type": "Performance",
+        "step": 3600,
+        "loss": 1.9567326307296753,
+        "step_time_ms": 48.299312591552734
+    },
+    {
+        "type": "Performance",
+        "step": 3700,
+        "loss": 1.9565765857696533,
+        "step_time_ms": 47.26309776306152
+    },
+    {
+        "type": "Convergence",
+        "step": 3750,
+        "train_loss": 1.910526156425476,
+        "val_loss": 1.9103094339370728
+    },
+    {
+        "type": "Performance",
+        "step": 3800,
+        "loss": 1.9527075290679932,
+        "step_time_ms": 48.94697666168213
+    },
+    {
+        "type": "Performance",
+        "step": 3900,
+        "loss": 1.9624733924865723,
+        "step_time_ms": 49.59609508514404
+    },
+    {
+        "type": "Convergence",
+        "step": 4000,
+        "train_loss": 1.909469485282898,
+        "val_loss": 1.9095431566238403
+    },
+    {
+        "type": "Performance",
+        "step": 4000,
+        "loss": 1.9568830728530884,
+        "step_time_ms": 786.2756490707397
+    },
+    {
+        "type": "Performance",
+        "step": 4100,
+        "loss": 1.9567769765853882,
+        "step_time_ms": 48.03636074066162
+    },
+    {
+        "type": "Performance",
+        "step": 4200,
+        "loss": 1.9566445350646973,
+        "step_time_ms": 48.60360622406006
+    },
+    {
+        "type": "Convergence",
+        "step": 4250,
+        "train_loss": 1.9144525527954102,
+        "val_loss": 1.914280652999878
+    },
+    {
+        "type": "Performance",
+        "step": 4300,
+        "loss": 1.9574859142303467,
+        "step_time_ms": 47.449445724487305
+    },
+    {
+        "type": "Performance",
+        "step": 4400,
+        "loss": 1.9567530155181885,
+        "step_time_ms": 47.36301898956299
+    },
+    {
+        "type": "Convergence",
+        "step": 4500,
+        "train_loss": 1.91880202293396,
+        "val_loss": 1.9191375970840454
+    },
+    {
+        "type": "Performance",
+        "step": 4500,
+        "loss": 1.9519749879837036,
+        "step_time_ms": 698.4194040298462
+    },
+    {
+        "type": "Performance",
+        "step": 4600,
+        "loss": 1.9504821300506592,
+        "step_time_ms": 48.90782833099365
+    },
+    {
+        "type": "Performance",
+        "step": 4700,
+        "loss": 1.9517220258712769,
+        "step_time_ms": 49.71151351928711
+    },
+    {
+        "type": "Convergence",
+        "step": 4750,
+        "train_loss": 1.911781907081604,
+        "val_loss": 1.9120886325836182
+    },
+    {
+        "type": "Performance",
+        "step": 4800,
+        "loss": 1.9527347087860107,
+        "step_time_ms": 49.573659896850586
+    },
+    {
+        "type": "Performance",
+        "step": 4900,
+        "loss": 1.9544239044189453,
+        "step_time_ms": 48.72555732727051
+    },
+    {
+        "type": "Convergence",
+        "step": 5000,
+        "train_loss": 1.9022201299667358,
+        "val_loss": 1.902665138244629
+    },
+    {
+        "type": "Performance",
+        "step": 5000,
+        "loss": 1.9535540342330933,
+        "step_time_ms": 702.0434617996216
+    },
+    {
+        "type": "Performance",
+        "step": 5100,
+        "loss": 1.947037935256958,
+        "step_time_ms": 47.70956039428711
+    },
+    {
+        "type": "Performance",
+        "step": 5200,
+        "loss": 1.9417674541473389,
+        "step_time_ms": 47.92680740356445
+    },
+    {
+        "type": "Convergence",
+        "step": 5250,
+        "train_loss": 1.9106258153915405,
+        "val_loss": 1.910811424255371
+    },
+    {
+        "type": "Performance",
+        "step": 5300,
+        "loss": 1.9429041147232056,
+        "step_time_ms": 48.197317123413086
+    },
+    {
+        "type": "Performance",
+        "step": 5400,
+        "loss": 1.9427905082702637,
+        "step_time_ms": 47.31407165527344
+    },
+    {
+        "type": "Convergence",
+        "step": 5500,
+        "train_loss": 1.8860201835632324,
+        "val_loss": 1.887317180633545
+    },
+    {
+        "type": "Performance",
+        "step": 5500,
+        "loss": 1.9406821727752686,
+        "step_time_ms": 702.6309728622437
+    },
+    {
+        "type": "Performance",
+        "step": 5600,
+        "loss": 1.9418483972549438,
+        "step_time_ms": 49.440717697143555
+    },
+    {
+        "type": "Performance",
+        "step": 5700,
+        "loss": 1.9315072298049927,
+        "step_time_ms": 47.31183052062988
+    },
+    {
+        "type": "Convergence",
+        "step": 5750,
+        "train_loss": 1.8782038688659668,
+        "val_loss": 1.8792041540145874
+    },
+    {
+        "type": "Performance",
+        "step": 5800,
+        "loss": 1.925682783126831,
+        "step_time_ms": 47.38283157348633
+    },
+    {
+        "type": "Performance",
+        "step": 5900,
+        "loss": 1.922867774963379,
+        "step_time_ms": 47.59032726287842
+    },
+    {
+        "type": "Convergence",
+        "step": 6000,
+        "train_loss": 1.8520190715789795,
+        "val_loss": 1.8530009984970093
+    },
+    {
+        "type": "Performance",
+        "step": 6000,
+        "loss": 1.923021912574768,
+        "step_time_ms": 694.1292762756348
+    },
+    {
+        "type": "Performance",
+        "step": 6100,
+        "loss": 1.922141432762146,
+        "step_time_ms": 47.241783142089844
+    },
+    {
+        "type": "Performance",
+        "step": 6200,
+        "loss": 1.9252173900604248,
+        "step_time_ms": 49.107980728149414
+    },
+    {
+        "type": "Convergence",
+        "step": 6250,
+        "train_loss": 1.8503990173339844,
+        "val_loss": 1.851347804069519
+    },
+    {
+        "type": "Performance",
+        "step": 6300,
+        "loss": 1.9201041460037231,
+        "step_time_ms": 49.25498962402344
+    },
+    {
+        "type": "Performance",
+        "step": 6400,
+        "loss": 1.913942813873291,
+        "step_time_ms": 49.43675994873047
+    },
+    {
+        "type": "Convergence",
+        "step": 6500,
+        "train_loss": 1.8318864107131958,
+        "val_loss": 1.8332959413528442
+    },
+    {
+        "type": "Performance",
+        "step": 6500,
+        "loss": 1.9086769819259644,
+        "step_time_ms": 746.9245433807373
+    },
+    {
+        "type": "Performance",
+        "step": 6600,
+        "loss": 1.9068526029586792,
+        "step_time_ms": 48.36626052856445
+    },
+    {
+        "type": "Performance",
+        "step": 6700,
+        "loss": 1.902418613433838,
+        "step_time_ms": 48.88300895690918
+    },
+    {
+        "type": "Convergence",
+        "step": 6750,
+        "train_loss": 1.812354326248169,
+        "val_loss": 1.8133829832077026
+    },
+    {
+        "type": "Performance",
+        "step": 6800,
+        "loss": 1.8991148471832275,
+        "step_time_ms": 48.285770416259766
+    },
+    {
+        "type": "Performance",
+        "step": 6900,
+        "loss": 1.8973654508590698,
+        "step_time_ms": 48.992371559143066
+    }
+]

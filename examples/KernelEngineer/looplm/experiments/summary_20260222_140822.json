@@ -1,0 +1,47 @@
+[
+    {
+        "experiment": "W2_stiff_thinking",
+        "timestamp": "2026-02-22 14:18:22",
+        "config": "--n_embd=256 --n_head=4 --num_loops=24 --dropout=0.2 --max_iters=5000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 200,
+            "avg_steps": 24.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/W2_stiff_thinking/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/W2_stiff_thinking/looplm_trace.json"
+        }
+    },
+    {
+        "experiment": "T2_deep_narrow",
+        "timestamp": "2026-02-22 14:27:53",
+        "config": "--n_embd=192 --n_head=3 --num_loops=32 --dropout=0.2 --max_iters=5000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 200,
+            "avg_steps": 32.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/T2_deep_narrow/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/T2_deep_narrow/looplm_trace.json"
+        }
+    },
+    {
+        "experiment": "A4_robust_reg",
+        "timestamp": "2026-02-22 14:37:05",
+        "config": "--n_embd=256 --n_head=4 --num_loops=16 --dropout=0.5 --max_iters=7000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 200,
+            "avg_steps": 16.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A4_robust_reg/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A4_robust_reg/looplm_trace.json"
+        }
+    }
+]
