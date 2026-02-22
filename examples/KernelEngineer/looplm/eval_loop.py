@@ -52,6 +52,9 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     correct = 0
     total = 0
     
+    # Bucketized results
+    buckets = {5: [0,0], 6: [0,0], 8: [0,0], 10: [0,0], 12: [0,0]} # [correct, total]
+    
     # To track thinking depth
     total_steps = 0
     total_tokens_generated = 0
@@ -60,51 +63,57 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     for ex in examples:
         if '=' not in ex: continue
         q, a = ex.split('=')
-        q = q + '='
+        q_len = len(q.split('+')[0]) # Use length of first operand as bucket
         
+        q_input = q + '='
         # Encode question
-        x = torch.tensor([stoi[c] for c in q], dtype=torch.long, device=device).unsqueeze(0)
+        x = torch.tensor([stoi[c] for c in q_input], dtype=torch.long, device=device).unsqueeze(0)
         
         # Generate result token by token
         generated = ""
         current_x = x
-        
-        # Max length for answer: length of correct answer + some buffer
         max_ans_len = len(a) + 2
         
         with torch.no_grad():
             for _ in range(max_ans_len):
-                # Using thinking_threshold=0.99 for output part
                 logits, _, steps = model(current_x, 
                                           halt_threshold=0.9, 
                                           thinking_token_id=thinking_token_id, 
                                           thinking_threshold=0.99)
-                # logits is (B, 1, V) because we are in eval mode (optimized for last token)
                 last_logits = logits[0, -1, :]
-                probs = torch.softmax(last_logits, dim=-1)
-                next_id = torch.argmax(probs).item()
+                next_id = torch.argmax(last_logits).item()
                 next_char = itos[next_id]
                 
                 if next_char == '\n': break
                 generated += next_char
-                # steps is (B, T), take only the last token's steps
                 total_steps += steps[0, -1].item()
                 total_tokens_generated += 1
                 
-                # Append to input for next step
                 next_id_tensor = torch.tensor([[next_id]], device=device)
                 current_x = torch.cat((current_x, next_id_tensor), dim=1)
                 if current_x.size(1) > gptconf.block_size:
                     current_x = current_x[:, 1:]
         
-        if generated.strip() == a.strip():
-            correct += 1
+        # After generation
+        is_correct = generated.strip() == a.strip()
+        if is_correct: correct += 1
         total += 1
         
+        # Track buckets
+        for b_size in sorted(buckets.keys(), reverse=True):
+            if q_len >= b_size:
+                buckets[b_size][1] += 1
+                if is_correct: buckets[b_size][0] += 1
+                break
+
     accuracy = correct / total if total > 0 else 0
     avg_steps = total_steps / total_tokens_generated if total_tokens_generated > 0 else 0
     
-    print(f"OOD Accuracy: {accuracy*100:.2f}% ({correct}/{total})")
+    print(f"\n--- OOD Detailed Report ---")
+    for b_size, counts in buckets.items():
+        if counts[1] > 0:
+            print(f"  {b_size}+ Digits: {counts[0]/counts[1]*100:5.2f}% ({counts[0]}/{counts[1]})")
+    print(f"Overall OOD Accuracy: {accuracy*100:.2f}%")
     return {
         "accuracy": accuracy,
         "correct": correct,

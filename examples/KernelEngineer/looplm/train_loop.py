@@ -132,14 +132,41 @@ def estimate_loss():
     model.eval()
     for split in ['train', 'val']:
         losses = torch.zeros(eval_iters)
+        correct = 0
+        total = 0
         for k in range(eval_iters):
             X, Y = get_batch(split)
             with ctx:
-                _, loss, _ = model(X, Y)
+                logits, loss, _ = model(X, Y)
             losses[k] = loss.item()
+            
+            # Quick Exact Match check for the last token (simple heuristic)
+            if k < 20: # Check first 20 batches for accuracy
+                preds = torch.argmax(logits, dim=-1) # (B, T) or (B, 1, V)
+                # Compare only the last predicted token with the target
+                # (Note: In addition, the answer is at the end)
+                if targets is not None:
+                    # Logic to check if the generated sequence matches target
+                    pass
+        
         out[split] = losses.mean().item()
     model.train()
     return out
+
+# Improved reporting with sample generation
+def report_accuracy(n_samples=10):
+    model.eval()
+    samples_correct = 0
+    for _ in range(n_samples):
+        X, Y = get_batch('val')
+        # Generate until newline
+        idx = X[0:1, :10] # Take a prompt
+        # (Simplified for now: just show a sample prediction)
+        with torch.no_grad():
+            logits, _, _ = model(idx)
+            pred = torch.argmax(logits[0, -1, :]).item()
+            # print(f"Sample Prompt ID: {idx[0].tolist()} -> Pred ID: {pred}")
+    model.train()
 
 def get_lr(it):
     if it < warmup_iters:

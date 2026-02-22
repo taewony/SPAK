@@ -52,16 +52,21 @@ def main():
 
     # --- ⚡ Phase 4: Blackwell Persistent & Architecture Ablation ---
     experiments = [
-        # P4_X0_Baseline: Standard injection (Current best)
-        # {"name": "P4_X0_Baseline", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=True max_iters=5000"},
-        # P4_Pure_Dynamics: Remove X0 injection (Pure recurrent state)
-        # {"name": "P4_Pure_Dynamics", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=False max_iters=5000"},
-        # P4_Deep_Grok: Combining best of Phase 3 with Phase 4
-        # {"name": "P4_Deep_Grok", "args": "n_embd=256 n_head=4 num_loops=24 inject_x0=True max_iters=10000 dropout=0.3"},
         # 🚀 FINAL GROKKING ATTEMPT: Bridge Data + 20k Iters + 32 Loops
-        {"name": "P4_Final_Grok_Long", "args": "n_embd=256 n_head=4 num_loops=32 inject_x0=True max_iters=20000 dropout=0.2"},
+        # {"name": "P4_Final_Grok_Long", "args": "n_embd=256 n_head=4 num_loops=32 inject_x0=True max_iters=20000 dropout=0.2"},
+
+        # --- 🔄 Phase 4.5: Reverse Addition Grokking (The Game Changer) ---
+        # R1: Baseline with Reverse Logic (Immediate jump expected)
+        {"name": "R1_Reverse_Baseline", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=16 max_iters=5000"},
+        # R2: Long Grokking with Reverse Logic (Target: 90%+ on 12-digits)
+        {"name": "R2_Reverse_Grok", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=24 max_iters=15000 dropout=0.2"},
+        # R3: Small & Deep with Reverse Logic (Efficiency check)
+        {"name": "R3_Reverse_Efficient", "args": "dataset=addition_reverse n_embd=128 n_head=4 num_loops=32 max_iters=10000"},
+        # R4: Ultimate Adaptive Test (48 loops + high confidence)
+        # This will prove if loops increase with number of carries.
+        {"name": "R4_Reverse_Deep_Thinking", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=48 max_iters=10000 dropout=0.2"},
     ]
-    # ---------------------------------------------------------------
+    # -------------------------------------------------------------------
 
     results = []
     script_dir = os.path.dirname(os.path.abspath(__file__))
