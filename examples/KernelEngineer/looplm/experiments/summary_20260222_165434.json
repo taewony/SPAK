@@ -1,0 +1,17 @@
+[
+    {
+        "experiment": "P4_Final_Grok_Long",
+        "timestamp": "2026-02-22 17:45:21",
+        "config": "--n_embd=256 --n_head=4 --num_loops=32 --inject_x0=True --max_iters=20000 --dropout=0.2",
+        "ood_metrics": {
+            "accuracy": 0.135,
+            "correct": 27,
+            "total": 200,
+            "avg_steps": 31.72797744890768
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/P4_Final_Grok_Long/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/P4_Final_Grok_Long/looplm_trace.json"
+        }
+    }
+]
