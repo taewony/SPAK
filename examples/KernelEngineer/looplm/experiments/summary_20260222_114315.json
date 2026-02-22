@@ -1,0 +1,77 @@
+[
+    {
+        "experiment": "baseline",
+        "timestamp": "2026-02-22 11:43:27",
+        "config": "--n_embd=384 --num_loops=12 --dropout=0.2",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/looplm_trace.json"
+        }
+    },
+    {
+        "experiment": "A1_low_cap",
+        "timestamp": "2026-02-22 11:43:35",
+        "config": "--n_embd=256 --n_head=4 --num_loops=12",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A1_low_cap/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A1_low_cap/looplm_trace.json"
+        }
+    },
+    {
+        "experiment": "A2_very_low_cap",
+        "timestamp": "2026-02-22 11:43:40",
+        "config": "--n_embd=128 --n_head=4 --num_loops=12",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A2_very_low_cap/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A2_very_low_cap/looplm_trace.json"
+        }
+    },
+    {
+        "experiment": "A3_high_dropout",
+        "timestamp": "2026-02-22 11:43:52",
+        "config": "--n_embd=384 --num_loops=12 --dropout=0.4",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A3_high_dropout/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/A3_high_dropout/looplm_trace.json"
+        }
+    },
+    {
+        "experiment": "T1_deep_thinking",
+        "timestamp": "2026-02-22 11:44:05",
+        "config": "--n_embd=256 --n_head=4 --num_loops=24",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 24.0
+        },
+        "paths": {
+            "ckpt": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/T1_deep_thinking/ckpt.pt",
+            "trace": "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/T1_deep_thinking/looplm_trace.json"
+        }
+    }
+]
