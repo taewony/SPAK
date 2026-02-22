@@ -1,3 +1,107 @@
-step 3500: train loss 1.6784, val loss 1.6791, lr 1.0000e-04
-iter 3500: loss 1.7515, time 1070.45ms
-iter 3510: loss 1.7587, time -17.28ms
+python run_experiments.py
+
+============================================================
+🚀 STARTING ADVANCED EXPERIMENT: R1_Reverse_Baseline
+   Config: --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=16 --max_iters=5000
+   Output: experiments/R1_Reverse_Baseline
+============================================================
+[R1_Reverse_Baseline] Step 1: Training for 5 iterations...
+Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=16 --max_iters=5000 --out_dir=experiments/R1_Reverse_Baseline --max_iters=5
+Overriding: dataset = addition_reverse
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: num_loops = 16
+Overriding: max_iters = 5000
+Overriding: out_dir = experiments/R1_Reverse_Baseline
+Overriding: max_iters = 5
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
+    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
+    f_ctx = open(
+            ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
+❌ [R1_Reverse_Baseline] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING ADVANCED EXPERIMENT: R2_Reverse_Grok
+   Config: --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000 --dropout=0.2
+   Output: experiments/R2_Reverse_Grok
+============================================================
+[R2_Reverse_Grok] Step 1: Training for 5 iterations...
+Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000 --dropout=0.2 --out_dir=experiments/R2_Reverse_Grok --max_iters=5
+Overriding: dataset = addition_reverse
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: num_loops = 24
+Overriding: max_iters = 15000
+Overriding: dropout = 0.2
+Overriding: out_dir = experiments/R2_Reverse_Grok
+Overriding: max_iters = 5
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
+    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
+    f_ctx = open(
+            ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
+❌ [R2_Reverse_Grok] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING ADVANCED EXPERIMENT: R3_Reverse_Efficient
+   Config: --dataset=addition_reverse --n_embd=128 --n_head=4 --num_loops=32 --max_iters=10000
+   Output: experiments/R3_Reverse_Efficient
+============================================================
+[R3_Reverse_Efficient] Step 1: Training for 5 iterations...
+Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=128 --n_head=4 --num_loops=32 --max_iters=10000 --out_dir=experiments/R3_Reverse_Efficient --max_iters=5
+Overriding: dataset = addition_reverse
+Overriding: n_embd = 128
+Overriding: n_head = 4
+Overriding: num_loops = 32
+Overriding: max_iters = 10000
+Overriding: out_dir = experiments/R3_Reverse_Efficient
+Overriding: max_iters = 5
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
+    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
+    f_ctx = open(
+            ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
+❌ [R3_Reverse_Efficient] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING ADVANCED EXPERIMENT: R4_Reverse_Deep_Thinking
+   Config: --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=10000 --dropout=0.2
+   Output: experiments/R4_Reverse_Deep_Thinking
+============================================================
+[R4_Reverse_Deep_Thinking] Step 1: Training for 5 iterations...
+Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=10000 --dropout=0.2 --out_dir=experiments/R4_Reverse_Deep_Thinking --max_iters=5
+Overriding: dataset = addition_reverse
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: num_loops = 48
+Overriding: max_iters = 10000
+Overriding: dropout = 0.2
+Overriding: out_dir = experiments/R4_Reverse_Deep_Thinking
+Overriding: max_iters = 5
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
+    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
+    f_ctx = open(
+            ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
+❌ [R4_Reverse_Deep_Thinking] Experiment failed during training phase.
+
+############################################################
+🏁 ALL EXPERIMENTS COMPLETE
+############################################################
+
+Summary Table:
+Experiment           | Accuracy   | Avg Steps
+----------------------------------------------
