@@ -1,0 +1,12 @@
+[
+    {
+        "experiment": "baseline",
+        "config": "--n_embd=384 --num_loops=12 --dropout=0.2",
+        "ood_metrics": null
+    },
+    {
+        "experiment": "A3_high_dropout",
+        "config": "--n_embd=384 --num_loops=12 --dropout=0.4",
+        "ood_metrics": null
+    }
+]

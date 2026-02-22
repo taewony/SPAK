@@ -1,78 +1,563 @@
-python looplm/run_experiments.py
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python looplm/run_experiments.py
 
 ============================================================
 🚀 STARTING EXPERIMENT: baseline
-   Config: n_embd=384 num_loops=12 dropout=0.2
+   Config: --n_embd=384 --num_loops=12 --dropout=0.2
    Output: looplm/experiments/baseline
 ============================================================
 [baseline] Step 1: Training for 2000 iterations...
-Running: python looplm/train_loop.py n_embd=384 num_loops=12 dropout=0.2 out_dir=looplm/experiments/baseline max_iters=2000
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
-    exec(open(_configurator_path).read())
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 31, in <module>
-AssertionError
-❌ [baseline] Experiment failed during training phase.
+Running: python looplm/train_loop.py --n_embd=384 --num_loops=12 --dropout=0.2 --out_dir=looplm/experiments/baseline --max_iters=2000
+Overriding: n_embd = 384
+Overriding: num_loops = 12
+Overriding: dropout = 0.2
+Overriding: out_dir = looplm/experiments/baseline
+Overriding: max_iters = 2000
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
+Starting LoopLM Training on addition...
+Config: 12 loops over 1 layer block
+step 0: train loss 2.6455, val loss 2.6447, lr 0.0000e+00
+iter 0: loss 2.6515, time 9573.57ms
+iter 10: loss 2.5681, time 65.75ms
+iter 20: loss 2.5496, time 66.05ms
+iter 30: loss 2.4636, time 66.09ms
+iter 40: loss 2.2463, time 65.61ms
+iter 50: loss 2.1149, time 63.76ms
+iter 60: loss 2.0372, time 61.19ms
+iter 70: loss 1.9892, time 61.14ms
+iter 80: loss 1.9593, time 60.77ms
+iter 90: loss 1.9570, time 63.18ms
+iter 100: loss 1.9347, time 66.28ms
+iter 110: loss 1.9166, time 66.42ms
+iter 120: loss 1.8966, time 66.19ms
+iter 130: loss 1.8716, time 65.91ms
+iter 140: loss 1.8543, time 65.95ms
+iter 150: loss 1.8258, time 66.12ms
+iter 160: loss 1.7980, time 66.06ms
+iter 170: loss 1.7797, time 66.81ms
+iter 180: loss 1.7398, time 66.05ms
+iter 190: loss 1.7263, time 61.91ms
+iter 200: loss 1.6998, time 60.35ms
+iter 210: loss 1.6646, time 60.95ms
+iter 220: loss 1.6527, time 65.49ms
+iter 230: loss 1.5903, time 65.35ms
+iter 240: loss 1.5530, time 65.43ms
+step 250: train loss 1.4361, val loss 1.4380, lr 9.8623e-04
+iter 250: loss 1.5073, time 1036.38ms
+iter 260: loss 1.4910, time 65.43ms
+iter 270: loss 1.4598, time 65.46ms
+iter 280: loss 1.4569, time 65.67ms
+iter 290: loss 1.4388, time 65.44ms
+iter 300: loss 1.4280, time 65.44ms
+iter 310: loss 1.4104, time 65.47ms
+iter 320: loss 1.4030, time 65.35ms
+iter 330: loss 1.4006, time 63.42ms
+iter 340: loss 1.3879, time 63.35ms
+iter 350: loss 1.3829, time 63.23ms
+iter 360: loss 1.3837, time 63.65ms
+iter 370: loss 1.3640, time 63.35ms
+iter 380: loss 1.3613, time 63.53ms
+iter 390: loss 1.3618, time 63.40ms
+iter 400: loss 1.3464, time 63.24ms
+iter 410: loss 1.3426, time 61.89ms
+iter 420: loss 1.3493, time 60.33ms
+iter 430: loss 1.3403, time 60.27ms
+iter 440: loss 1.3333, time 60.47ms
+iter 450: loss 1.3291, time 61.81ms
+iter 460: loss 1.3411, time 65.50ms
+iter 470: loss 1.3323, time 65.51ms
+iter 480: loss 1.3336, time 65.30ms
+iter 490: loss 1.3232, time 65.34ms
+step 500: train loss 1.2936, val loss 1.2950, lr 9.0511e-04
+iter 500: loss 1.3179, time 955.09ms
+iter 510: loss 1.3324, time 66.20ms
+iter 520: loss 1.3241, time 66.23ms
+iter 530: loss 1.3119, time 66.42ms
+iter 540: loss 1.3153, time 65.72ms
+iter 550: loss 1.3113, time 159.45ms
+iter 560: loss 1.3115, time 62.29ms
+iter 570: loss 1.3137, time 66.21ms
+iter 580: loss 1.3100, time 65.96ms
+iter 590: loss 1.3123, time 66.23ms
+iter 600: loss 1.3113, time 66.42ms
+iter 610: loss 1.3078, time 65.99ms
+iter 620: loss 1.3105, time 66.06ms
+iter 630: loss 1.3083, time 66.09ms
+iter 640: loss 1.3012, time 66.14ms
+iter 650: loss 1.3008, time 66.41ms
+iter 660: loss 1.3040, time 66.13ms
+iter 670: loss 1.3052, time 61.75ms
+iter 680: loss 1.3016, time 61.56ms
+iter 690: loss 1.3036, time 66.37ms
+iter 700: loss 1.2958, time 66.17ms
+iter 710: loss 1.3064, time 66.19ms
+iter 720: loss 1.3003, time 66.09ms
+iter 730: loss 1.3001, time 66.20ms
+iter 740: loss 1.3050, time 66.52ms
+step 750: train loss 1.2820, val loss 1.2841, lr 7.6418e-04
+iter 750: loss 1.2982, time 958.66ms
+iter 760: loss 1.2951, time 65.18ms
+iter 770: loss 1.3015, time 60.87ms
+iter 780: loss 1.2906, time 60.93ms
+iter 790: loss 1.2973, time 61.68ms
+iter 800: loss 1.2985, time 66.18ms
+iter 810: loss 1.2965, time 65.89ms
+iter 820: loss 1.2990, time 65.65ms
+iter 830: loss 1.2960, time 66.32ms
+iter 840: loss 1.2929, time 65.99ms
+iter 850: loss 1.2978, time 65.89ms
+iter 860: loss 1.2909, time 66.08ms
+iter 870: loss 1.2896, time 65.77ms
+iter 880: loss 1.2948, time 65.92ms
+iter 890: loss 1.2914, time 62.41ms
+iter 900: loss 1.2942, time 61.11ms
+iter 910: loss 1.2957, time 151.27ms
+iter 920: loss 1.2946, time 65.05ms
+iter 930: loss 1.2922, time 65.99ms
+iter 940: loss 1.2928, time 65.92ms
+iter 950: loss 1.2922, time 65.98ms
+iter 960: loss 1.2916, time 65.96ms
+iter 970: loss 1.2907, time 65.84ms
+iter 980: loss 1.2908, time 66.00ms
+iter 990: loss 1.2845, time 65.95ms
+step 1000: train loss 1.2782, val loss 1.2800, lr 5.8716e-04
+iter 1000: loss 1.2886, time 953.92ms
+iter 1010: loss 1.2893, time 61.15ms
+iter 1020: loss 1.2878, time 61.13ms
+iter 1030: loss 1.2818, time 65.12ms
+iter 1040: loss 1.2873, time 66.17ms
+iter 1050: loss 1.2903, time 65.93ms
+iter 1060: loss 1.2854, time 65.58ms
+iter 1070: loss 1.2911, time 65.62ms
+iter 1080: loss 1.2857, time 65.66ms
+iter 1090: loss 1.2877, time 65.48ms
+iter 1100: loss 1.2858, time 65.45ms
+iter 1110: loss 1.2832, time 65.88ms
+iter 1120: loss 1.2837, time 64.02ms
+iter 1130: loss 1.2832, time 61.00ms
+iter 1140: loss 1.2846, time 61.39ms
+iter 1150: loss 1.2814, time 63.39ms
+iter 1160: loss 1.2853, time 66.32ms
+iter 1170: loss 1.2849, time 66.53ms
+iter 1180: loss 1.2945, time 66.31ms
+iter 1190: loss 1.2841, time 66.24ms
+iter 1200: loss 1.2836, time 66.25ms
+iter 1210: loss 1.2853, time 66.35ms
+iter 1220: loss 1.2828, time 66.13ms
+iter 1230: loss 1.2822, time 66.51ms
+iter 1240: loss 1.2864, time 66.25ms
+step 1250: train loss 1.2761, val loss 1.2779, lr 4.0389e-04
+iter 1250: loss 1.2845, time 1052.45ms
+iter 1260: loss 1.2826, time 64.79ms
+iter 1270: loss 1.2877, time 66.15ms
+iter 1280: loss 1.2821, time 65.88ms
+iter 1290: loss 1.2850, time 66.01ms
+iter 1300: loss 1.2797, time 66.11ms
+iter 1310: loss 1.2853, time 65.70ms
+iter 1320: loss 1.2817, time 65.62ms
+iter 1330: loss 1.2815, time 65.57ms
+iter 1340: loss 1.2825, time 65.73ms
+iter 1350: loss 1.2786, time 64.85ms
+iter 1360: loss 1.2798, time 60.67ms
+iter 1370: loss 1.2808, time 60.59ms
+iter 1380: loss 1.2756, time 62.06ms
+iter 1390: loss 1.2820, time 65.52ms
+iter 1400: loss 1.2840, time 65.57ms
+iter 1410: loss 1.2807, time 65.53ms
+iter 1420: loss 1.2880, time 65.40ms
+iter 1430: loss 1.2829, time 65.51ms
+iter 1440: loss 1.2769, time 65.35ms
+iter 1450: loss 1.2814, time 65.60ms
+iter 1460: loss 1.2802, time 65.58ms
+iter 1470: loss 1.2823, time 65.55ms
+iter 1480: loss 1.2817, time 62.64ms
+iter 1490: loss 1.2820, time 60.92ms
+step 1500: train loss 1.2729, val loss 1.2752, lr 2.4522e-04
+iter 1500: loss 1.2784, time 1027.98ms
+iter 1510: loss 1.2796, time 65.62ms
+iter 1520: loss 1.2803, time 65.75ms
+iter 1530: loss 1.2796, time 65.73ms
+iter 1540: loss 1.2805, time 65.80ms
+iter 1550: loss 1.2725, time 65.57ms
+iter 1560: loss 1.2805, time 65.73ms
+iter 1570: loss 1.2800, time 65.60ms
+iter 1580: loss 1.2808, time 61.94ms
+iter 1590: loss 1.2768, time 60.71ms
+iter 1600: loss 1.2781, time 60.58ms
+iter 1610: loss 1.2814, time 60.61ms
+iter 1620: loss 1.2806, time 63.50ms
+iter 1630: loss 1.2751, time 66.32ms
+iter 1640: loss 1.2786, time 66.52ms
+iter 1650: loss 1.2773, time 66.41ms
+iter 1660: loss 1.2730, time 66.16ms
+iter 1670: loss 1.2836, time 66.57ms
+iter 1680: loss 1.2763, time 66.07ms
+iter 1690: loss 1.2811, time 65.88ms
+iter 1700: loss 1.2699, time 65.72ms
+iter 1710: loss 1.2778, time 65.92ms
+iter 1720: loss 1.2768, time 64.45ms
+iter 1730: loss 1.2793, time 60.98ms
+iter 1740: loss 1.2807, time 62.51ms
+step 1750: train loss 1.2722, val loss 1.2744, lr 1.3790e-04
+iter 1750: loss 1.2757, time 969.27ms
+iter 1760: loss 1.2773, time 65.78ms
+iter 1770: loss 1.2768, time 66.16ms
+iter 1780: loss 1.2762, time 65.77ms
+iter 1790: loss 1.2756, time 65.88ms
+iter 1800: loss 1.2727, time 65.97ms
+iter 1810: loss 1.2713, time 65.70ms
+iter 1820: loss 1.2732, time 65.80ms
+iter 1830: loss 1.2721, time 63.81ms
+iter 1840: loss 1.2769, time 61.43ms
+iter 1850: loss 1.2764, time 161.60ms
+iter 1860: loss 1.2782, time 66.08ms
+iter 1870: loss 1.2787, time 65.95ms
+iter 1880: loss 1.2757, time 65.90ms
+iter 1890: loss 1.2769, time 66.08ms
+iter 1900: loss 1.2726, time 66.06ms
+iter 1910: loss 1.2754, time 66.02ms
+iter 1920: loss 1.2727, time 66.07ms
+iter 1930: loss 1.2700, time 65.94ms
+iter 1940: loss 1.2756, time 63.22ms
+iter 1950: loss 1.2779, time 60.81ms
+iter 1960: loss 1.2778, time 60.98ms
+iter 1970: loss 1.2721, time 61.76ms
+iter 1980: loss 1.2746, time 65.73ms
+iter 1990: loss 1.2746, time 65.83ms
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/baseline/ckpt.pt
+
+[baseline] Step 2: Evaluating OOD performance (Generalization)...
+Evaluating OOD for looplm/experiments/baseline/ckpt.pt (n=200, max_loops=None)...
+Checkpoint looplm/experiments/baseline/ckpt.pt not found.
+[baseline] Experiment completed and metrics saved.
 
 ============================================================
 🚀 STARTING EXPERIMENT: A1_low_cap
-   Config: n_embd=256 n_head=4 num_loops=12
+   Config: --n_embd=256 --n_head=4 --num_loops=12
    Output: looplm/experiments/A1_low_cap
 ============================================================
 [A1_low_cap] Step 1: Training for 2000 iterations...
-Running: python looplm/train_loop.py n_embd=256 n_head=4 num_loops=12 out_dir=looplm/experiments/A1_low_cap max_iters=2000
+Running: python looplm/train_loop.py --n_embd=256 --n_head=4 --num_loops=12 --out_dir=looplm/experiments/A1_low_cap --max_iters=2000
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: num_loops = 12
+Overriding: out_dir = looplm/experiments/A1_low_cap
+Overriding: max_iters = 2000
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
-    exec(open(_configurator_path).read())
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 31, in <module>
-AssertionError
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 112, in <module>
+    model.load_state_dict(state_dict, strict=False)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 2629, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for LoopGPT:
+        size mismatch for transformer.wpe.weight: copying a param with shape torch.Size([256, 384]) from checkpoint, the shape in current model is torch.Size([256, 256]).
+        size mismatch for transformer.h.ln_1.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for transformer.h.attn.c_attn.weight: copying a param with shape torch.Size([1152, 384]) from checkpoint, the shape in current model is torch.Size([768, 256]).
+        size mismatch for transformer.h.attn.c_proj.weight: copying a param with shape torch.Size([384, 384]) from checkpoint, the shape in current model is torch.Size([256, 256]).
+        size mismatch for transformer.h.ln_2.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for transformer.h.mlp.c_fc.weight: copying a param with shape torch.Size([1536, 384]) from checkpoint, the shape in current model is torch.Size([1024, 256]).
+        size mismatch for transformer.h.mlp.c_proj.weight: copying a param with shape torch.Size([384, 1536]) from checkpoint, the shape in current model is torch.Size([256, 1024]).
+        size mismatch for transformer.ln_f.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for step_embedding.weight: copying a param with shape torch.Size([12, 384]) from checkpoint, the shape in current model is torch.Size([12, 256]).
 ❌ [A1_low_cap] Experiment failed during training phase.
 
 ============================================================
 🚀 STARTING EXPERIMENT: A2_very_low_cap
-   Config: n_embd=128 n_head=4 num_loops=12
+   Config: --n_embd=128 --n_head=4 --num_loops=12
    Output: looplm/experiments/A2_very_low_cap
 ============================================================
 [A2_very_low_cap] Step 1: Training for 2000 iterations...
-Running: python looplm/train_loop.py n_embd=128 n_head=4 num_loops=12 out_dir=looplm/experiments/A2_very_low_cap max_iters=2000
+Running: python looplm/train_loop.py --n_embd=128 --n_head=4 --num_loops=12 --out_dir=looplm/experiments/A2_very_low_cap --max_iters=2000
+Overriding: n_embd = 128
+Overriding: n_head = 4
+Overriding: num_loops = 12
+Overriding: out_dir = looplm/experiments/A2_very_low_cap
+Overriding: max_iters = 2000
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
-    exec(open(_configurator_path).read())
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 31, in <module>
-AssertionError
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 112, in <module>
+    model.load_state_dict(state_dict, strict=False)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 2629, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for LoopGPT:
+        size mismatch for transformer.wpe.weight: copying a param with shape torch.Size([256, 384]) from checkpoint, the shape in current model is torch.Size([256, 128]).
+        size mismatch for transformer.h.ln_1.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([128]).
+        size mismatch for transformer.h.attn.c_attn.weight: copying a param with shape torch.Size([1152, 384]) from checkpoint, the shape in current model is torch.Size([384, 128]).
+        size mismatch for transformer.h.attn.c_proj.weight: copying a param with shape torch.Size([384, 384]) from checkpoint, the shape in current model is torch.Size([128, 128]).
+        size mismatch for transformer.h.ln_2.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([128]).
+        size mismatch for transformer.h.mlp.c_fc.weight: copying a param with shape torch.Size([1536, 384]) from checkpoint, the shape in current model is torch.Size([512, 128]).
+        size mismatch for transformer.h.mlp.c_proj.weight: copying a param with shape torch.Size([384, 1536]) from checkpoint, the shape in current model is torch.Size([128, 512]).
+        size mismatch for transformer.ln_f.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([128]).
+        size mismatch for step_embedding.weight: copying a param with shape torch.Size([12, 384]) from checkpoint, the shape in current model is torch.Size([12, 128]).
 ❌ [A2_very_low_cap] Experiment failed during training phase.
 
 ============================================================
 🚀 STARTING EXPERIMENT: A3_high_dropout
-   Config: n_embd=384 num_loops=12 dropout=0.4
+   Config: --n_embd=384 --num_loops=12 --dropout=0.4
    Output: looplm/experiments/A3_high_dropout
 ============================================================
 [A3_high_dropout] Step 1: Training for 2000 iterations...
-Running: python looplm/train_loop.py n_embd=384 num_loops=12 dropout=0.4 out_dir=looplm/experiments/A3_high_dropout max_iters=2000
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
-    exec(open(_configurator_path).read())
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 31, in <module>
-AssertionError
-❌ [A3_high_dropout] Experiment failed during training phase.
+Running: python looplm/train_loop.py --n_embd=384 --num_loops=12 --dropout=0.4 --out_dir=looplm/experiments/A3_high_dropout --max_iters=2000
+Overriding: n_embd = 384
+Overriding: num_loops = 12
+Overriding: dropout = 0.4
+Overriding: out_dir = looplm/experiments/A3_high_dropout
+Overriding: max_iters = 2000
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
+Starting LoopLM Training on addition...
+Config: 12 loops over 1 layer block
+step 0: train loss 2.6455, val loss 2.6447, lr 0.0000e+00
+iter 0: loss 2.6540, time 9315.46ms
+iter 10: loss 2.5808, time 66.04ms
+iter 20: loss 2.5598, time 66.19ms
+iter 30: loss 2.5527, time 66.04ms
+iter 40: loss 2.5387, time 65.99ms
+iter 50: loss 2.3594, time 65.99ms
+iter 60: loss 2.2032, time 66.22ms
+iter 70: loss 2.0696, time 66.23ms
+iter 80: loss 2.0331, time 66.02ms
+iter 90: loss 2.0141, time 66.05ms
+iter 100: loss 1.9977, time 63.28ms
+iter 110: loss 1.9793, time 61.36ms
+iter 120: loss 1.9674, time 61.40ms
+iter 130: loss 1.9615, time 167.85ms
+iter 140: loss 1.9541, time 66.08ms
+iter 150: loss 1.9468, time 66.31ms
+iter 160: loss 1.9403, time 66.28ms
+iter 170: loss 1.9306, time 66.21ms
+iter 180: loss 1.9136, time 66.98ms
+iter 190: loss 1.8954, time 66.38ms
+iter 200: loss 1.8840, time 66.47ms
+iter 210: loss 1.8637, time 64.14ms
+iter 220: loss 1.8574, time 61.03ms
+iter 230: loss 1.8275, time 61.39ms
+iter 240: loss 1.8237, time 61.43ms
+step 250: train loss 1.7425, val loss 1.7437, lr 9.8623e-04
+iter 250: loss 1.7931, time 965.82ms
+iter 260: loss 1.7770, time 66.72ms
+iter 270: loss 1.7553, time 66.77ms
+iter 280: loss 1.7375, time 66.51ms
+iter 290: loss 1.6906, time 66.91ms
+iter 300: loss 1.6738, time 66.76ms
+iter 310: loss 1.6369, time 66.77ms
+iter 320: loss 1.5968, time 66.67ms
+iter 330: loss 1.5755, time 61.49ms
+iter 340: loss 1.5593, time 61.49ms
+iter 350: loss 1.5433, time 61.37ms
+iter 360: loss 1.5276, time 66.00ms
+iter 370: loss 1.5085, time 66.33ms
+iter 380: loss 1.5042, time 66.44ms
+iter 390: loss 1.4976, time 66.63ms
+iter 400: loss 1.4866, time 66.43ms
+iter 410: loss 1.4647, time 66.51ms
+iter 420: loss 1.4692, time 66.56ms
+iter 430: loss 1.4574, time 66.82ms
+iter 440: loss 1.4458, time 66.70ms
+iter 450: loss 1.4357, time 65.33ms
+iter 460: loss 1.4382, time 61.44ms
+iter 470: loss 1.4277, time 61.48ms
+iter 480: loss 1.4290, time 64.40ms
+iter 490: loss 1.4183, time 161.92ms
+step 500: train loss 1.3183, val loss 1.3205, lr 9.0511e-04
+iter 500: loss 1.4167, time 941.84ms
+iter 510: loss 1.4195, time 65.89ms
+iter 520: loss 1.4081, time 65.79ms
+iter 530: loss 1.3979, time 66.14ms
+iter 540: loss 1.4078, time 65.97ms
+iter 550: loss 1.3925, time 65.74ms
+iter 560: loss 1.3949, time 65.51ms
+iter 570: loss 1.3929, time 61.07ms
+iter 580: loss 1.3806, time 60.83ms
+iter 590: loss 1.3911, time 63.07ms
+iter 600: loss 1.3841, time 65.85ms
+iter 610: loss 1.3751, time 65.73ms
+iter 620: loss 1.3707, time 65.76ms
+iter 630: loss 1.3776, time 65.93ms
+iter 640: loss 1.3670, time 65.77ms
+iter 650: loss 1.3686, time 65.85ms
+iter 660: loss 1.3720, time 65.93ms
+iter 670: loss 1.3660, time 66.53ms
+iter 680: loss 1.3613, time 64.75ms
+iter 690: loss 1.3592, time 61.11ms
+iter 700: loss 1.3561, time 60.98ms
+iter 710: loss 1.3673, time 61.13ms
+iter 720: loss 1.3618, time 65.92ms
+iter 730: loss 1.3577, time 66.04ms
+iter 740: loss 1.3538, time 65.95ms
+step 750: train loss 1.2890, val loss 1.2909, lr 7.6418e-04
+iter 750: loss 1.3530, time 1042.65ms
+iter 760: loss 1.3542, time 65.74ms
+iter 770: loss 1.3475, time 66.01ms
+iter 780: loss 1.3410, time 66.28ms
+iter 790: loss 1.3536, time 63.13ms
+iter 800: loss 1.3455, time 61.14ms
+iter 810: loss 1.3456, time 61.09ms
+iter 820: loss 1.3521, time 60.91ms
+iter 830: loss 1.3500, time 65.26ms
+iter 840: loss 1.3432, time 66.00ms
+iter 850: loss 1.3538, time 65.95ms
+iter 860: loss 1.3428, time 66.20ms
+iter 870: loss 1.3415, time 65.98ms
+iter 880: loss 1.3429, time 65.90ms
+iter 890: loss 1.3387, time 66.35ms
+iter 900: loss 1.3348, time 66.19ms
+iter 910: loss 1.3365, time 66.03ms
+iter 920: loss 1.3326, time 65.07ms
+iter 930: loss 1.3335, time 61.22ms
+iter 940: loss 1.3316, time 61.17ms
+iter 950: loss 1.3387, time 63.95ms
+iter 960: loss 1.3303, time 66.26ms
+iter 970: loss 1.3275, time 66.48ms
+iter 980: loss 1.3316, time 65.98ms
+iter 990: loss 1.3264, time 66.09ms
+step 1000: train loss 1.2831, val loss 1.2851, lr 5.8716e-04
+iter 1000: loss 1.3265, time 947.03ms
+iter 1010: loss 1.3281, time 65.79ms
+iter 1020: loss 1.3263, time 65.89ms
+iter 1030: loss 1.3234, time 65.90ms
+iter 1040: loss 1.3258, time 60.93ms
+iter 1050: loss 1.3323, time 60.89ms
+iter 1060: loss 1.3204, time 63.14ms
+iter 1070: loss 1.3276, time 65.90ms
+iter 1080: loss 1.3223, time 161.69ms
+iter 1090: loss 1.3262, time 66.00ms
+iter 1100: loss 1.3227, time 65.96ms
+iter 1110: loss 1.3195, time 66.40ms
+iter 1120: loss 1.3176, time 65.91ms
+iter 1130: loss 1.3186, time 65.80ms
+iter 1140: loss 1.3241, time 65.98ms
+iter 1150: loss 1.3151, time 62.21ms
+iter 1160: loss 1.3202, time 61.04ms
+iter 1170: loss 1.3164, time 60.88ms
+iter 1180: loss 1.3226, time 60.75ms
+iter 1190: loss 1.3163, time 65.89ms
+iter 1200: loss 1.3181, time 65.75ms
+iter 1210: loss 1.3196, time 65.93ms
+iter 1220: loss 1.3121, time 66.14ms
+iter 1230: loss 1.3135, time 66.35ms
+iter 1240: loss 1.3199, time 66.03ms
+step 1250: train loss 1.2804, val loss 1.2821, lr 4.0389e-04
+iter 1250: loss 1.3128, time 947.65ms
+iter 1260: loss 1.3092, time 65.80ms
+iter 1270: loss 1.3163, time 60.82ms
+iter 1280: loss 1.3131, time 60.84ms
+iter 1290: loss 1.3115, time 60.90ms
+iter 1300: loss 1.3089, time 65.18ms
+iter 1310: loss 1.3155, time 65.94ms
+iter 1320: loss 1.3093, time 65.97ms
+iter 1330: loss 1.3083, time 65.87ms
+iter 1340: loss 1.3105, time 65.88ms
+iter 1350: loss 1.3077, time 65.85ms
+iter 1360: loss 1.3073, time 65.91ms
+iter 1370: loss 1.3119, time 65.95ms
+iter 1380: loss 1.2999, time 66.11ms
+iter 1390: loss 1.3087, time 65.89ms
+iter 1400: loss 1.3121, time 60.69ms
+iter 1410: loss 1.3042, time 60.85ms
+iter 1420: loss 1.3105, time 63.45ms
+iter 1430: loss 1.3069, time 65.80ms
+iter 1440: loss 1.3009, time 162.40ms
+iter 1450: loss 1.3079, time 65.84ms
+iter 1460: loss 1.3099, time 65.74ms
+iter 1470: loss 1.3105, time 66.01ms
+iter 1480: loss 1.3066, time 66.07ms
+iter 1490: loss 1.3072, time 65.85ms
+step 1500: train loss 1.2771, val loss 1.2787, lr 2.4522e-04
+iter 1500: loss 1.3051, time 955.81ms
+iter 1510: loss 1.3050, time 61.27ms
+iter 1520: loss 1.3047, time 61.39ms
+iter 1530: loss 1.3005, time 64.14ms
+iter 1540: loss 1.3035, time 66.26ms
+iter 1550: loss 1.2945, time 66.13ms
+iter 1560: loss 1.3082, time 66.32ms
+iter 1570: loss 1.3079, time 66.61ms
+iter 1580: loss 1.3023, time 66.56ms
+iter 1590: loss 1.3033, time 66.49ms
+iter 1600: loss 1.3016, time 65.87ms
+iter 1610: loss 1.3031, time 65.72ms
+iter 1620: loss 1.3039, time 64.04ms
+iter 1630: loss 1.2997, time 60.67ms
+iter 1640: loss 1.3037, time 60.65ms
+iter 1650: loss 1.3017, time 61.71ms
+iter 1660: loss 1.2943, time 65.79ms
+iter 1670: loss 1.3064, time 65.85ms
+iter 1680: loss 1.2991, time 65.98ms
+iter 1690: loss 1.3037, time 65.89ms
+iter 1700: loss 1.2904, time 65.95ms
+iter 1710: loss 1.3033, time 65.84ms
+iter 1720: loss 1.2986, time 65.91ms
+iter 1730: loss 1.3009, time 65.80ms
+iter 1740: loss 1.3055, time 65.60ms
+step 1750: train loss 1.2756, val loss 1.2779, lr 1.3790e-04
+iter 1750: loss 1.2973, time 1030.73ms
+iter 1760: loss 1.3013, time 60.96ms
+iter 1770: loss 1.2986, time 65.79ms
+iter 1780: loss 1.2960, time 65.87ms
+iter 1790: loss 1.2977, time 65.88ms
+iter 1800: loss 1.2939, time 65.90ms
+iter 1810: loss 1.2919, time 65.98ms
+iter 1820: loss 1.2957, time 65.75ms
+iter 1830: loss 1.2944, time 65.94ms
+iter 1840: loss 1.2970, time 66.03ms
+iter 1850: loss 1.2988, time 65.74ms
+iter 1860: loss 1.3012, time 64.30ms
+iter 1870: loss 1.3020, time 61.07ms
+iter 1880: loss 1.2957, time 60.76ms
+iter 1890: loss 1.3000, time 65.82ms
+iter 1900: loss 1.2940, time 69.01ms
+iter 1910: loss 1.2960, time 69.33ms
+iter 1920: loss 1.2918, time 69.69ms
+iter 1930: loss 1.2906, time 69.46ms
+iter 1940: loss 1.2987, time 69.66ms
+iter 1950: loss 1.2988, time 69.84ms
+iter 1960: loss 1.3014, time 69.23ms
+iter 1970: loss 1.2917, time 69.17ms
+iter 1980: loss 1.2960, time 64.68ms
+iter 1990: loss 1.2955, time 64.01ms
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/A3_high_dropout/ckpt.pt
+
+[A3_high_dropout] Step 2: Evaluating OOD performance (Generalization)...
+Evaluating OOD for looplm/experiments/A3_high_dropout/ckpt.pt (n=200, max_loops=None)...
+Checkpoint looplm/experiments/A3_high_dropout/ckpt.pt not found.
+[A3_high_dropout] Experiment completed and metrics saved.
 
 ============================================================
 🚀 STARTING EXPERIMENT: T1_deep_thinking
-   Config: n_embd=256 n_head=4 num_loops=24
+   Config: --n_embd=256 --n_head=4 --num_loops=24
    Output: looplm/experiments/T1_deep_thinking
 ============================================================
 [T1_deep_thinking] Step 1: Training for 2000 iterations...
-Running: python looplm/train_loop.py n_embd=256 n_head=4 num_loops=24 out_dir=looplm/experiments/T1_deep_thinking max_iters=2000
+Running: python looplm/train_loop.py --n_embd=256 --n_head=4 --num_loops=24 --out_dir=looplm/experiments/T1_deep_thinking --max_iters=2000
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: num_loops = 24
+Overriding: out_dir = looplm/experiments/T1_deep_thinking
+Overriding: max_iters = 2000
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
-    exec(open(_configurator_path).read())
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<string>", line 31, in <module>
-AssertionError
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 112, in <module>
+    model.load_state_dict(state_dict, strict=False)
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 2629, in load_state_dict
+    raise RuntimeError(
+RuntimeError: Error(s) in loading state_dict for LoopGPT:
+        size mismatch for transformer.wpe.weight: copying a param with shape torch.Size([256, 384]) from checkpoint, the shape in current model is torch.Size([256, 256]).
+        size mismatch for transformer.h.ln_1.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for transformer.h.attn.c_attn.weight: copying a param with shape torch.Size([1152, 384]) from checkpoint, the shape in current model is torch.Size([768, 256]).
+        size mismatch for transformer.h.attn.c_proj.weight: copying a param with shape torch.Size([384, 384]) from checkpoint, the shape in current model is torch.Size([256, 256]).
+        size mismatch for transformer.h.ln_2.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for transformer.h.mlp.c_fc.weight: copying a param with shape torch.Size([1536, 384]) from checkpoint, the shape in current model is torch.Size([1024, 256]).
+        size mismatch for transformer.h.mlp.c_proj.weight: copying a param with shape torch.Size([384, 1536]) from checkpoint, the shape in current model is torch.Size([256, 1024]).
+        size mismatch for transformer.ln_f.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for step_embedding.weight: copying a param with shape torch.Size([12, 384]) from checkpoint, the shape in current model is torch.Size([24, 256]).
 ❌ [T1_deep_thinking] Experiment failed during training phase.
 
 ############################################################
@@ -82,3 +567,5 @@ AssertionError
 Summary Table:
 Experiment           | Accuracy   | Avg Steps
 ----------------------------------------------
+baseline             |     0.00% |       0.00
+A3_high_dropout      |     0.00% |       0.00
