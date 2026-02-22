@@ -1,8 +1,15 @@
-python looplm/run_experiments.py
+iter 1990: loss 1.2746, time 67.16ms
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/ckpt.pt
+
+[baseline] Step 2: Evaluating OOD performance (Generalization)...
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/ckpt.pt (n=200, max_loops=None)...
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 77, in <module>
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 101, in <module>
     main()
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 45, in main
-    "ood_metrics": eval_res,
-                   ^^^^^^^^
-NameError: name 'eval_res' is not defined
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 57, in main
+    eval_res = evaluate_ood(ckpt_path, num_samples=200)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/eval_loop.py", line 82, in evaluate_ood
+    total_steps += steps.item()
+                   ^^^^^^^^^^^^
+RuntimeError: a Tensor with 20 elements cannot be converted to Scalar
