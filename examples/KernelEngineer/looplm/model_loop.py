@@ -43,7 +43,7 @@ class LoopGPT(nn.Module):
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
 
-    def forward(self, idx, targets=None, num_loops=None, halt_threshold=None):
+    def forward(self, idx, targets=None, num_loops=None, halt_threshold=None, thinking_token_id=None, thinking_threshold=None):
         device = idx.device
         b, t = idx.size()
         M = b * t
@@ -58,13 +58,22 @@ class LoopGPT(nn.Module):
         N = self.config.n_embd
         V = self.config.vocab_size
 
+        # Wait-to-Think: detect if '=' has appeared in the sequence
+        # We assume thinking_token_id is passed (e.g., stoi['='])
+        is_thinking = torch.zeros((b, t), device=device, dtype=torch.float32)
+        if thinking_token_id is not None:
+            # For each position, mark 1 if thinking_token_id appeared at or before this position
+            for i in range(b):
+                eq_indices = (idx[i] == thinking_token_id).nonzero(as_tuple=True)[0]
+                if len(eq_indices) > 0:
+                    first_eq = eq_indices[0].item()
+                    is_thinking[i, first_eq:] = 1.0
+
         # --- Training Mode (Refined for Reasoning) ---
         if self.training:
             h_curr = h
             supervised_logits = []
             for l in range(loops):
-                # Persistent Injection: h = Block(h + x0)
-                # (Note: Phase 4 can test removing + x0 for pure dynamics)
                 h_input = h_curr + x0
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
                 h_next = self.transformer.h(h_input + step_enc)
@@ -98,6 +107,13 @@ class LoopGPT(nn.Module):
             active_mask[:M, 0] = 1.0 
             steps_taken = torch.zeros((M_padded, 1), device=device, dtype=torch.int32)
             
+            # Per-token halt threshold
+            token_thresholds = torch.full((M_padded, 1), halt_threshold if halt_threshold is not None else 0.0, device=device, dtype=torch.float32)
+            if thinking_threshold is not None and thinking_token_id is not None:
+                token_thresholds[:M, 0] = torch.where(is_thinking.view(M) > 0.5, 
+                                                      torch.tensor(thinking_threshold, device=device), 
+                                                      torch.tensor(halt_threshold if halt_threshold is not None else 0.0, device=device))
+
             x0_padded = torch.zeros((M_padded, tile_n), device=device, dtype=x0.dtype)
             x0_padded[:M, :N] = x0.view(M, N)
 
@@ -105,7 +121,7 @@ class LoopGPT(nn.Module):
             logits_padded = torch.full((M_padded, tile_v), -float('inf'), device=device, dtype=x0.dtype)
 
             for l in range(loops):
-                if halt_threshold is not None:
+                if halt_threshold is not None or thinking_threshold is not None:
                     if not (active_mask[:M] > 0.5).any(): break
                 
                 h_current_view = h_state_padded[:M, :N].view(b, t, N)
@@ -115,7 +131,7 @@ class LoopGPT(nn.Module):
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
                 h_next = self.transformer.h(h_input + step_enc)
                 
-                if halt_threshold is not None:
+                if halt_threshold is not None or thinking_threshold is not None:
                     with torch.no_grad():
                         h_next_padded.zero_()
                         logits_padded.fill_(-float('inf'))
@@ -125,10 +141,10 @@ class LoopGPT(nn.Module):
                         h_next_padded[:M, :N] = h_next.view(M, N)
                         
                         grid_x = M_padded // tile_size_m
-                        # Pass actual vocab_size V as REAL_V for internal masking
+                        # Pass token-specific thresholds
                         ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
                                  (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
-                                  halt_threshold, tile_size_m, tile_n, tile_v, V))
+                                  token_thresholds, tile_size_m, tile_n, tile_v, V))
                 else:
                     h_state_padded[:M, :N] = h_next.view(M, N)
                     steps_taken[:M] += 1

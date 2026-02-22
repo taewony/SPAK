@@ -108,18 +108,8 @@
 
 ---
 
----
-
-## 📂 유형 7: Phase 3 Algorithmic Generalization 설계
-
-### **Strategy [Systematic_Trace_Collection]**
-*   **배경**: RTX 5070에서의 반복적인 수동 실행은 비효율적이며, 데이터 기반의 정밀한 분석이 필요함.
-*   **해결**: `run_experiments.py` 통합 스크립트 도입. Training-Evaluation-OOD Testing을 자동화하고 모든 지표를 `summary.json`에 집계.
-*   **상태**: **[IMPLEMENTED]** (v9)
-
-### **Observation [Wait_to_Think_Inference]**
-*   **내용**: 연산의 난이도에 따라 동적으로 루프 횟수를 조절하는 것이 지능의 핵심임.
-*   **구현**: `model_loop.py`에 `thinking_token_id`(=) 감지 로직 추가. `=` 이후에는 `thinking_threshold`를 높게 설정하여 모델이 "깊게" 생각하도록 유도.
-*   **상태**: **[IMPLEMENTED]** (v9)
-
----
+### **💡 최종 엔지니어링 체크리스트 (Phase 2 종결)**
+*   [x] 4D/2D 인덱싱 법칙 통합 (Tile-unit Indexing)
+*   [x] 수치 안정성 확보 (NaN Guard & Column Mask)
+*   [x] 학습/추론 경로 분리 (BPTT vs Pinned-State)
+*   [x] 하드웨어 가속 확인 (Blackwell RTX 5070 최적화)
