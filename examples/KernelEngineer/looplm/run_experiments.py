@@ -35,7 +35,31 @@ def main():
         formatted_args = " ".join([f"--{a}" for a in args_str.split()])
         out_dir_rel = f"experiments/{name}"
         
-        # ... (Training and Evaluation logic) ...
+        print("\n" + "="*60)
+        print(f"🚀 STARTING EXPERIMENT: {name}")
+        print(f"   Config: {formatted_args}")
+        print(f"   Output: looplm/{out_dir_rel}")
+        print("="*60)
+        
+        # 1. Train
+        print(f"[{name}] Step 1: Training for 2000 iterations...")
+        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir_rel} --max_iters=2000"
+        ret = run_command(train_cmd)
+        if ret != 0:
+            print(f"❌ [{name}] Experiment failed during training phase.")
+            continue
+            
+        # 2. Evaluate OOD
+        print(f"\n[{name}] Step 2: Evaluating OOD performance (Generalization)...")
+        ckpt_path = os.path.join(script_dir, out_dir_rel, "ckpt.pt")
+        
+        from eval_loop import evaluate_ood
+        eval_res = evaluate_ood(ckpt_path, num_samples=200)
+        
+        if eval_res:
+            print(f"✅ [{name}] Results: Accuracy {eval_res['accuracy']*100:.2f}%, Avg Steps: {eval_res['avg_steps']:.2f}")
+        else:
+            eval_res = None
         
         # 3. Save combined result with trace links
         res = {
