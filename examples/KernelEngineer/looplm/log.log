@@ -1,0 +1,5 @@
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python test_parity_fused.py
+Testing LoopLM Fused Kernel Parity (Step-by-Step)...
+  Reference Output Shape: torch.Size([1, 1, 13])
+  [Step 1] Initializing Parity Check... OK
+  [Step 2] Next: Replacing attention/MLP loop with Fused Kernel.
