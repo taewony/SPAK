@@ -53,11 +53,13 @@ def main():
     # --- ⚡ Phase 4: Blackwell Persistent & Architecture Ablation ---
     experiments = [
         # P4_X0_Baseline: Standard injection (Current best)
-        {"name": "P4_X0_Baseline", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=True max_iters=5000"},
+        # {"name": "P4_X0_Baseline", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=True max_iters=5000"},
         # P4_Pure_Dynamics: Remove X0 injection (Pure recurrent state)
-        {"name": "P4_Pure_Dynamics", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=False max_iters=5000"},
+        # {"name": "P4_Pure_Dynamics", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=False max_iters=5000"},
         # P4_Deep_Grok: Combining best of Phase 3 with Phase 4
-        {"name": "P4_Deep_Grok", "args": "n_embd=256 n_head=4 num_loops=24 inject_x0=True max_iters=10000 dropout=0.3"},
+        # {"name": "P4_Deep_Grok", "args": "n_embd=256 n_head=4 num_loops=24 inject_x0=True max_iters=10000 dropout=0.3"},
+        # 🚀 FINAL GROKKING ATTEMPT: Bridge Data + 20k Iters + 32 Loops
+        {"name": "P4_Final_Grok_Long", "args": "n_embd=256 n_head=4 num_loops=32 inject_x0=True max_iters=20000 dropout=0.2"},
     ]
     # ---------------------------------------------------------------
 
