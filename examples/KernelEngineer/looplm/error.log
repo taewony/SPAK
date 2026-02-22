@@ -1,0 +1,3 @@
+step 3500: train loss 1.6784, val loss 1.6791, lr 1.0000e-04
+iter 3500: loss 1.7515, time 1070.45ms
+iter 3510: loss 1.7587, time -17.28ms
