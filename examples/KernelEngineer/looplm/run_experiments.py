@@ -42,7 +42,7 @@ def main():
     # --- 🧠 My Advanced Algorithmic Experiments ---
     experiments = [
         # G1: Long training to find Grokking point
-        {"name": "G1_grokking_long", "args": "n_embd=256 n_head=4 num_loops=16 dropout=0.3 max_iters=10000"},
+        # {"name": "G1_grokking_long", "args": "--n_embd=256 --n_head=4 --num_loops=16 --dropout=0.3 --max_iters=10000"},
         # W2: Stiff Thinking (Wait for 99.9% confidence)
         {"name": "W2_stiff_thinking", "args": "n_embd=256 n_head=4 num_loops=24 dropout=0.2 max_iters=5000"},
         # T2: Deep & Narrow (Force logic reuse with 32 loops)
@@ -53,7 +53,13 @@ def main():
     # -----------------------------------------------
 
     results = []
-    # ... (Rest of logic remains the same) ...
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    summary_filename = f"summary_{timestamp}.json"
+    summary_path = os.path.join(script_dir, "experiments", summary_filename)
+    
+    # Ensure experiments dir exists
+    os.makedirs(os.path.dirname(summary_path), exist_ok=True)
     
     for exp in experiments:
         name = exp["name"]
