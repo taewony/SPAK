@@ -117,16 +117,12 @@
 *   **해결**: `run_experiments.py` 통합 스크립트 도입. Training-Evaluation-OOD Testing을 자동화하고 모든 지표를 `summary.json`에 집계.
 *   **상태**: **[IMPLEMENTED]** (v9)
 
-### **RCA v10: Zero-shot Length Generalization Failure**
+### **RCA v12: The Anchor Law (X0 Injection Necessity)**
 *   **Observation**: 
-    *   `baseline`: Accuracy 5% (OOD), Avg Steps 11.05/12.
-    *   `T1 (24 loops)`: Accuracy 0%, Avg Steps 24.0/24.
-*   **Root Cause**: 
-    1. **Insufficient Training (Pre-Grokking)**: 2000 iterations는 덧셈의 추상적 알고리즘을 학습하기에 부족함. 모델이 패턴은 익혔으나 자릿수 확장에 대응하는 '일반적 규칙'을 형성하지 못함.
-    2. **Confidence-Accuracy Gap**: `baseline`은 루프를 줄였음에도 정답률이 낮음. 즉, "잘못된 답에 대해 확신(Overconfidence)"하는 현상 발생.
-*   **Insight**: 
-    *   단순히 루프를 늘리는 것(`T1`)만으로는 지능이 생기지 않음. 
-    *   **Curriculum Learning** (2자리 -> 3자리 -> 4자리 순차 학습) 또는 **Longer Training** (10k+ iters)이 필수적임.
-    *   Weight Decay와 Dropout의 조합이 일반화에 긍정적 영향을 미침 (`A3`가 `A1/A2`보다 나음).
+    *   `P4_X0_Baseline (inject_x0=True)`: 0.5% Accuracy.
+    *   `P4_Pure_Dynamics (inject_x0=False)`: 0.0% Accuracy.
+*   **Root Cause**: 루프가 반복될수록 잠재 공간(Latent Space)의 상태 벡터 `h`가 입력 정보로부터 멀어지는 현상이 발생함. 매 단계 `x0`를 재주입하는 것이 추론 안정성을 지탱하는 '닻' 역할을 수행함.
+*   **Decision**: 향후 모든 `LoopLM` 아키텍처는 **Persistent X0 Injection (`h = Block(h + x0)`)**을 기본값으로 채택함.
+*   **Insight**: 지능은 단순히 루프 횟수(`num_loops`)에 비례하지 않으며, 학습 데이터의 질과 커리큘럼이 병목 지점임이 확인됨.
 
 ---
