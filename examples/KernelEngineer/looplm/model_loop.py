@@ -7,7 +7,7 @@ import cuda.tile as ct
 
 # Reuse shared logic
 from model import Block, LayerNorm, GPTConfig
-from looplm_kernels import looplm_fused_mlp_halt_kernel
+from looplm_kernels import looplm_halt_update_kernel
 
 def next_pow2(n):
     return 2**(n - 1).bit_length()
@@ -136,26 +136,25 @@ class LoopGPT(nn.Module):
                 
                 if halt_threshold is not None or thinking_threshold is not None:
                     with torch.no_grad():
-                        # Phase 4.1: Blackwell Fused Kernel with Persistent Weights
+                        # Phase 4.1: Hybrid Inference (Attention + MLP in PyTorch, Halt in Kernel)
+                        # This ensures 100% numerical parity with Training path.
+                        
+                        # Full Transformer Block in PyTorch
+                        h_input = h_current_view + x0_current_view if self.inject_x0 else h_current_view
+                        step_enc = self.step_embedding(torch.tensor([l], device=device))
+                        h_next = self.transformer.h(h_input + step_enc)
+                        
+                        # Prepare buffers for Halting Kernel
+                        h_next_padded.zero_()
+                        logits_padded.fill_(-float('inf'))
+                        
+                        logits_step = self.lm_head(self.transformer.ln_f(h_next))
+                        logits_padded[:M, :V] = logits_step.view(M, V)
+                        h_next_padded[:M, :N] = h_next.view(M, N)
+                        
                         grid_x = M_padded // tile_size_m
-                        
-                        # In this fused version, we provide the residual (x0 if inject_x0 else 0)
-                        # and the weights for MLP and Head to be used across the loop
-                        h_residual = x0_current_view if self.inject_x0 else torch.zeros_like(x0_current_view)
-                        
-                        # Note: In a fully optimized version, Attention would also be fused.
-                        # For now, we fuse MLP + Residual + Halting.
-                        
-                        # Standard attention call (will be fused in next iteration)
-                        h_attn = self.transformer.h.attn(self.transformer.h.ln_1(h_current_view + step_enc))
-                        h_state_padded[:M, :N] = h_attn.view(M, N)
-                        
-                        ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_fused_mlp_halt_kernel,
-                                 (h_state_padded, h_residual.view(M, N), 
-                                  self.transformer.h.mlp.c_fc.weight.t(), # MLP Up
-                                  self.transformer.h.mlp.c_proj.weight.t(), # MLP Down
-                                  self.lm_head.weight.t(), # LM Head
-                                  active_mask, steps_taken, 
+                        ct.launch(torch.cuda.current_stream(), (grid_x,), looplm_halt_update_kernel,
+                                 (h_state_padded, h_next_padded, logits_padded, active_mask, steps_taken, 
                                   token_thresholds, tile_size_m, tile_n, tile_v, V))
                 else:
                     h_state_padded[:M, :N] = h_next.view(M, N)
