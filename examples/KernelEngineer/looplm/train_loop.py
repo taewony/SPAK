@@ -45,8 +45,9 @@ script_dir = os.path.dirname(__file__)
 if script_dir == '': script_dir = '.'
 
 # Robust out_dir resolution
-if not out_dir.startswith(script_dir):
-    full_out_dir = os.path.join(script_dir, os.path.basename(out_dir))
+# If it's a relative path, resolve it relative to the script's directory.
+if not os.path.isabs(out_dir):
+    full_out_dir = os.path.abspath(os.path.join(script_dir, out_dir))
 else:
     full_out_dir = out_dir
 
@@ -109,7 +110,12 @@ if os.path.exists(init_from_path):
         del state_dict['lm_head.weight']
         del state_dict['transformer.wte.weight']
     
-    model.load_state_dict(state_dict, strict=False)
+    try:
+        model.load_state_dict(state_dict, strict=False)
+        print("Successfully loaded weights from checkpoint.")
+    except RuntimeError as e:
+        print(f"Dimension mismatch or error loading state_dict: {e}")
+        print("Starting from scratch instead.")
 else:
     print("No previous checkpoint found. Starting from scratch.")
 
