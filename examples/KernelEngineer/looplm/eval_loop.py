@@ -13,25 +13,30 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
         return None
 
     checkpoint = torch.load(ckpt_path, map_location=device)
-    # The saved model_args might not include everything, ensure it's compatible
+    # Get dataset name from checkpoint if available, or infer from path
+    config_dict = checkpoint.get('config', {})
+    dataset = config_dict.get('dataset', 'addition')
+    if 'addition_reverse' in ckpt_path: dataset = 'addition_reverse'
+
     args = checkpoint['model_args']
     gptconf = GPTConfig(**args)
     
     n_loops = max_loops if max_loops is not None else checkpoint['num_loops']
-    model = LoopGPT(gptconf, num_loops=n_loops)
+    # Inject_x0 should be in model_args now, but handle old ckpts too
+    inject_x0 = config_dict.get('inject_x0', True)
+    model = LoopGPT(gptconf, num_loops=n_loops, inject_x0=inject_x0)
     
     # Check for strict=False because of potential minor state dict differences
     model.load_state_dict(checkpoint['model'], strict=False)
     model.to(device)
     model.eval()
-
     # Load meta and OOD data
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.join(script_dir, 'data', 'addition')
+    data_dir = os.path.abspath(os.path.join(script_dir, 'data', dataset))
     meta_path = os.path.join(data_dir, 'meta.pkl')
     if not os.path.exists(meta_path):
         # Try relative to CWD if script_dir fails
-        data_dir = 'looplm/data/addition'
+        data_dir = os.path.join('data', dataset)
         meta_path = os.path.join(data_dir, 'meta.pkl')
         
     with open(meta_path, 'rb') as f:
@@ -95,7 +100,17 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
                     current_x = current_x[:, 1:]
         
         # After generation
-        is_correct = generated.strip() == a.strip()
+        final_gen = generated.strip()
+        final_ans = a.strip()
+        
+        # If using reverse dataset, the generated string is reversed answer
+        # but the target 'a' in file is already reversed too.
+        # Wait, addition_reverse_prepare.py saves: "123+456=975"
+        # So 'generated' will be "975" and 'a' will be "975".
+        # Exact match should just work. 
+        # But for 'thinking' trace, it's good to know.
+        
+        is_correct = final_gen == final_ans
         if is_correct: correct += 1
         total += 1
         

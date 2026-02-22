@@ -62,12 +62,19 @@ ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torc
 ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype)
 
 # Data loader setup
-# 1. Try script-relative path
-data_dir = os.path.join(script_dir, 'data', dataset)
-if not os.path.exists(data_dir):
-    # 2. Try nanoGPT relative path
+# 1. Try absolute path relative to script
+data_dir = os.path.abspath(os.path.join(script_dir, 'data', dataset))
+if not os.path.exists(os.path.join(data_dir, 'train.bin')):
+    # 2. Try relative to CWD
+    data_dir = os.path.join('data', dataset)
+if not os.path.exists(os.path.join(data_dir, 'train.bin')):
+    # 3. Try nanoGPT relative path
     data_dir = os.path.join(script_dir, '..', 'nanoGPT', 'data', dataset)
 
+if not os.path.exists(os.path.join(data_dir, 'train.bin')):
+    raise FileNotFoundError(f"Could not find training data in {data_dir}")
+
+print(f"Loading data from: {data_dir}")
 train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
 val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
 
