@@ -2,6 +2,18 @@ import subprocess
 import os
 import json
 import time
+import sys
+
+# Ensure looplm is in path for imports
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+
+try:
+    from eval_loop import evaluate_ood
+except ImportError:
+    print("Warning: Could not import evaluate_ood from eval_loop.py")
+    def evaluate_ood(*args, **kwargs): return None
 
 def run_command(cmd):
     print(f"Running: {cmd}")
@@ -12,12 +24,27 @@ def run_command(cmd):
     return process.returncode
 
 def main():
+    # ==========================================================
+    # 🔍 SMOKE_TEST: True면 1회만 학습하고 2개 샘플만 평가하여 
+    # 로직(파일 저장, 경로 등)이 정상인지 1분 내에 검증합니다.
+    # ==========================================================
+    SMOKE_TEST = True 
+    # ==========================================================
+
+    max_iters = 5 if SMOKE_TEST else 2000
+    ood_samples = 2 if SMOKE_TEST else 200
+
+    if SMOKE_TEST:
+        print("\n" + "!"*60)
+        print("⚠️  RUNNING IN SMOKE TEST MODE (Logic Verification Only)")
+        print("!"*60)
+
     experiments = [
         {"name": "baseline", "args": "n_embd=384 num_loops=12 dropout=0.2"},
         {"name": "A1_low_cap", "args": "n_embd=256 n_head=4 num_loops=12"},
         {"name": "A2_very_low_cap", "args": "n_embd=128 n_head=4 num_loops=12"},
         {"name": "A3_high_dropout", "args": "n_embd=384 num_loops=12 dropout=0.4"},
-        {"name": "T1_deep_thinking", "args": "n_embd=256 n_head=4 num_loops=24"}, # Increased loops
+        {"name": "T1_deep_thinking", "args": "n_embd=256 n_head=4 num_loops=24"},
     ]
 
     results = []
@@ -42,8 +69,8 @@ def main():
         print("="*60)
         
         # 1. Train
-        print(f"[{name}] Step 1: Training for 2000 iterations...")
-        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir_rel} --max_iters=2000"
+        print(f"[{name}] Step 1: Training for {max_iters} iterations...")
+        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir_rel} --max_iters={max_iters}"
         ret = run_command(train_cmd)
         if ret != 0:
             print(f"❌ [{name}] Experiment failed during training phase.")
@@ -53,8 +80,7 @@ def main():
         print(f"\n[{name}] Step 2: Evaluating OOD performance (Generalization)...")
         ckpt_path = os.path.join(script_dir, out_dir_rel, "ckpt.pt")
         
-        from eval_loop import evaluate_ood
-        eval_res = evaluate_ood(ckpt_path, num_samples=200)
+        eval_res = evaluate_ood(ckpt_path, num_samples=ood_samples)
         
         if eval_res:
             print(f"✅ [{name}] Results: Accuracy {eval_res['accuracy']*100:.2f}%, Avg Steps: {eval_res['avg_steps']:.2f}")
