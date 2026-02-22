@@ -26,14 +26,21 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     model.eval()
 
     # Load meta and OOD data
-    script_dir = os.path.dirname(__file__)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(script_dir, 'data', 'addition')
-    with open(os.path.join(data_dir, 'meta.pkl'), 'rb') as f:
+    meta_path = os.path.join(data_dir, 'meta.pkl')
+    if not os.path.exists(meta_path):
+        # Try relative to CWD if script_dir fails
+        data_dir = 'looplm/data/addition'
+        meta_path = os.path.join(data_dir, 'meta.pkl')
+        
+    with open(meta_path, 'rb') as f:
         meta = pickle.load(f)
     itos = meta['itos']
     stoi = meta['stoi']
 
-    ood_data = np.memmap(os.path.join(data_dir, 'val_ood.bin'), dtype=np.uint16, mode='r')
+    ood_bin_path = os.path.join(data_dir, 'val_ood.bin')
+    ood_data = np.memmap(ood_bin_path, dtype=np.uint16, mode='r')
     text = "".join([itos[i] for i in ood_data])
     examples = text.strip().split('\n')
     
