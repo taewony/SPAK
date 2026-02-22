@@ -1,33 +1,4 @@
-## Academic Summary: A Framework for Design-Space Transformation via Semantic Normal Forms
 
-### 1. Problem and Motivation
-Modern GPU kernel development requires navigating a vast design space of architectural choices (e.g., tiling, fusion, memory hierarchy) and tuning parameters. Directly generating optimized code from a high-level specification often leads to iterative, code-level trial-and-error, which is token-inefficient for LLMs and obscures reusable design knowledge. We propose a two-stage methodology that separates **design-space transformation** from **code generation**, leveraging a **Semantic Normal Form (SNF)** as an intermediate representation.
-
-### 2. Core Concepts
-- **SNF (Semantic Normal Form)**: A semiformal DSL that captures the design space (categorical choices), tuning space (numeric parameters), and accumulated knowledge (invariants, rules, facts). It serves as a compact, human- and machine-readable specification of a kernel's architectural intent.
-- **Transformation Functions**:
-  - \( f: \text{SNF} \rightarrow \text{Code} \) – a (possibly LLM-based) generator that produces executable GPU kernel code from a given SNF.
-  - \( g: \text{SNF} \times \text{Target} \rightarrow \text{SNF} \) – a design-space transformation that refines an input SNF to meet a specified target (e.g., hardware platform, performance goal) by adding/removing design axes, adjusting value ranges, and incorporating relevant knowledge.
-
-### 3. Proposed Methodology
-Given a seed SNF (\(\text{SNF}_{\text{seed}}\)) and a desired target specification:
-1. **Design-Space Transformation**: Apply \( g \) to \(\text{SNF}_{\text{seed}}\) to obtain \(\text{SNF}_{\text{target}}\). This step uses an LLM’s reasoning ability to identify missing design axes, recommend hardware-specific values, and embed applicable rules from the knowledge base. It operates solely at the SNF level, avoiding code-level manipulations.
-2. **Code Generation**: Apply \( f \) to \(\text{SNF}_{\text{target}}\) to produce the final optimized kernel code. This step is a straightforward, template-driven synthesis that faithfully implements the decisions encoded in the SNF.
-
-The overall pipeline is:  
-\(\text{SNF}_{\text{seed}} \xrightarrow{g} \text{SNF}_{\text{target}} \xrightarrow{f} \text{Code}_{\text{final}}\).
-
-### 4. Advantages
-- **Token Efficiency**: LLM interactions are confined to the compact SNF representation during the creative design step, drastically reducing token usage compared to manipulating full code.
-- **Separation of Concerns**: Design exploration and code generation are decoupled, enabling independent evolution of the design space and the code templates.
-- **Knowledge Compounding**: Insights from experiments (e.g., negative patterns, optimal values) are stored in the SNF’s knowledge base, making them reusable across future transformations.
-- **Hardware Adaptability**: By changing the target specification, the same seed SNF can yield kernels optimized for different architectures without manual reimplementation.
-
-### 5. Illustration with FMHA Case Study
-Starting from a naive SNF (\(v0\)), we targeted the RTX 5070 Blackwell GPU. The LLM-driven transformation \(g\) introduced new design axes (GQA, TMA latency, online softmax) and hardware-specific heuristics (e.g., tile size constraints), producing \(\text{SNF}_{v4}\). Subsequent code generation \(f\) produced a cuTile kernel achieving 133 TFLOPS, matching hand-tuned performance. The entire process reused the compact SNF representation, minimizing LLM token cost while capturing expert knowledge.
-
-### 6. Conclusion
-This framework establishes a systematic, token-efficient methodology for GPU kernel optimization by elevating design transformations to the SNF level. It enables LLMs to act as design-space reasoners, while code generation remains a deterministic downstream step. The approach generalizes to other domains where design spaces are complex and reusable knowledge is critical.
 ---
 LLM을 단순한 코드 생성기가 아니라 의미적 변환기(semantic transformer) 로 사용하여, 초기의 추상적인 설계 명세(seed semantic normal format code)를 구체적이고 최적화된 실행 코드로 변환하는 체계적인 방법론을 구축할 수 있습니다.
 
