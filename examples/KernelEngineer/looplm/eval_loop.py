@@ -54,6 +54,7 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     
     # To track thinking depth
     total_steps = 0
+    total_tokens_generated = 0
     thinking_token_id = stoi.get('=', None)
     
     for ex in examples:
@@ -86,7 +87,9 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
                 
                 if next_char == '\n': break
                 generated += next_char
-                total_steps += steps.item()
+                # steps is (B, T), take only the last token's steps
+                total_steps += steps[0, -1].item()
+                total_tokens_generated += 1
                 
                 # Append to input for next step
                 next_id_tensor = torch.tensor([[next_id]], device=device)
@@ -99,7 +102,7 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
         total += 1
         
     accuracy = correct / total if total > 0 else 0
-    avg_steps = total_steps / (total * max_ans_len) # rough avg
+    avg_steps = total_steps / total_tokens_generated if total_tokens_generated > 0 else 0
     
     print(f"OOD Accuracy: {accuracy*100:.2f}% ({correct}/{total})")
     return {
