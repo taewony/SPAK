@@ -152,7 +152,7 @@ def estimate_loss():
                 preds = torch.argmax(logits, dim=-1) # (B, T) or (B, 1, V)
                 # Compare only the last predicted token with the target
                 # (Note: In addition, the answer is at the end)
-                if targets is not None:
+                if Y is not None:
                     # Logic to check if the generated sequence matches target
                     pass
         

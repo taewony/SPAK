@@ -86,5 +86,83 @@ Phase 2에서 **커널 무결성(0-step bug 해결)**과 **지능형 역동성(A
    python looplm/run_experiments.py
 
 
-  실행 중 발생하는 오류와 분석 결과는 지속적으로 root.md에 지식 자산으로 축적될 것입니다. 이제 Blackwell 하드웨어의
-  성능을 확인하러 가셔도 좋습니다! 🚀
+  실행 중 터미널 출력 예시 (Mockup)
+
+
+
+   ============================================================
+   🚀 STARTING ADVANCED EXPERIMENT: R2_Reverse_Grok
+      Config: --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000
+      Output: experiments/R2_Reverse_Grok
+   ============================================================
+   [R2_Reverse_Grok] Step 1: Training for 15000 iterations...
+   Loading data from: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/data/addition_reverse
+   Starting LoopLM Training on addition_reverse...
+
+   step 0: train loss 2.7251, val loss 2.7243, lr 0.0000e+00
+   iter 100: loss 2.1042, time 102.45ms
+   iter 500: loss 1.4521, time 101.12ms  <-- 4자리 정답률 상승 중
+   ...
+   step 5000: train loss 0.4215, val loss 0.4512, lr 8.5421e-04
+   [Live Heuristic] Validation Accuracy (4-digits): 98.5% ✅
+
+   [R2_Reverse_Grok] Step 2: Evaluating OOD performance (Generalization)...
+   Evaluating OOD for experiments/R2_Reverse_Grok/ckpt.pt (n=200, max_loops=None)...
+
+   --- OOD Detailed Intelligence Report ---
+   Digits     | Accuracy   | Avg Steps
+   -----------------------------------
+    5+ Digits |    95.00%  |     18.42
+    6+ Digits |    92.50%  |     21.15
+    8+ Digits |    85.00%  |     23.80
+   10+ Digits |    70.00%  |     24.00 (Max)
+   12+ Digits |    45.50%  |     24.00 (Max)
+
+   Overall OOD Accuracy: 77.60%
+   ✅ [R2_Reverse_Grok] Results: Accuracy 77.60%, Avg Steps: 22.10
+   [R2_Reverse_Grok] Experiment completed and metrics indexed.
+
+  ---
+
+
+  이 리포트가 주는 인사이트
+   1. 지능의 한계선 파악: 위 예시에서 8자리까지는 85%로 잘 풀다가 12자리에서 45%로 떨어진다면, "현재 모델의 용량으로는 12자리의 복잡한 Carry(올림)를 처리하기에 루프 횟수(24회)가 부족하구나"라고 즉시 판단할 수 있습니다.
+   2. 사고 시간 비례 증명: Avg Steps가 5자리(18.4)보다 8자리(23.8)에서 더 높게 나온다면, "모델이 어려운 문제일수록 더 오래 생각한다"는 가변적 지능(Adaptive Intelligence)을 데이터로 완벽히 입증하게 됩니다.
+   
+✦ 결론부터 말씀드리면, `generate_master_report.py`는 Windows PC에서 실행하셔도 전혀 문제없습니다. 데이터 집계와 텍스트
+  생성만 수행하기 때문입니다.
+
+  추가로 필요한 데이터에 대한 Cross-check 결과입니다:
+
+
+  1. 데이터 필수 체크리스트
+  Master Report를 완성하기 위해 필요한 최소한의 데이터는 다음과 같습니다.
+
+
+   * [필수] Reverse Addition 결과 (`R1~R4`): 현재 RTX 5070에서 돌아가고 있는 데이터입니다.
+   * [필수] Baseline 결과:
+       * experiments/baseline/ckpt.pt (표준 GPT 혹은 LoopLM Normal Baseline)
+       * 이 데이터가 summary_latest.json에 포함되어 있어야 비교가 가능합니다.
+       * 만약 `summary_latest.json`에 `baseline` 결과가 빠져있다면, R1~R4 완료 후 baseline 체크포인트만 지정해서
+         eval_loop.py를 한 번 더 돌려주면 자동으로 업데이트됩니다.
+
+
+  2. Windows PC 실행 시 주의사항
+  Windows에서 실행하실 때 딱 한 가지만 챙겨주세요:
+   * RTX 5070 서버에 있는 `looplm/experiments/` 폴더 전체를 Windows PC로 복사해 오셔야 합니다. (특히 summary_latest.json
+     파일이 핵심입니다.)
+
+
+  3. 지능형 비교를 위한 한 가지 더!
+  만약 generate_master_report.py가 더 풍부한 리포트를 내길 원하신다면, Normal Logic 최강자였던 P4_Final_Grok_Long (13.5%
+  성적표)도 꼭 포함시켜 주세요.
+
+   * Normal 최강자 (13.5%) vs Reverse 최강자 (??%)
+
+  이 대조군이 있어야 "연산 방향의 중요성"을 가장 극적으로 리포트에 담을 수 있습니다.
+
+
+  요약:
+   1. R1~R4 결과가 나오면 experiments/ 폴더를 통째로 가져오세요.
+   2. Windows에서 python generate_master_report.py를 실행하세요.
+   3. MASTER_REPORT.md가 탄생합니다! 🚀🔥
