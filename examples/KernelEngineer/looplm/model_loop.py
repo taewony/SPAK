@@ -13,12 +13,13 @@ def next_pow2(n):
     return 2**(n - 1).bit_length()
 
 class LoopGPT(nn.Module):
-    def __init__(self, config, num_loops=12):
+    def __init__(self, config, num_loops=12, inject_x0=True):
         super().__init__()
         assert config.vocab_size is not None
         assert config.block_size is not None
         self.config = config
         self.num_loops = num_loops
+        self.inject_x0 = inject_x0 # Phase 4.2: Toggle for Anchor Injection
 
         self.transformer = nn.ModuleDict(dict(
             wte = nn.Embedding(config.vocab_size, config.n_embd),
@@ -74,7 +75,8 @@ class LoopGPT(nn.Module):
             h_curr = h
             supervised_logits = []
             for l in range(loops):
-                h_input = h_curr + x0
+                # Phase 4.2: Anchor Injection (h = Block(h + x0) vs Block(h))
+                h_input = h_curr + x0 if self.inject_x0 else h_curr
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
                 h_next = self.transformer.h(h_input + step_enc)
                 h_curr = h_next
@@ -127,7 +129,8 @@ class LoopGPT(nn.Module):
                 h_current_view = h_state_padded[:M, :N].view(b, t, N)
                 x0_current_view = x0_padded[:M, :N].view(b, t, N)
                 
-                h_input = h_current_view + x0_current_view
+                # Phase 4.2: Anchor Injection (h = Block(h + x0) vs Block(h))
+                h_input = h_current_view + x0_current_view if self.inject_x0 else h_current_view
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
                 h_next = self.transformer.h(h_input + step_enc)
                 
