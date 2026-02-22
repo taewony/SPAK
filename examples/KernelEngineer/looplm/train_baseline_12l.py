@@ -64,9 +64,16 @@ ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype)
 
 # Data loader setup
 # We expect data to be in nanoGPT/data/shakespeare_char/
-data_dir = os.path.join('nanoGPT', 'data', dataset)
+# script_dir is either '.' or the path to looplm/
+data_dir = os.path.join(os.path.dirname(script_dir), 'nanoGPT', 'data', dataset)
+if not os.path.exists(data_dir):
+    # Try direct project root if nested
+    data_dir = os.path.join('..', 'nanoGPT', 'data', dataset)
 if not os.path.exists(data_dir):
     data_dir = os.path.join('data', dataset)
+if not os.path.exists(data_dir):
+    # Fallback to local data dir if all else fails
+    data_dir = os.path.join(script_dir, 'data', dataset)
 
 train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
 val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')

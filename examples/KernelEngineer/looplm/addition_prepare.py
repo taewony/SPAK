@@ -22,8 +22,15 @@ def generate_addition_example(max_digits):
     return f"{n1}+{n2}={n1+n2}"
 
 def generate_addition_data():
-    print(f"Generating {num_samples} training samples (up to {max_digits_train} digits)...")
-    dataset = [generate_addition_example(max_digits_train) for _ in range(num_samples)]
+    print(f"Generating {num_samples} training samples (with 5% Bridge Data)...")
+    dataset = []
+    for _ in range(num_samples):
+        # 95% 1-4 digits, 5% 5-6 digits (The Bridge)
+        if random.random() < 0.05:
+            max_d = random.randint(5, 6)
+        else:
+            max_d = max_digits_train
+        dataset.append(generate_addition_example(max_d))
     
     print(f"Generating 5000 OOD samples (up to {max_digits_ood} digits)...")
     ood_dataset = [generate_addition_example(max_digits_ood) for _ in range(5000)]

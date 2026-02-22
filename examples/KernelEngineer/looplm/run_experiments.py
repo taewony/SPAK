@@ -86,15 +86,18 @@ def main():
         ood_samples = 2 if SMOKE_TEST else 200
         out_dir_rel = f"experiments/{name}"
         
+        # Determine the correct path to train_loop.py
+        train_script = os.path.join(script_dir, "train_loop.py")
+        
         print("\n" + "="*60)
         print(f"🚀 STARTING ADVANCED EXPERIMENT: {name}")
         print(f"   Config: {formatted_args}")
-        print(f"   Output: looplm/{out_dir_rel}")
+        print(f"   Output: {out_dir_rel}")
         print("="*60)
         
         # 1. Train
         print(f"[{name}] Step 1: Training for {current_max_iters} iterations...")
-        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir_rel} --max_iters={current_max_iters}"
+        train_cmd = f"python {train_script} {formatted_args} --out_dir={out_dir_rel} --max_iters={current_max_iters}"
         ret = run_command(train_cmd)
 
         if ret != 0:
