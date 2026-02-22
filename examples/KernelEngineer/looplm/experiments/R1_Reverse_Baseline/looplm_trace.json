@@ -1,0 +1,14 @@
+[
+    {
+        "type": "Convergence",
+        "step": 0,
+        "train_loss": 2.729776382446289,
+        "val_loss": 2.730412483215332
+    },
+    {
+        "type": "Performance",
+        "step": 0,
+        "loss": 2.728300094604492,
+        "step_time_ms": 7173.091411590576
+    }
+]

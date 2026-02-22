@@ -20,20 +20,14 @@ def generate_report():
     # Reverse Baseline
     # Reverse Grok
     
-    report = "# [Master Report] LoopLM vs Standard GPT Intelligence Comparison
-
-"
+    report = "# [Master Report] LoopLM vs Standard GPT Intelligence Comparison"
     report += f"Generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}
 
 "
     
-    report += "## 1. Top-line Performance (12-digit OOD)
-
-"
-    report += "| Experiment | Config | Accuracy | Avg Steps | Efficiency (Params) |
-"
-    report += "| :--- | :--- | :---: | :---: | :---: |
-"
+    report += "## 1. Top-line Performance (12-digit OOD)"
+    report += "| Experiment | Config | Accuracy | Avg Steps | Efficiency (Params) |"
+    report += "| :--- | :--- | :---: | :---: | :---: |"
     
     for res in results:
         name = res['experiment']
@@ -47,19 +41,12 @@ def generate_report():
             params = "85M" if "n_layer=12" in conf or "baseline" in name.lower() else "7M"
             eff = "1.0x" if params == "85M" else "12.1x"
             
-            report += f"| {name} | {conf} | {acc} | {steps} | {eff} |
-"
+            report += f"| {name} | {conf} | {acc} | {steps} | {eff} |"
 
-    report += "
-## 2. Key Insights
-
-"
-    report += "- **The Reverse Breakthrough**: Reverse logic shows significantly higher OOD accuracy compared to normal logic.
-"
-    report += "- **Depth vs Complexity**: Avg steps show a positive correlation with digit length in LoopLM models.
-"
-    report += "- **Parameter Efficiency**: LoopLM achieves comparable or better reasoning with 12x fewer parameters.
-"
+    report += "## 2. Key Insights"
+    report += "- **The Reverse Breakthrough**: Reverse logic shows significantly higher OOD accuracy compared to normal logic."
+    report += "- **Depth vs Complexity**: Avg steps show a positive correlation with digit length in LoopLM models."
+    report += "- **Parameter Efficiency**: LoopLM achieves comparable or better reasoning with 12x fewer parameters."
 
     report_path = os.path.join(script_dir, "MASTER_REPORT.md")
     with open(report_path, "w", encoding='utf-8') as f:
