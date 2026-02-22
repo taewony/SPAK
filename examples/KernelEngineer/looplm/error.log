@@ -14,14 +14,34 @@ Overriding: num_loops = 16
 Overriding: max_iters = 5000
 Overriding: out_dir = experiments/R1_Reverse_Baseline
 Overriding: max_iters = 5
+Loading data from: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/data/addition_reverse
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
+Dimension mismatch or error loading state_dict: Error(s) in loading state_dict for LoopGPT:
+        size mismatch for transformer.wpe.weight: copying a param with shape torch.Size([256, 384]) from checkpoint, the shape in current model is torch.Size([256, 256]).
+        size mismatch for transformer.h.ln_1.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for transformer.h.attn.c_attn.weight: copying a param with shape torch.Size([1152, 384]) from checkpoint, the shape in current model is torch.Size([768, 256]).
+        size mismatch for transformer.h.attn.c_proj.weight: copying a param with shape torch.Size([384, 384]) from checkpoint, the shape in current model is torch.Size([256, 256]).
+        size mismatch for transformer.h.ln_2.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for transformer.h.mlp.c_fc.weight: copying a param with shape torch.Size([1536, 384]) from checkpoint, the shape in current model is torch.Size([1024, 256]).
+        size mismatch for transformer.h.mlp.c_proj.weight: copying a param with shape torch.Size([384, 1536]) from checkpoint, the shape in current model is torch.Size([256, 1024]).
+        size mismatch for transformer.ln_f.weight: copying a param with shape torch.Size([384]) from checkpoint, the shape in current model is torch.Size([256]).
+        size mismatch for step_embedding.weight: copying a param with shape torch.Size([12, 384]) from checkpoint, the shape in current model is torch.Size([16, 256]).
+Starting from scratch instead.
+Starting LoopLM Training on addition_reverse...
+Config: 16 loops over 1 layer block
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
-    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
-    f_ctx = open(
-            ^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 200, in <module>
+    losses = estimate_loss()
+             ^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/env/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 155, in estimate_loss
+    if targets is not None:
+       ^^^^^^^
+NameError: name 'targets' is not defined
 ❌ [R1_Reverse_Baseline] Experiment failed during training phase.
 
 ============================================================
@@ -29,79 +49,3 @@ FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPA
    Config: --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000 --dropout=0.2
    Output: experiments/R2_Reverse_Grok
 ============================================================
-[R2_Reverse_Grok] Step 1: Training for 5 iterations...
-Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000 --dropout=0.2 --out_dir=experiments/R2_Reverse_Grok --max_iters=5
-Overriding: dataset = addition_reverse
-Overriding: n_embd = 256
-Overriding: n_head = 4
-Overriding: num_loops = 24
-Overriding: max_iters = 15000
-Overriding: dropout = 0.2
-Overriding: out_dir = experiments/R2_Reverse_Grok
-Overriding: max_iters = 5
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
-    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
-    f_ctx = open(
-            ^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
-❌ [R2_Reverse_Grok] Experiment failed during training phase.
-
-============================================================
-🚀 STARTING ADVANCED EXPERIMENT: R3_Reverse_Efficient
-   Config: --dataset=addition_reverse --n_embd=128 --n_head=4 --num_loops=32 --max_iters=10000
-   Output: experiments/R3_Reverse_Efficient
-============================================================
-[R3_Reverse_Efficient] Step 1: Training for 5 iterations...
-Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=128 --n_head=4 --num_loops=32 --max_iters=10000 --out_dir=experiments/R3_Reverse_Efficient --max_iters=5
-Overriding: dataset = addition_reverse
-Overriding: n_embd = 128
-Overriding: n_head = 4
-Overriding: num_loops = 32
-Overriding: max_iters = 10000
-Overriding: out_dir = experiments/R3_Reverse_Efficient
-Overriding: max_iters = 5
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
-    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
-    f_ctx = open(
-            ^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
-❌ [R3_Reverse_Efficient] Experiment failed during training phase.
-
-============================================================
-🚀 STARTING ADVANCED EXPERIMENT: R4_Reverse_Deep_Thinking
-   Config: --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=10000 --dropout=0.2
-   Output: experiments/R4_Reverse_Deep_Thinking
-============================================================
-[R4_Reverse_Deep_Thinking] Step 1: Training for 5 iterations...
-Running: python /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=10000 --dropout=0.2 --out_dir=experiments/R4_Reverse_Deep_Thinking --max_iters=5
-Overriding: dataset = addition_reverse
-Overriding: n_embd = 256
-Overriding: n_head = 4
-Overriding: num_loops = 48
-Overriding: max_iters = 10000
-Overriding: dropout = 0.2
-Overriding: out_dir = experiments/R4_Reverse_Deep_Thinking
-Overriding: max_iters = 5
-Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 71, in <module>
-    train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/env/lib/python3.12/site-packages/numpy/_core/memmap.py", line 236, in __new__
-    f_ctx = open(
-            ^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/../nanoGPT/data/addition_reverse/train.bin'
-❌ [R4_Reverse_Deep_Thinking] Experiment failed during training phase.
-
-############################################################
-🏁 ALL EXPERIMENTS COMPLETE
-############################################################
-
-Summary Table:
-Experiment           | Accuracy   | Avg Steps
-----------------------------------------------
