@@ -1,0 +1,84 @@
+python looplm/run_experiments.py
+
+============================================================
+🚀 STARTING EXPERIMENT: baseline
+   Config: n_embd=384 num_loops=12 dropout=0.2
+   Output: looplm/experiments/baseline
+============================================================
+[baseline] Step 1: Training for 2000 iterations...
+Running: python looplm/train_loop.py n_embd=384 num_loops=12 dropout=0.2 out_dir=looplm/experiments/baseline max_iters=2000
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 31, in <module>
+AssertionError
+❌ [baseline] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING EXPERIMENT: A1_low_cap
+   Config: n_embd=256 n_head=4 num_loops=12
+   Output: looplm/experiments/A1_low_cap
+============================================================
+[A1_low_cap] Step 1: Training for 2000 iterations...
+Running: python looplm/train_loop.py n_embd=256 n_head=4 num_loops=12 out_dir=looplm/experiments/A1_low_cap max_iters=2000
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 31, in <module>
+AssertionError
+❌ [A1_low_cap] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING EXPERIMENT: A2_very_low_cap
+   Config: n_embd=128 n_head=4 num_loops=12
+   Output: looplm/experiments/A2_very_low_cap
+============================================================
+[A2_very_low_cap] Step 1: Training for 2000 iterations...
+Running: python looplm/train_loop.py n_embd=128 n_head=4 num_loops=12 out_dir=looplm/experiments/A2_very_low_cap max_iters=2000
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 31, in <module>
+AssertionError
+❌ [A2_very_low_cap] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING EXPERIMENT: A3_high_dropout
+   Config: n_embd=384 num_loops=12 dropout=0.4
+   Output: looplm/experiments/A3_high_dropout
+============================================================
+[A3_high_dropout] Step 1: Training for 2000 iterations...
+Running: python looplm/train_loop.py n_embd=384 num_loops=12 dropout=0.4 out_dir=looplm/experiments/A3_high_dropout max_iters=2000
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 31, in <module>
+AssertionError
+❌ [A3_high_dropout] Experiment failed during training phase.
+
+============================================================
+🚀 STARTING EXPERIMENT: T1_deep_thinking
+   Config: n_embd=256 n_head=4 num_loops=24
+   Output: looplm/experiments/T1_deep_thinking
+============================================================
+[T1_deep_thinking] Step 1: Training for 2000 iterations...
+Running: python looplm/train_loop.py n_embd=256 n_head=4 num_loops=24 out_dir=looplm/experiments/T1_deep_thinking max_iters=2000
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 40, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 31, in <module>
+AssertionError
+❌ [T1_deep_thinking] Experiment failed during training phase.
+
+############################################################
+🏁 ALL EXPERIMENTS COMPLETE
+############################################################
+
+Summary Table:
+Experiment           | Accuracy   | Avg Steps
+----------------------------------------------
