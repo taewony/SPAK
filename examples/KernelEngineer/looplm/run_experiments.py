@@ -39,10 +39,9 @@ def main():
         {"name": "T1_deep_thinking", "args": "n_embd=256 n_head=4 num_loops=24"},
     ]
 
-    # --- 🧠 My Advanced Algorithmic Experiments ---
-    experiments = [
+    advanced_experiments_p3 = [
         # G1: Long training to find Grokking point
-        # {"name": "G1_grokking_long", "args": "--n_embd=256 --n_head=4 --num_loops=16 --dropout=0.3 --max_iters=10000"},
+        {"name": "G1_grokking_long", "args": "n_embd=256 n_head=4 num_loops=16 dropout=0.3 max_iters=10000"},
         # W2: Stiff Thinking (Wait for 99.9% confidence)
         {"name": "W2_stiff_thinking", "args": "n_embd=256 n_head=4 num_loops=24 dropout=0.2 max_iters=5000"},
         # T2: Deep & Narrow (Force logic reuse with 32 loops)
@@ -50,7 +49,17 @@ def main():
         # A4: Robust Regularization (High Dropout to kill memorization)
         {"name": "A4_robust_reg", "args": "n_embd=256 n_head=4 num_loops=16 dropout=0.5 max_iters=7000"},
     ]
-    # -----------------------------------------------
+
+    # --- ⚡ Phase 4: Blackwell Persistent & Architecture Ablation ---
+    experiments = [
+        # P4_X0_Baseline: Standard injection (Current best)
+        {"name": "P4_X0_Baseline", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=True max_iters=5000"},
+        # P4_Pure_Dynamics: Remove X0 injection (Pure recurrent state)
+        {"name": "P4_Pure_Dynamics", "args": "n_embd=256 n_head=4 num_loops=16 inject_x0=False max_iters=5000"},
+        # P4_Deep_Grok: Combining best of Phase 3 with Phase 4
+        {"name": "P4_Deep_Grok", "args": "n_embd=256 n_head=4 num_loops=24 inject_x0=True max_iters=10000 dropout=0.3"},
+    ]
+    # ---------------------------------------------------------------
 
     results = []
     script_dir = os.path.dirname(os.path.abspath(__file__))

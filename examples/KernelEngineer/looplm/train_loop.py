@@ -17,6 +17,7 @@ block_size = 256
 n_embd = 384
 n_head = 6
 num_loops = 12
+inject_x0 = True
 dropout = 0.2
 bias = False
 learning_rate = 1e-3
@@ -88,7 +89,7 @@ vocab_size = meta['vocab_size']
 model_args = dict(n_layer=1, n_head=n_head, n_embd=n_embd, block_size=block_size,
                   bias=bias, vocab_size=vocab_size, dropout=dropout)
 gptconf = GPTConfig(**model_args)
-model = LoopGPT(gptconf, num_loops=num_loops)
+model = LoopGPT(gptconf, num_loops=num_loops, inject_x0=inject_x0)
 
 # Warm Start Logic: Prioritize addition checkpoint, fallback to shakespeare looplm
 # Primary: looplm/out_addition/ckpt.pt
