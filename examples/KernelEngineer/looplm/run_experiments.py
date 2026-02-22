@@ -28,18 +28,10 @@ def main():
     # 🔍 SMOKE_TEST: True면 1회만 학습하고 2개 샘플만 평가하여 
     # 로직(파일 저장, 경로 등)이 정상인지 1분 내에 검증합니다.
     # ==========================================================
-    SMOKE_TEST = False
+    SMOKE_TEST = False 
     # ==========================================================
 
-    max_iters = 5 if SMOKE_TEST else 2000
-    ood_samples = 2 if SMOKE_TEST else 200
-
-    if SMOKE_TEST:
-        print("\n" + "!"*60)
-        print("⚠️  RUNNING IN SMOKE TEST MODE (Logic Verification Only)")
-        print("!"*60)
-
-    experiments = [
+    basic_experiments = [
         {"name": "baseline", "args": "n_embd=384 num_loops=12 dropout=0.2"},
         {"name": "A1_low_cap", "args": "n_embd=256 n_head=4 num_loops=12"},
         {"name": "A2_very_low_cap", "args": "n_embd=128 n_head=4 num_loops=12"},
@@ -47,31 +39,49 @@ def main():
         {"name": "T1_deep_thinking", "args": "n_embd=256 n_head=4 num_loops=24"},
     ]
 
-    results = []
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    timestamp = time.strftime("%Y%m%d_%H%M%S")
-    summary_filename = f"summary_{timestamp}.json"
-    summary_path = os.path.join(script_dir, "experiments", summary_filename)
-    
-    # Ensure experiments dir exists
-    os.makedirs(os.path.dirname(summary_path), exist_ok=True)
+    # --- 🧠 My Advanced Algorithmic Experiments ---
+    experiments = [
+        # G1: Long training to find Grokking point
+        {"name": "G1_grokking_long", "args": "n_embd=256 n_head=4 num_loops=16 dropout=0.3 max_iters=10000"},
+        # W2: Stiff Thinking (Wait for 99.9% confidence)
+        {"name": "W2_stiff_thinking", "args": "n_embd=256 n_head=4 num_loops=24 dropout=0.2 max_iters=5000"},
+        # T2: Deep & Narrow (Force logic reuse with 32 loops)
+        {"name": "T2_deep_narrow", "args": "n_embd=192 n_head=3 num_loops=32 dropout=0.2 max_iters=5000"},
+        # A4: Robust Regularization (High Dropout to kill memorization)
+        {"name": "A4_robust_reg", "args": "n_embd=256 n_head=4 num_loops=16 dropout=0.5 max_iters=7000"},
+    ]
+    # -----------------------------------------------
 
+    results = []
+    # ... (Rest of logic remains the same) ...
+    
     for exp in experiments:
         name = exp["name"]
         args_str = exp["args"]
         formatted_args = " ".join([f"--{a}" for a in args_str.split()])
+        
+        # Override max_iters if present in exp["args"]
+        current_max_iters = 5 if SMOKE_TEST else 2000
+        if "max_iters=" in args_str:
+            for part in args_str.split():
+                if "max_iters=" in part:
+                    current_max_iters = int(part.split('=')[1])
+                    if SMOKE_TEST: current_max_iters = 5
+
+        ood_samples = 2 if SMOKE_TEST else 200
         out_dir_rel = f"experiments/{name}"
         
         print("\n" + "="*60)
-        print(f"🚀 STARTING EXPERIMENT: {name}")
+        print(f"🚀 STARTING ADVANCED EXPERIMENT: {name}")
         print(f"   Config: {formatted_args}")
         print(f"   Output: looplm/{out_dir_rel}")
         print("="*60)
         
         # 1. Train
-        print(f"[{name}] Step 1: Training for {max_iters} iterations...")
-        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir_rel} --max_iters={max_iters}"
+        print(f"[{name}] Step 1: Training for {current_max_iters} iterations...")
+        train_cmd = f"python looplm/train_loop.py {formatted_args} --out_dir={out_dir_rel} --max_iters={current_max_iters}"
         ret = run_command(train_cmd)
+
         if ret != 0:
             print(f"❌ [{name}] Experiment failed during training phase.")
             continue

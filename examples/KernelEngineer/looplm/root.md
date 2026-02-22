@@ -117,9 +117,16 @@
 *   **해결**: `run_experiments.py` 통합 스크립트 도입. Training-Evaluation-OOD Testing을 자동화하고 모든 지표를 `summary.json`에 집계.
 *   **상태**: **[IMPLEMENTED]** (v9)
 
-### **Observation [Wait_to_Think_Inference]**
-*   **내용**: 연산의 난이도에 따라 동적으로 루프 횟수를 조절하는 것이 지능의 핵심임.
-*   **구현**: `model_loop.py`에 `thinking_token_id`(=) 감지 로직 추가. `=` 이후에는 `thinking_threshold`를 높게 설정하여 모델이 "깊게" 생각하도록 유도.
-*   **상태**: **[IMPLEMENTED]** (v9)
+### **RCA v10: Zero-shot Length Generalization Failure**
+*   **Observation**: 
+    *   `baseline`: Accuracy 5% (OOD), Avg Steps 11.05/12.
+    *   `T1 (24 loops)`: Accuracy 0%, Avg Steps 24.0/24.
+*   **Root Cause**: 
+    1. **Insufficient Training (Pre-Grokking)**: 2000 iterations는 덧셈의 추상적 알고리즘을 학습하기에 부족함. 모델이 패턴은 익혔으나 자릿수 확장에 대응하는 '일반적 규칙'을 형성하지 못함.
+    2. **Confidence-Accuracy Gap**: `baseline`은 루프를 줄였음에도 정답률이 낮음. 즉, "잘못된 답에 대해 확신(Overconfidence)"하는 현상 발생.
+*   **Insight**: 
+    *   단순히 루프를 늘리는 것(`T1`)만으로는 지능이 생기지 않음. 
+    *   **Curriculum Learning** (2자리 -> 3자리 -> 4자리 순차 학습) 또는 **Longer Training** (10k+ iters)이 필수적임.
+    *   Weight Decay와 Dropout의 조합이 일반화에 긍정적 영향을 미침 (`A3`가 `A1/A2`보다 나음).
 
 ---
