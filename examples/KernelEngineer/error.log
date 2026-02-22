@@ -1,15 +1,41 @@
-iter 1990: loss 1.2746, time 67.16ms
+python looplm/run_experiments.py
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+⚠️  RUNNING IN SMOKE TEST MODE (Logic Verification Only)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+============================================================
+🚀 STARTING EXPERIMENT: baseline
+   Config: --n_embd=384 --num_loops=12 --dropout=0.2
+   Output: looplm/experiments/baseline
+============================================================
+[baseline] Step 1: Training for 5 iterations...
+Running: python looplm/train_loop.py --n_embd=384 --num_loops=12 --dropout=0.2 --out_dir=experiments/baseline --max_iters=5
+Overriding: n_embd = 384
+Overriding: num_loops = 12
+Overriding: dropout = 0.2
+Overriding: out_dir = experiments/baseline
+Overriding: max_iters = 5
+Initializing from existing LoopLM checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/out_addition/ckpt.pt
+Vocab mismatch: Ckpt(12) vs Dataset(13).
+Resetting lm_head and wte weights for new task.
+Successfully loaded weights from checkpoint.
+Starting LoopLM Training on addition...
+Config: 12 loops over 1 layer block
+step 0: train loss 2.6455, val loss 2.6447, lr 0.0000e+00
+iter 0: loss 2.6515, time 9632.44ms
 LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/ckpt.pt
 
 [baseline] Step 2: Evaluating OOD performance (Generalization)...
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/ckpt.pt (n=200, max_loops=None)...
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/baseline/ckpt.pt (n=2, max_loops=None)...
 Traceback (most recent call last):
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 101, in <module>
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 127, in <module>
     main()
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 57, in main
-    eval_res = evaluate_ood(ckpt_path, num_samples=200)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/eval_loop.py", line 82, in evaluate_ood
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/run_experiments.py", line 83, in main
+    eval_res = evaluate_ood(ckpt_path, num_samples=ood_samples)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/eval_loop.py", line 89, in evaluate_ood
     total_steps += steps.item()
                    ^^^^^^^^^^^^
 RuntimeError: a Tensor with 20 elements cannot be converted to Scalar
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$
