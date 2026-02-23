@@ -12,7 +12,7 @@ from model import GPTConfig
 # default config values for Addition Experiment
 dataset = 'addition'
 out_dir = 'looplm/out_addition'
-batch_size = 64
+batch_size = 128 # Increased for stability
 block_size = 256
 n_embd = 384
 n_head = 6

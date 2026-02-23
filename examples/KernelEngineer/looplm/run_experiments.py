@@ -31,19 +31,18 @@ def main():
     SMOKE_TEST = False 
     # ==========================================================
 
-    # --- 🌉 Phase 4.7: The 30% Bridge Breakthrough ---
-    # Stronger signal for generalization (60k samples of 5-6 digits)
-    bridge_30_experiments = [
-        # Standard GPT vs LoopLM with 30% Bridge
-        {"name": "B30_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
-        {"name": "B30_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
-        
-        # Advanced LoopLM with 30% Bridge + Deeper Loops
-        {"name": "B30_Deep_Grok", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=24 max_iters=20000 dropout=0.2"},
-        {"name": "B30_Ultimate_Thinking", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=48 max_iters=15000 dropout=0.2"},
+    # --- 🌀 Phase 4.8: RoPE (Rotary Position Embeddings) Breakthrough ---
+    # Translation-invariant position info for OOD success.
+    rope_experiments = [
+        # Standard GPT with RoPE
+        {"name": "RoPE_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
+        # LoopLM with RoPE
+        {"name": "RoPE_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
+        # Ultimate RoPE Grokking
+        {"name": "RoPE_Ultimate_Thinking", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=32 max_iters=20000 dropout=0.2"},
     ]
 
-    experiments = bridge_30_experiments 
+    experiments = rope_experiments 
     # -----------------------------------------------------------
 
     results = []

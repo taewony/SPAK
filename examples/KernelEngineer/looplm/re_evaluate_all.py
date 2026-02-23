@@ -17,7 +17,6 @@ def re_evaluate():
         return
 
     results = []
-    # Find all subdirectories that have ckpt.pt
     subdirs = [d for d in os.listdir(experiments_dir) if os.path.isdir(os.path.join(experiments_dir, d))]
     
     print(f"Found {len(subdirs)} experiment folders. Starting re-evaluation...")
@@ -27,9 +26,9 @@ def re_evaluate():
         if not os.path.exists(ckpt_path):
             continue
 
-        print(f">>> Re-evaluating: {name}")
-        # Run evaluation (500 samples for better statistical significance)
-        eval_res = evaluate_ood(ckpt_path, num_samples=500)
+        print(f"\n>>> Re-evaluating: {name}")
+        # Run evaluation (1000 samples for better statistical significance)
+        eval_res = evaluate_ood(ckpt_path, num_samples=1000)
         
         if eval_res:
             res = {
@@ -40,17 +39,15 @@ def re_evaluate():
             }
             results.append(res)
 
-    # Save to a new dedicated summary file
     summary_path = os.path.join(experiments_dir, "summary_diagnostic.json")
     with open(summary_path, "w") as f:
         json.dump(results, f, indent=4)
     
-    # Also update latest
     latest_path = os.path.join(experiments_dir, "summary_latest.json")
     with open(latest_path, "w") as f:
         json.dump(results, f, indent=4)
 
-    print(f"✨ Re-evaluation Complete! Results saved to {summary_path}")
+    print(f"\n✨ Re-evaluation Complete! Results saved to {summary_path}")
     print("Run 'python generate_master_report.py' to see the new report.")
 
 if __name__ == "__main__":

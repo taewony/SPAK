@@ -23,7 +23,6 @@ class LoopGPT(nn.Module):
 
         self.transformer = nn.ModuleDict(dict(
             wte = nn.Embedding(config.vocab_size, config.n_embd),
-            wpe = nn.Embedding(config.block_size, config.n_embd),
             drop = nn.Dropout(config.dropout),
             h = Block(config), 
             ln_f = LayerNorm(config.n_embd, bias=config.bias),
@@ -38,21 +37,29 @@ class LoopGPT(nn.Module):
                 torch.nn.init.normal_(p, mean=0.0, std=0.02/math.sqrt(2 * 1))
 
     def _init_weights(self, module):
-        if isinstance(module, nn.Linear):
+        if isinstance(module, (nn.Linear, nn.Embedding)):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
-            if module.bias is not None: torch.nn.init.zeros_(module.bias)
-        elif isinstance(module, nn.Embedding):
-            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if hasattr(module, 'bias') and module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+
+    def _get_cos_sin(self, T, device, dtype):
+        head_dim = self.config.n_embd // self.config.n_head
+        inv_freq = self.transformer.h.attn.inv_freq
+        t = torch.arange(T, device=device, dtype=inv_freq.dtype)
+        freqs = torch.outer(t, inv_freq)
+        freqs = torch.cat((freqs, freqs), dim=-1)
+        cos = freqs.cos().view(1, 1, T, head_dim).to(dtype)
+        sin = freqs.sin().view(1, 1, T, head_dim).to(dtype)
+        return cos, sin
 
     def forward(self, idx, targets=None, num_loops=None, halt_threshold=None, thinking_token_id=None, thinking_threshold=None):
         device = idx.device
         b, t = idx.size()
         M = b * t
-        pos = torch.arange(0, t, dtype=torch.long, device=device)
         
         tok_emb = self.transformer.wte(idx)
-        pos_emb = self.transformer.wpe(pos)
-        x0 = self.transformer.drop(tok_emb + pos_emb)
+        x0 = self.transformer.drop(tok_emb) # No more pos_emb
+        cos, sin = self._get_cos_sin(t, device, tok_emb.dtype)
         
         h = x0
         loops = num_loops if num_loops is not None else self.num_loops
@@ -78,7 +85,7 @@ class LoopGPT(nn.Module):
                 # Phase 4.2: Anchor Injection (h = Block(h + x0) vs Block(h))
                 h_input = h_curr + x0 if self.inject_x0 else h_curr
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
-                h_next = self.transformer.h(h_input + step_enc)
+                h_next = self.transformer.h(h_input + step_enc, cos=cos, sin=sin)
                 h_curr = h_next
                 
                 # Supervise second half for stability
@@ -132,7 +139,7 @@ class LoopGPT(nn.Module):
                 # Phase 4.2: Anchor Injection (h = Block(h + x0) vs Block(h))
                 h_input = h_current_view + x0_current_view if self.inject_x0 else h_current_view
                 step_enc = self.step_embedding(torch.tensor([l], device=device))
-                h_next = self.transformer.h(h_input + step_enc)
+                h_next = self.transformer.h(h_input + step_enc, cos=cos, sin=sin)
                 
                 if halt_threshold is not None or thinking_threshold is not None:
                     with torch.no_grad():

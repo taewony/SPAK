@@ -12,7 +12,7 @@ from model import GPTConfig, GPT
 # default config values
 dataset = 'shakespeare_char'
 out_dir = 'looplm/out_baseline_12l'
-batch_size = 64
+batch_size = 128 # Increased for stability
 block_size = 256
 n_layer = 12
 n_head = 12
