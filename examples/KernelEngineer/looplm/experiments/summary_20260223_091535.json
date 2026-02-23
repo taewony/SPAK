@@ -1,0 +1,386 @@
+[
+    {
+        "experiment": "B1_Static_Normal",
+        "config": "--dataset=addition --n_layer=12 --n_embd=256 --n_head=4 --max_iters=15000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    252,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "B2_Static_Reverse",
+        "config": "--dataset=addition_reverse --n_layer=12 --n_embd=256 --n_head=4 --max_iters=15000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    120,
+                    10
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "L1_Dynamic_Normal",
+        "config": "--dataset=addition --num_loops=12 --n_embd=256 --n_head=4 --max_iters=15000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    252,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "L2_Dynamic_Reverse",
+        "config": "--dataset=addition_reverse --num_loops=12 --n_embd=256 --n_head=4 --max_iters=15000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 12.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    252,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "R1_Reverse_Baseline",
+        "config": "--dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=16 --max_iters=15000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 16.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    336,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "R2_Reverse_Grok",
+        "config": "--dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000 --dropout=0.2",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 24.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    504,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "R3_Reverse_Efficient",
+        "config": "--dataset=addition_reverse --n_embd=128 --n_head=4 --num_loops=32 --max_iters=15000",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 32.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    672,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    {
+        "experiment": "R4_Reverse_Deep_Thinking",
+        "config": "--dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=15000 --dropout=0.2",
+        "ood_metrics": {
+            "accuracy": 0.0,
+            "correct": 0,
+            "total": 2,
+            "avg_steps": 48.0,
+            "buckets": {
+                "1": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "5": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "6": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "8": [
+                    0,
+                    2,
+                    1008,
+                    21
+                ],
+                "10": [
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "12": [
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        }
+    }
+]
