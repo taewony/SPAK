@@ -6,8 +6,22 @@ import json
 from model_loop import LoopGPT
 from model import GPTConfig, GPT
 
+def count_carries(n1, n2):
+    s1, s2 = str(n1)[::-1], str(n2)[::-1]
+    max_l = max(len(s1), len(s2))
+    s1, s2 = s1.ljust(max_l, '0'), s2.ljust(max_l, '0')
+    carries, current_carry = 0, 0
+    for i in range(max_l):
+        digit_sum = int(s1[i]) + int(s2[i]) + current_carry
+        if digit_sum >= 10:
+            carries += 1
+            current_carry = 1
+        else:
+            current_carry = 0
+    return carries
+
 def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
-    print(f"Evaluating OOD for {ckpt_path} (n={num_samples}, max_loops={max_loops})...")
+    print(f"Evaluating OOD for {ckpt_path}...")
     if not os.path.exists(ckpt_path):
         print(f"Checkpoint {ckpt_path} not found.")
         return None
@@ -55,30 +69,33 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
 
     correct = 0
     total = 0
-    # Buckets: 1-4 (Train range), 5, 6, 8, 10, 12 (OOD range)
     buckets = {1: [0,0,0,0], 5: [0,0,0,0], 6: [0,0,0,0], 8: [0,0,0,0], 10: [0,0,0,0], 12: [0,0,0,0]}
+    carry_stats = {} # [correct, total]
     total_steps, total_tokens_generated = 0, 0
     thinking_token_id = stoi.get('=', None)
     
     for ex in examples:
         if '=' not in ex: continue
         q, a = ex.split('=')
-        # Use the max length of the two operands to represent difficulty
         parts = q.split('+')
         q_len = max(len(parts[0]), len(parts[1]))
         
-        q_input = q + '='
-        # ... (Generation remains same) ...
-        x = torch.tensor([stoi[c] for c in q_input], dtype=torch.long, device=device).unsqueeze(0)
+        # Parse operands for carry diagnostic
+        try:
+            if 'addition_reverse' in dataset:
+                n1, n2 = int(parts[0][::-1]), int(parts[1][::-1])
+            else:
+                n1, n2 = int(parts[0]), int(parts[1])
+            num_c = count_carries(n1, n2)
+        except: num_c = 0
         
-        generated = ""
-        current_x = x
-        max_ans_len = len(a) + 2
-        sample_steps = 0
-        sample_tokens = 0
+        q_input = q + '='
+        x = torch.tensor([stoi[c] for c in q_input], dtype=torch.long, device=device).unsqueeze(0)
+        generated, current_x = "", x
+        sample_steps, sample_tokens = 0, 0
         
         with torch.no_grad():
-            for _ in range(max_ans_len):
+            for _ in range(len(a) + 2):
                 if is_loop:
                     logits, _, steps = model(current_x, halt_threshold=0.9, 
                                               thinking_token_id=thinking_token_id, thinking_threshold=0.99)
@@ -94,7 +111,6 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
                 generated += next_char
                 sample_steps += steps_taken_val
                 sample_tokens += 1
-                
                 current_x = torch.cat((current_x, torch.tensor([[next_id]], device=device)), dim=1)
                 if current_x.size(1) > gptconf.block_size: current_x = current_x[:, 1:]
         
@@ -104,6 +120,10 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
         total_steps += sample_steps
         total_tokens_generated += sample_tokens
         
+        if num_c not in carry_stats: carry_stats[num_c] = [0, 0]
+        carry_stats[num_c][1] += 1
+        if is_correct: carry_stats[num_c][0] += 1
+        
         for b_size in sorted(buckets.keys(), reverse=True):
             if q_len >= b_size:
                 buckets[b_size][1] += 1
@@ -112,10 +132,12 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
                 buckets[b_size][3] += sample_tokens
                 break
 
-    accuracy = correct / total if total > 0 else 0
+    print(f"\n--- Carry-wise Diagnostic Report ---")
+    for c in sorted(carry_stats.keys()):
+        stats = carry_stats[c]
+        print(f"{c:2d} Carries | {(stats[0]/stats[1]*100):8.2f}% ({stats[0]}/{stats[1]})")
+
     print(f"\n--- OOD Detailed Intelligence Report ---")
-    print(f"{'Digits':<10} | {'Accuracy':<10} | {'Avg Steps':<10}")
-    print("-" * 35)
     for b_size, data in sorted(buckets.items()):
         if data[1] > 0:
             acc = (data[0]/data[1]) * 100
@@ -124,13 +146,13 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
             print(f"{label:<10} | {acc:8.2f}% | {avg_s:9.2f}")
     
     overall_avg_steps = total_steps / total_tokens_generated if total_tokens_generated > 0 else 0
-    print(f"\nOverall OOD Accuracy: {accuracy*100:.2f}%")
     return {
-        "accuracy": accuracy,
-        "correct": correct,
-        "total": total,
-        "avg_steps": overall_avg_steps,
-        "buckets": buckets # Added for Master Report
+        "accuracy": correct/total if total>0 else 0, 
+        "correct": correct, 
+        "total": total, 
+        "avg_steps": overall_avg_steps, 
+        "buckets": buckets,
+        "carry_stats": carry_stats # Added for diagnostic storage
     }
 
 if __name__ == "__main__":
