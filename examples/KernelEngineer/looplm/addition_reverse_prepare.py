@@ -17,9 +17,14 @@ def generate_addition_example_reversed(max_digits):
     n1 = random.randint(0, 10**d1 - 1)
     n2 = random.randint(0, 10**d2 - 1)
     ans = n1 + n2
-    # Format: "123+456=975" (where 579 is the answer, but written reversed)
-    # This aligns with the model learning to add from right to left!
-    return f"{n1}+{n2}={str(ans)[::-1]}"
+    
+    # Format: "321+654=975" (Everything is reversed!)
+    # n1=123 -> 321, n2=456 -> 654, ans=579 -> 975
+    s1_rev = str(n1)[::-1]
+    s2_rev = str(n2)[::-1]
+    ans_rev = str(ans)[::-1]
+    
+    return f"{s1_rev}+{s2_rev}={ans_rev}"
 
 def generate_addition_data():
     print(f"Generating {num_samples} REVERSED training samples...")

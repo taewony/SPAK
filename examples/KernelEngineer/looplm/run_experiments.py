@@ -32,7 +32,8 @@ def main():
     # ==========================================================
 
     # --- ⚔️ THE FINAL MATCH LIST ---
-    # Unified Max Iters = 15,000 for all experiments to ensure absolute fairness.
+    # Unified Max Iters = 15,000 for absolute fairness.
+    # Dataset logic: 'addition' (Normal) vs 'addition_reverse' (Double Reverse)
     experiments = [
         # --- ⚖️ Fair Battle Group (Depth 12) ---
         {"name": "B1_Static_Normal", "args": "dataset=addition n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
