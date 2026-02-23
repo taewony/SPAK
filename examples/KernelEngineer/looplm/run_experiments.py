@@ -36,9 +36,10 @@ def main():
     # Dataset logic: 'addition' (Normal) vs 'addition_reverse' (Double Reverse)
     experiments = [
         # --- ⚖️ Fair Battle Group (Depth 12) ---
-        {"name": "B1_Static_Normal", "args": "dataset=addition n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
+        # B1 & L1 (Normal cases) are already done. Commenting out to save time.
+        # {"name": "B1_Static_Normal", "args": "dataset=addition n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
         {"name": "B2_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
-        {"name": "L1_Dynamic_Normal", "args": "dataset=addition num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
+        # {"name": "L1_Dynamic_Normal", "args": "dataset=addition num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
         {"name": "L2_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
         
         # --- 🔄 Reverse Advanced Group (R1-R4) ---
