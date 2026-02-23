@@ -1,7 +1,7 @@
 # [Master Report] LoopLM vs Standard GPT Intelligence Comparison
 
-Generated on: 2026-02-23 19:32:35
-Source: Aggregated from 14 experiment files
+Generated on: 2026-02-24 07:55:58
+Source: Aggregated from 15 experiment files
 
 ## 1. Top-line Performance (12-digit OOD)
 
@@ -12,6 +12,7 @@ Source: Aggregated from 14 experiment files
 | B30_Static_Reverse | --dataset=addition_reverse --n_layer=12 --n_embd=256 --n_head=4 --max_iters=15000 | 1.50% | 12.00 | 1.0x |
 | P4_X0_Baseline | --n_embd=256 --n_head=4 --num_loops=16 --inject_x0=True --max_iters=5000 | 0.50% | 16.00 | 1.0x |
 | R1_Reverse_Baseline | --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=16 --max_iters=15000 | 1.50% | 15.89 | 1.0x |
+| RoPE_Static_Reverse | --dataset=addition_reverse --n_layer=12 --n_embd=256 --n_head=4 --max_iters=15000 | 1.50% | 12.00 | 1.0x |
 | baseline | --n_embd=384 --num_loops=12 --dropout=0.2 | 5.00% | 11.05 | 1.0x |
 | A1_low_cap | --n_embd=256 --n_head=4 --num_loops=12 | 0.00% | 12.00 | 12.1x |
 | A2_very_low_cap | --n_embd=128 --n_head=4 --num_loops=12 | 0.00% | 12.00 | 12.1x |
@@ -28,6 +29,8 @@ Source: Aggregated from 14 experiment files
 | R2_Reverse_Grok | --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=15000 --dropout=0.2 | 1.50% | 23.84 | 12.1x |
 | R3_Reverse_Efficient | Re-evaluated from /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R3_Reverse_Efficient/ckpt.pt | 0.00% | 32.00 | 12.1x |
 | R4_Reverse_Deep_Thinking | --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=15000 --dropout=0.2 | 1.50% | 46.75 | 12.1x |
+| RoPE_Dynamic_Reverse | --dataset=addition_reverse --num_loops=12 --n_embd=256 --n_head=4 --max_iters=15000 | 0.00% | 11.29 | 12.1x |
+| RoPE_Ultimate_Thinking | --dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=32 --max_iters=20000 --dropout=0.2 | 0.00% | 8.23 | 12.1x |
 | T1_deep_thinking | --n_embd=256 --n_head=4 --num_loops=24 | 0.00% | 24.00 | 12.1x |
 | T2_deep_narrow | --n_embd=192 --n_head=3 --num_loops=32 --dropout=0.2 --max_iters=5000 | 0.00% | 32.00 | 12.1x |
 | W2_stiff_thinking | --n_embd=256 --n_head=4 --num_loops=24 --dropout=0.2 --max_iters=5000 | 0.00% | 24.00 | 12.1x |
@@ -43,6 +46,7 @@ Source: Aggregated from 14 experiment files
 | B30_Static_Reverse | 9.1% | 0.0% | 3.3% | 0.0% | 0.0% | 0.0% | 
 | P4_X0_Baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | R1_Reverse_Baseline | 13.6% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| RoPE_Static_Reverse | 9.1% | 0.0% | 3.3% | 0.0% | 0.0% | 0.0% | 
 | baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | A1_low_cap | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | A2_very_low_cap | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
@@ -59,6 +63,8 @@ Source: Aggregated from 14 experiment files
 | R2_Reverse_Grok | 13.6% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | R3_Reverse_Efficient | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | R4_Reverse_Deep_Thinking | 13.6% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| RoPE_Dynamic_Reverse | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| RoPE_Ultimate_Thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | T1_deep_thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | T2_deep_narrow | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 | W2_stiff_thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 

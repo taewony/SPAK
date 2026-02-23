@@ -1,6 +1,6 @@
 [
     {
-        "experiment": "B30_Static_Reverse",
+        "experiment": "RoPE_Static_Reverse",
         "config": "--dataset=addition_reverse --n_layer=12 --n_embd=256 --n_head=4 --max_iters=15000",
         "ood_metrics": {
             "accuracy": 0.015,
@@ -11,8 +11,8 @@
                 "1": [
                     2,
                     22,
-                    888,
-                    74
+                    924,
+                    77
                 ],
                 "5": [
                     0,
@@ -23,26 +23,26 @@
                 "6": [
                     1,
                     30,
-                    2196,
-                    183
+                    2184,
+                    182
                 ],
                 "8": [
                     0,
                     41,
-                    3216,
-                    268
+                    3048,
+                    254
                 ],
                 "10": [
                     0,
                     58,
-                    4656,
-                    388
+                    4212,
+                    351
                 ],
                 "12": [
                     0,
                     36,
-                    3024,
-                    252
+                    2604,
+                    217
                 ]
             },
             "carry_stats": {
@@ -90,54 +90,54 @@
         }
     },
     {
-        "experiment": "B30_Dynamic_Reverse",
+        "experiment": "RoPE_Dynamic_Reverse",
         "config": "--dataset=addition_reverse --num_loops=12 --n_embd=256 --n_head=4 --max_iters=15000",
         "ood_metrics": {
-            "accuracy": 0.005,
-            "correct": 1,
+            "accuracy": 0.0,
+            "correct": 0,
             "total": 200,
-            "avg_steps": 11.908713692946058,
+            "avg_steps": 11.293865905848788,
             "buckets": {
                 "1": [
-                    1,
+                    0,
                     22,
-                    921,
-                    77
+                    1360,
+                    117
                 ],
                 "5": [
                     0,
                     13,
-                    792,
-                    66
+                    1092,
+                    91
                 ],
                 "6": [
                     0,
                     30,
-                    2183,
-                    183
+                    2765,
+                    257
                 ],
                 "8": [
                     0,
                     41,
-                    3123,
-                    263
+                    4987,
+                    433
                 ],
                 "10": [
                     0,
                     58,
-                    4377,
-                    367
+                    8062,
+                    714
                 ],
                 "12": [
                     0,
                     36,
-                    2954,
-                    249
+                    5485,
+                    491
                 ]
             },
             "carry_stats": {
                 "0": [
-                    1,
+                    0,
                     35
                 ],
                 "4": [
@@ -180,144 +180,54 @@
         }
     },
     {
-        "experiment": "B30_Deep_Grok",
-        "config": "--dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=24 --max_iters=20000 --dropout=0.2",
+        "experiment": "RoPE_Ultimate_Thinking",
+        "config": "--dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=32 --max_iters=20000 --dropout=0.2",
         "ood_metrics": {
-            "accuracy": 0.015,
-            "correct": 3,
+            "accuracy": 0.0,
+            "correct": 0,
             "total": 200,
-            "avg_steps": 23.908243727598567,
+            "avg_steps": 8.229938995776632,
             "buckets": {
                 "1": [
-                    2,
+                    0,
                     22,
-                    1824,
-                    76
+                    2628,
+                    117
                 ],
                 "5": [
                     0,
                     13,
-                    1632,
-                    68
+                    1331,
+                    91
                 ],
                 "6": [
-                    1,
+                    0,
                     30,
-                    4776,
-                    199
+                    3047,
+                    257
                 ],
                 "8": [
                     0,
                     41,
-                    7419,
-                    310
+                    3752,
+                    435
                 ],
                 "10": [
                     0,
                     58,
-                    10627,
-                    445
+                    5004,
+                    726
                 ],
                 "12": [
                     0,
                     36,
-                    7074,
-                    297
+                    1776,
+                    505
                 ]
             },
             "carry_stats": {
                 "0": [
-                    3,
-                    35
-                ],
-                "4": [
                     0,
-                    19
-                ],
-                "1": [
-                    0,
-                    47
-                ],
-                "2": [
-                    0,
-                    48
-                ],
-                "6": [
-                    0,
-                    10
-                ],
-                "3": [
-                    0,
-                    27
-                ],
-                "7": [
-                    0,
-                    1
-                ],
-                "5": [
-                    0,
-                    11
-                ],
-                "9": [
-                    0,
-                    1
-                ],
-                "8": [
-                    0,
-                    1
-                ]
-            }
-        }
-    },
-    {
-        "experiment": "B30_Ultimate_Thinking",
-        "config": "--dataset=addition_reverse --n_embd=256 --n_head=4 --num_loops=48 --max_iters=15000 --dropout=0.2",
-        "ood_metrics": {
-            "accuracy": 0.01,
-            "correct": 2,
-            "total": 200,
-            "avg_steps": 48.0,
-            "buckets": {
-                "1": [
-                    1,
-                    22,
-                    3696,
-                    77
-                ],
-                "5": [
-                    0,
-                    13,
-                    3072,
-                    64
-                ],
-                "6": [
-                    1,
-                    30,
-                    9120,
-                    190
-                ],
-                "8": [
-                    0,
-                    41,
-                    15072,
-                    314
-                ],
-                "10": [
-                    0,
-                    58,
-                    22752,
-                    474
-                ],
-                "12": [
-                    0,
-                    36,
-                    16224,
-                    338
-                ]
-            },
-            "carry_stats": {
-                "0": [
-                    2,
                     35
                 ],
                 "4": [
