@@ -31,23 +31,20 @@ def main():
     SMOKE_TEST = False 
     # ==========================================================
 
-    # --- ⚔️ THE FINAL MATCH LIST ---
-    # Unified Max Iters = 15,000 for absolute fairness.
-    # Dataset logic: 'addition' (Normal) vs 'addition_reverse' (Double Reverse)
-    experiments = [
-        # --- ⚖️ Fair Battle Group (Depth 12) ---
-        # B1 & L1 (Normal cases) are already done. Commenting out to save time.
-        # {"name": "B1_Static_Normal", "args": "dataset=addition n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
-        {"name": "B2_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
-        # {"name": "L1_Dynamic_Normal", "args": "dataset=addition num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
-        {"name": "L2_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
+    # --- 🌉 Phase 4.7: The 30% Bridge Breakthrough ---
+    # Stronger signal for generalization (60k samples of 5-6 digits)
+    bridge_30_experiments = [
+        # Standard GPT vs LoopLM with 30% Bridge
+        {"name": "B30_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
+        {"name": "B30_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
         
-        # --- 🔄 Reverse Advanced Group (R1-R4) ---
-        {"name": "R1_Reverse_Baseline", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=16 max_iters=15000"},
-        {"name": "R2_Reverse_Grok", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=24 max_iters=15000 dropout=0.2"},
-        {"name": "R3_Reverse_Efficient", "args": "dataset=addition_reverse n_embd=128 n_head=4 num_loops=32 max_iters=15000"},
-        {"name": "R4_Reverse_Deep_Thinking", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=48 max_iters=15000 dropout=0.2"},
+        # Advanced LoopLM with 30% Bridge + Deeper Loops
+        {"name": "B30_Deep_Grok", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=24 max_iters=20000 dropout=0.2"},
+        {"name": "B30_Ultimate_Thinking", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=48 max_iters=15000 dropout=0.2"},
     ]
+
+    experiments = bridge_30_experiments 
+    # -----------------------------------------------------------
 
     results = []
     timestamp = time.strftime("%Y%m%d_%H%M%S")

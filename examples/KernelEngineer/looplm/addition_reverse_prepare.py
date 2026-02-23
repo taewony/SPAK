@@ -27,10 +27,11 @@ def generate_addition_example_reversed(max_digits):
     return f"{s1_rev}+{s2_rev}={ans_rev}"
 
 def generate_addition_data():
-    print(f"Generating {num_samples} REVERSED training samples...")
+    print(f"Generating {num_samples} REVERSED training samples (30% Bridge Data up to 6d)...")
     dataset = []
     for _ in range(num_samples):
-        if random.random() < 0.05:
+        # 70% 1-4 digits, 30% 5-6 digits (Strong signal for rules)
+        if random.random() < 0.30:
             max_d = random.randint(5, 6)
         else:
             max_d = max_digits_train
