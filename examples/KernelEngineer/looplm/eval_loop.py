@@ -55,16 +55,20 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
 
     correct = 0
     total = 0
-    buckets = {5: [0,0,0,0], 6: [0,0,0,0], 8: [0,0,0,0], 10: [0,0,0,0], 12: [0,0,0,0]}
+    # Buckets: 1-4 (Train range), 5, 6, 8, 10, 12 (OOD range)
+    buckets = {1: [0,0,0,0], 5: [0,0,0,0], 6: [0,0,0,0], 8: [0,0,0,0], 10: [0,0,0,0], 12: [0,0,0,0]}
     total_steps, total_tokens_generated = 0, 0
     thinking_token_id = stoi.get('=', None)
     
     for ex in examples:
         if '=' not in ex: continue
         q, a = ex.split('=')
-        q_len = len(q.split('+')[0])
+        # Use the max length of the two operands to represent difficulty
+        parts = q.split('+')
+        q_len = max(len(parts[0]), len(parts[1]))
         
         q_input = q + '='
+        # ... (Generation remains same) ...
         x = torch.tensor([stoi[c] for c in q_input], dtype=torch.long, device=device).unsqueeze(0)
         
         generated = ""
@@ -112,11 +116,12 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     print(f"\n--- OOD Detailed Intelligence Report ---")
     print(f"{'Digits':<10} | {'Accuracy':<10} | {'Avg Steps':<10}")
     print("-" * 35)
-    for b_size, data in buckets.items():
+    for b_size, data in sorted(buckets.items()):
         if data[1] > 0:
             acc = (data[0]/data[1]) * 100
             avg_s = data[2]/data[3] if data[3] > 0 else 0
-            print(f"{b_size:2d}+ Digits | {acc:8.2f}% | {avg_s:9.2f}")
+            label = f"{b_size:2d}+ Digits" if b_size > 1 else "1-4 Digits"
+            print(f"{label:<10} | {acc:8.2f}% | {avg_s:9.2f}")
     
     overall_avg_steps = total_steps / total_tokens_generated if total_tokens_generated > 0 else 0
     print(f"\nOverall OOD Accuracy: {accuracy*100:.2f}%")

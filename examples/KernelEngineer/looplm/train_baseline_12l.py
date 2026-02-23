@@ -130,10 +130,12 @@ def get_lr(it):
 
 # Training Loop
 print(f"Starting 12L Baseline Training on {dataset}...")
+torch.cuda.synchronize()
 t0 = time.time()
 history = []
 
 for iter_num in range(max_iters):
+    # ... (LR logic) ...
     lr = get_lr(iter_num) if decay_lr else learning_rate
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
@@ -160,6 +162,7 @@ for iter_num in range(max_iters):
     optimizer.zero_grad(set_to_none=True)
 
     if iter_num % log_interval == 0:
+        torch.cuda.synchronize()
         t1 = time.time()
         dt = (t1 - t0) * 1000 / log_interval if iter_num > 0 else (t1 - t0) * 1000
         t0 = t1

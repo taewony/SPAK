@@ -1,6 +1,6 @@
 # [Master Report] LoopLM vs Standard GPT Intelligence Comparison
 
-Generated on: 2026-02-23 08:38:59
+Generated on: 2026-02-23 09:12:03
 Source: Aggregated from 9 experiment files
 
 ## 1. Top-line Performance (12-digit OOD)
@@ -28,24 +28,24 @@ Source: Aggregated from 9 experiment files
 
 테스트 데이터를 자릿수별로 분류하여 어떤 지점에서 모델의 논리가 붕괴되는지 분석합니다.
 
-| Experiment | 5+ Digits | 6+ Digits | 8+ Digits | 10+ Digits | 12+ Digits |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| P4_X0_Baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| R1_Reverse_Baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| A1_low_cap | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| A2_very_low_cap | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| A3_high_dropout | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| A4_robust_reg | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| P4_Deep_Grok | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| P4_Final_Grok_Long | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| P4_Pure_Dynamics | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| R2_Reverse_Grok | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| R3_Reverse_Efficient | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| R4_Reverse_Deep_Thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| T1_deep_thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| T2_deep_narrow | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
-| W2_stiff_thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| Experiment | 1-4 Digits | 5+ Digits | 6+ Digits | 8+ Digits | 10+ Digits | 12+ Digits |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| P4_X0_Baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| R1_Reverse_Baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| baseline | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| A1_low_cap | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| A2_very_low_cap | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| A3_high_dropout | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| A4_robust_reg | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| P4_Deep_Grok | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| P4_Final_Grok_Long | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| P4_Pure_Dynamics | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| R2_Reverse_Grok | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| R3_Reverse_Efficient | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| R4_Reverse_Deep_Thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| T1_deep_thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| T2_deep_narrow | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
+| W2_stiff_thinking | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% | 
 
 ## 3. Key Insights
 

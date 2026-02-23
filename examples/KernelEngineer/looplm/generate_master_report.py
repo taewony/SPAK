@@ -57,16 +57,15 @@ def generate_report():
 
     report += "\n## 2. Bucketized OOD Accuracy (Logic Resilience)\n\n"
     report += "테스트 데이터를 자릿수별로 분류하여 어떤 지점에서 모델의 논리가 붕괴되는지 분석합니다.\n\n"
-    report += "| Experiment | 5+ Digits | 6+ Digits | 8+ Digits | 10+ Digits | 12+ Digits |\n"
-    report += "| :--- | :---: | :---: | :---: | :---: | :---: |\n"
+    report += "| Experiment | 1-4 Digits | 5+ Digits | 6+ Digits | 8+ Digits | 10+ Digits | 12+ Digits |\n"
+    report += "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n"
 
     for name in sorted_names:
         res = all_results[name]
         metrics = res.get('ood_metrics', {})
         buckets = metrics.get('buckets', {}) 
         row = f"| {name} | "
-        for b_size in [5, 6, 8, 10, 12]:
-            # Convert key to string because JSON stores keys as strings
+        for b_size in [1, 5, 6, 8, 10, 12]:
             b_data = buckets.get(str(b_size), [0, 0, 0, 0])
             acc = (b_data[0]/b_data[1]*100) if b_data[1] > 0 else 0
             row += f"{acc:.1f}% | "

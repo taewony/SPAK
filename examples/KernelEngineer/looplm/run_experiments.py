@@ -24,19 +24,27 @@ def run_command(cmd):
     return process.returncode
 
 def main():
+    # ==========================================================
+    # 🔍 SMOKE_TEST: True면 1회만 학습하고 2개 샘플만 평가하여 
+    # 로직(파일 저장, 경로 등)이 정상인지 1분 내에 검증합니다.
+    # ==========================================================
     SMOKE_TEST = False 
+    # ==========================================================
 
-    # --- ⚔️ THE FINAL FAIR BATTLE: Standard GPT vs LoopLM ---
-    # Matching Max Compute Budget = 12 Layers / 12 Loops
+    # --- ⚔️ THE FINAL MATCH LIST ---
+    # Unified Max Iters = 15,000 for all experiments to ensure absolute fairness.
     experiments = [
-        # 1. Standard GPT - Normal Direction
-        {"name": "B1_Static_Normal", "args": "dataset=addition n_layer=12 n_embd=256 n_head=4 max_iters=10000"},
-        # 2. Standard GPT - Reverse Direction
-        {"name": "B2_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=10000"},
-        # 3. LoopLM - Normal Direction
-        {"name": "L1_Dynamic_Normal", "args": "dataset=addition num_loops=12 n_embd=256 n_head=4 max_iters=10000"},
-        # 4. LoopLM - Reverse Direction
-        {"name": "L2_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=10000"},
+        # --- ⚖️ Fair Battle Group (Depth 12) ---
+        {"name": "B1_Static_Normal", "args": "dataset=addition n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
+        {"name": "B2_Static_Reverse", "args": "dataset=addition_reverse n_layer=12 n_embd=256 n_head=4 max_iters=15000"},
+        {"name": "L1_Dynamic_Normal", "args": "dataset=addition num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
+        {"name": "L2_Dynamic_Reverse", "args": "dataset=addition_reverse num_loops=12 n_embd=256 n_head=4 max_iters=15000"},
+        
+        # --- 🔄 Reverse Advanced Group (R1-R4) ---
+        {"name": "R1_Reverse_Baseline", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=16 max_iters=15000"},
+        {"name": "R2_Reverse_Grok", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=24 max_iters=15000 dropout=0.2"},
+        {"name": "R3_Reverse_Efficient", "args": "dataset=addition_reverse n_embd=128 n_head=4 num_loops=32 max_iters=15000"},
+        {"name": "R4_Reverse_Deep_Thinking", "args": "dataset=addition_reverse n_embd=256 n_head=4 num_loops=48 max_iters=15000 dropout=0.2"},
     ]
 
     results = []
@@ -50,22 +58,33 @@ def main():
         formatted_args = " ".join([f"--{a}" for a in args_str.split()])
         out_dir_rel = f"experiments/{name}"
         
+        # Override max_iters if present in exp["args"]
+        current_max_iters = 5 if SMOKE_TEST else 15000
+        if "max_iters=" in args_str:
+            for part in args_str.split():
+                if "max_iters=" in part:
+                    current_max_iters = int(part.split('=')[1])
+                    if SMOKE_TEST: current_max_iters = 5
+
+        ood_samples = 2 if SMOKE_TEST else 200
+        
         # Determine script type
         train_script = "train_baseline_12l.py" if "n_layer=12" in args_str else "train_loop.py"
         train_path = os.path.join(script_dir, train_script)
         
         print("\n" + "="*60)
-        print(f"🚀 STARTING FINAL MATCH: {name}")
+        print(f"🚀 STARTING MATCH: {name}")
         print(f"   Using Script: {train_script}")
+        print(f"   Config: {formatted_args}")
         print("="*60)
         
         # 1. Train
-        ret = run_command(f"python {train_path} {formatted_args} --out_dir={out_dir_rel}")
+        ret = run_command(f"python {train_path} {formatted_args} --out_dir={out_dir_rel} --max_iters={current_max_iters}")
         if ret != 0: continue
             
         # 2. Evaluate
         ckpt_path = os.path.join(script_dir, out_dir_rel, "ckpt.pt")
-        eval_res = evaluate_ood(ckpt_path, num_samples=200)
+        eval_res = evaluate_ood(ckpt_path, num_samples=ood_samples)
         
         # 3. Save
         res = {"experiment": name, "config": formatted_args, "ood_metrics": eval_res}
