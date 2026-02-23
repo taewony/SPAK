@@ -1,0 +1,6 @@
+*.pt
+*.bin
+*.pkl
+looplm/experiments/
+looplm/data/
+**/__pycache__/
