@@ -1,0 +1,91 @@
+
+12L Baseline Training Complete. Checkpoint: experiments/B2_Static_Reverse/ckpt.pt
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/B2_Static_Reverse/ckpt.pt (n=200, max_loops=None)...
+number of parameters: 9.45M
+
+--- OOD Detailed Intelligence Report ---
+Digits     | Accuracy   | Avg Steps
+-----------------------------------
+1-4 Digits |     9.09% |     12.00
+ 5+ Digits |     0.00% |     12.00
+ 6+ Digits |     3.33% |     12.00
+ 8+ Digits |     0.00% |     12.00
+10+ Digits |     0.00% |     12.00
+12+ Digits |     0.00% |     12.00
+
+Overall OOD Accuracy: 1.50%
+
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/L2_Dynamic_Reverse/ckpt.pt
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/L2_Dynamic_Reverse/ckpt.pt (n=200, max_loops=None)...
+
+--- OOD Detailed Intelligence Report ---
+Digits     | Accuracy   | Avg Steps
+-----------------------------------
+1-4 Digits |    13.64% |     11.73
+ 5+ Digits |     0.00% |     11.62
+ 6+ Digits |     3.33% |     12.00
+ 8+ Digits |     0.00% |     11.99
+10+ Digits |     0.00% |     12.00
+12+ Digits |     0.00% |     12.00
+
+Overall OOD Accuracy: 2.00%
+
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R1_Reverse_Baseline/ckpt.pt
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R1_Reverse_Baseline/ckpt.pt (n=200, max_loops=None)...
+
+--- OOD Detailed Intelligence Report ---
+Digits     | Accuracy   | Avg Steps
+-----------------------------------
+1-4 Digits |     4.55% |     15.39
+ 5+ Digits |     0.00% |     15.28
+ 6+ Digits |     0.00% |     15.58
+ 8+ Digits |     0.00% |     15.90
+10+ Digits |     0.00% |     15.97
+12+ Digits |     0.00% |     15.98
+
+Overall OOD Accuracy: 0.50%
+
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R2_Reverse_Grok/ckpt.pt
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R2_Reverse_Grok/ckpt.pt (n=200, max_loops=None)...
+
+--- OOD Detailed Intelligence Report ---
+Digits     | Accuracy   | Avg Steps
+-----------------------------------
+1-4 Digits |     4.55% |     22.20
+ 5+ Digits |     0.00% |     20.72
+ 6+ Digits |     3.33% |     21.97
+ 8+ Digits |     0.00% |     23.37
+10+ Digits |     0.00% |     23.45
+12+ Digits |     0.00% |     23.64
+
+Overall OOD Accuracy: 1.00%
+
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R3_Reverse_Efficient/ckpt.pt
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R3_Reverse_Efficient/ckpt.pt (n=200, max_loops=None)...
+
+--- OOD Detailed Intelligence Report ---
+Digits     | Accuracy   | Avg Steps
+-----------------------------------
+1-4 Digits |     0.00% |     32.00
+ 5+ Digits |     0.00% |     32.00
+ 6+ Digits |     0.00% |     32.00
+ 8+ Digits |     0.00% |     32.00
+10+ Digits |     0.00% |     32.00
+12+ Digits |     0.00% |     32.00
+
+Overall OOD Accuracy: 0.00%
+
+LoopLM Training Complete. Checkpoint: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R4_Reverse_Deep_Thinking/ckpt.pt
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R4_Reverse_Deep_Thinking/ckpt.pt (n=200, max_loops=None)...
+
+--- OOD Detailed Intelligence Report ---
+Digits     | Accuracy   | Avg Steps
+-----------------------------------
+1-4 Digits |     4.55% |     47.36
+ 5+ Digits |     0.00% |     48.00
+ 6+ Digits |     3.33% |     47.97
+ 8+ Digits |     0.00% |     47.92
+10+ Digits |     0.00% |     47.92
+12+ Digits |     0.00% |     48.00
+
+Overall OOD Accuracy: 1.00%
