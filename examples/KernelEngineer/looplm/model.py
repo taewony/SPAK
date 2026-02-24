@@ -141,7 +141,7 @@ class GPT(nn.Module):
         sin = freqs.sin().view(1, 1, T, head_dim).to(dtype)
         return cos, sin
 
-    def forward(self, idx, targets=None):
+    def forward(self, idx, targets=None, thinking_token_id=None):
         device = idx.device
         b, t = idx.size()
         tok_emb = self.transformer.wte(idx)
@@ -150,9 +150,22 @@ class GPT(nn.Module):
         for block in self.transformer.h:
             x = block(x, cos=cos, sin=sin)
         x = self.transformer.ln_f(x)
+        
         if targets is not None:
             logits = self.lm_head(x)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
+            
+            # Efficient Loss Masking
+            mask = torch.ones_like(targets, dtype=torch.float32)
+            if thinking_token_id is not None:
+                for i in range(b):
+                    eq_indices = (idx[i] == thinking_token_id).nonzero(as_tuple=True)[0]
+                    if len(eq_indices) > 0:
+                        first_eq = eq_indices[0].item()
+                        mask[i, :first_eq] = 0.0
+            
+            mask = mask.view(-1)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none', ignore_index=-1)
+            loss = (loss * mask).sum() / (mask.sum() + 1e-8)
         else:
             logits = self.lm_head(x[:, [-1], :])
             loss = None

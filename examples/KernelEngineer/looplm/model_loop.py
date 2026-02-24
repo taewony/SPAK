@@ -94,7 +94,26 @@ class LoopGPT(nn.Module):
                     supervised_logits.append(lg)
             
             if targets is not None:
-                losses = [F.cross_entropy(lg.view(-1, V), targets.view(-1), ignore_index=-1) for lg in supervised_logits]
+                # Efficient Loss Masking: only supervise tokens after '='
+                mask = torch.ones_like(targets, dtype=torch.float32)
+                if thinking_token_id is not None:
+                    # For each sequence, find the index of the thinking_token_id
+                    # and mask out everything before and including it.
+                    # Since targets are shifted by 1 (y[t] = x[t+1]), 
+                    # if x[p] == '=', then y[p] is the first token of the answer.
+                    for i in range(b):
+                        eq_indices = (idx[i] == thinking_token_id).nonzero(as_tuple=True)[0]
+                        if len(eq_indices) > 0:
+                            first_eq = eq_indices[0].item()
+                            mask[i, :first_eq] = 0.0 # Mask tokens before the answer starts
+                
+                mask = mask.view(-1)
+                losses = []
+                for lg in supervised_logits:
+                    l = F.cross_entropy(lg.view(-1, V), targets.view(-1), reduction='none', ignore_index=-1)
+                    l = (l * mask).sum() / (mask.sum() + 1e-8)
+                    losses.append(l)
+                
                 loss = torch.stack(losses).mean()
                 logits = supervised_logits[-1]
             else:

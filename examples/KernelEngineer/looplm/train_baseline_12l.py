@@ -10,25 +10,25 @@ from model import GPTConfig, GPT
 
 # -----------------------------------------------------------------------------
 # default config values
-dataset = 'shakespeare_char'
+dataset = 'addition_reverse'
 out_dir = 'looplm/out_baseline_12l'
-batch_size = 128 # Increased for stability
-block_size = 256
+batch_size = 128 
+block_size = 64
 n_layer = 12
-n_head = 12
-n_embd = 768
-dropout = 0.2
+n_head = 4
+n_embd = 256
+dropout = 0.1
 bias = False
 learning_rate = 1e-3
-max_iters = 5000
-eval_interval = 250
+max_iters = 15000
+eval_interval = 500
 eval_iters = 200
-log_interval = 10
+log_interval = 100
 device = 'cuda'
 dtype = 'float16' 
 decay_lr = True
 warmup_iters = 100
-lr_decay_iters = 5000
+lr_decay_iters = 15000
 min_lr = 1e-4
 beta2 = 0.99
 # -----------------------------------------------------------------------------
@@ -78,9 +78,21 @@ if not os.path.exists(data_dir):
 train_data = np.memmap(os.path.join(data_dir, 'train.bin'), dtype=np.uint16, mode='r')
 val_data = np.memmap(os.path.join(data_dir, 'val.bin'), dtype=np.uint16, mode='r')
 
+# Pre-calculate newline indices for aligned batching
+def get_newline_indices(data):
+    return np.where(data == 0)[0]
+
+print("Indexing newlines for aligned batching...")
+train_newlines = get_newline_indices(train_data)
+val_newlines = get_newline_indices(val_data)
+
 def get_batch(split):
     data = train_data if split == 'train' else val_data
-    ix = torch.randint(len(data) - block_size, (batch_size,))
+    newlines = train_newlines if split == 'train' else val_newlines
+    valid_indices = newlines[newlines < len(data) - block_size - 1]
+    ix_newlines = torch.randint(len(valid_indices), (batch_size,))
+    ix = valid_indices[ix_newlines] + 1
+    
     x = torch.stack([torch.from_numpy((data[i:i+block_size]).astype(np.int64)) for i in ix])
     y = torch.stack([torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64)) for i in ix])
     x, y = x.to(device), y.to(device)
@@ -91,6 +103,8 @@ meta_path = os.path.join(data_dir, 'meta.pkl')
 with open(meta_path, 'rb') as f:
     meta = pickle.load(f)
 vocab_size = meta['vocab_size']
+stoi = meta['stoi']
+thinking_token_id = stoi.get('=', None)
 
 # Model init
 model_args = dict(n_layer=n_layer, n_head=n_head, n_embd=n_embd, block_size=block_size,
@@ -100,7 +114,7 @@ model = GPT(gptconf)
 model.to(device)
 
 # Optimizer
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, betas=(0.9, beta2), weight_decay=1e-1)
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, betas=(0.9, beta2), weight_decay=1e-4)
 scaler = torch.amp.GradScaler('cuda', enabled=(dtype == 'float16'))
 
 @torch.no_grad()
@@ -112,7 +126,7 @@ def estimate_loss():
         for k in range(eval_iters):
             X, Y = get_batch(split)
             with ctx:
-                _, loss = model(X, Y)
+                _, loss = model(X, Y, thinking_token_id=thinking_token_id)
             losses[k] = loss.item()
         out[split] = losses.mean().item()
     model.train()
@@ -152,7 +166,7 @@ for iter_num in range(max_iters):
 
     X, Y = get_batch('train')
     with ctx:
-        _, loss = model(X, Y)
+        _, loss = model(X, Y, thinking_token_id=thinking_token_id)
     
     scaler.scale(loss).backward()
     scaler.unscale_(optimizer)
