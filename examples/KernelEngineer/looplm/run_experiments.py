@@ -33,19 +33,17 @@ def main():
 
     # 실험 목록: [이름, 스크립트파일, 인자들]
     experiments = [
-        # ... (이전 실험들 생략 가능, Exp7 위주로 구성) ...
+        # Exp8: SwiGLU Integration Test
         {
-            "name": "Exp7_Grokking_Marathon",
+            "name": "Exp8_SwiGLU_Dynamic",
             "script": "train_loop.py",
             "args": (
                 "--dataset=addition_reverse "
-                "--num_loops=12 --n_embd=256 --n_head=4 "
+                "--num_loops=30 --n_embd=256 --n_head=4 "
+                "--use_swiglu=True " # SwiGLU 활성화
                 "--inject_x0=False "
-                "--max_iters=100000 "
-                "--batch_size=128 "
-                "--learning_rate=5e-4 "
-                "--weight_decay=0.2 "
-                "--dropout=0.2"
+                "--max_iters=15000 --batch_size=128 "
+                "--weight_decay=1e-4"
             )
         }
     ]

@@ -18,6 +18,7 @@ n_embd = 256
 n_head = 4
 num_loops = 12
 inject_x0 = False # Disabled for RoPE compatibility as per guide.md
+use_swiglu = False
 dropout = 0.1
 bias = False
 learning_rate = 1e-3
@@ -149,7 +150,7 @@ thinking_token_id = stoi.get('=', None)
 
 # Model init
 model_args = dict(n_layer=1, n_head=n_head, n_embd=n_embd, block_size=block_size,
-                  bias=bias, vocab_size=vocab_size, dropout=dropout)
+                  bias=bias, vocab_size=vocab_size, dropout=dropout, use_swiglu=use_swiglu)
 gptconf = GPTConfig(**model_args)
 model = LoopGPT(gptconf, num_loops=num_loops, inject_x0=inject_x0)
 

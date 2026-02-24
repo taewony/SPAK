@@ -7,7 +7,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     exp_base = os.path.join(script_dir, "experiments")
     
-    # 분석 대상 실험군 정의 (Phase 4 ~ Phase 6)
+    # 분석 대상 실험군 정의 (Phase 4 ~ Phase 7)
     target_exps = [
         {"name": "Exp1_Baseline_RoPE_Fixed", "label": "GPT-12L (Static)"},
         {"name": "Exp2_LoopLM_RoPE_Fixed", "label": "LoopLM-12 (Dynamic)"},
@@ -15,7 +15,8 @@ def main():
         {"name": "Exp4_LoopLM_Narrow_Deep_Time", "label": "LoopLM-128e (Efficient)"},
         {"name": "Exp5_LoopLM_Forced_Grokking", "label": "LoopLM-Grok (High-Reg)"},
         {"name": "Exp6_Baseline_Small", "label": "GPT-1L (Control)"},
-        {"name": "Exp7_Grokking_Marathon", "label": "LoopLM-100k (Marathon)"}
+        {"name": "Exp7_Grokking_Marathon", "label": "LoopLM-100k (Marathon)"},
+        {"name": "Exp8_SwiGLU_Dynamic", "label": "LoopLM-SwiGLU (Advanced)"}
     ]
     
     results = {}

@@ -85,13 +85,32 @@ class MLP(nn.Module):
         x = self.dropout(x)
         return x
 
+class SwiGLU(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        # 파라미터 수를 기존 MLP(4*embd)와 비슷하게 맞추기 위해 8/3 비율 사용
+        hidden_dim = int(8 * config.n_embd / 3)
+        self.w1 = nn.Linear(config.n_embd, hidden_dim, bias=config.bias)
+        self.w2 = nn.Linear(config.n_embd, hidden_dim, bias=config.bias)
+        self.w3 = nn.Linear(hidden_dim, config.n_embd, bias=config.bias)
+        self.dropout = nn.Dropout(config.dropout)
+
+    def forward(self, x):
+        # Swish(xW1) * xW2 -> W3
+        return self.dropout(self.w3(F.silu(self.w1(x)) * self.w2(x)))
+
 class Block(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.ln_1 = LayerNorm(config.n_embd, bias=config.bias)
         self.attn = CausalSelfAttention(config)
         self.ln_2 = LayerNorm(config.n_embd, bias=config.bias)
-        self.mlp = MLP(config)
+        
+        # SwiGLU 선택 로직
+        if getattr(config, 'use_swiglu', False):
+            self.mlp = SwiGLU(config)
+        else:
+            self.mlp = MLP(config)
 
     def forward(self, x, cos=None, sin=None):
         x = x + self.attn(self.ln_1(x), cos=cos, sin=sin)
@@ -107,6 +126,7 @@ class GPTConfig:
     n_embd: int = 768
     dropout: float = 0.0
     bias: bool = True
+    use_swiglu: bool = False # Added for SwiGLU support
 
 class GPT(nn.Module):
     def __init__(self, config):
