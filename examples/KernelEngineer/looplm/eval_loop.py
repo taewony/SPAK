@@ -28,9 +28,11 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
 
     checkpoint = torch.load(ckpt_path, map_location=device)
     config_dict = checkpoint.get('config', {})
-    dataset = config_dict.get('dataset', 'addition')
-    if 'addition_reverse' in ckpt_path: dataset = 'addition_reverse'
-
+    
+    # [CRITICAL BUG FIX] Force 'addition_reverse' dataset
+    # Previous logic failed because 'config' was not always saved and folder names lacked the suffix.
+    dataset = 'addition_reverse' 
+    
     args = checkpoint['model_args']
     gptconf = GPTConfig(**args)
     
