@@ -1,4 +1,4 @@
-python run_experiments.py
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python run_experiments.py
 🚀 Starting 3 Experiments for RoPE & Batching Validation...
 
 ============================================================
@@ -51,3 +51,115 @@ iter 2400: loss 1.2464, time 47.81ms
 step 2500: train loss 1.2481, val loss 1.2481, lr 9.4360e-04
 iter 2500: loss 1.2530, time 158.44ms
 iter 2600: loss 1.2494, time 76.26ms
+iter 2700: loss 1.2472, time 40.55ms
+iter 2800: loss 1.2482, time 40.83ms
+iter 2900: loss 1.2421, time 41.01ms
+step 3000: train loss 1.2496, val loss 1.2505, lr 9.1847e-04
+iter 3000: loss 1.2467, time 147.08ms
+iter 3100: loss 1.2549, time 39.87ms
+iter 3200: loss 1.2484, time 75.97ms
+iter 3300: loss 1.2536, time 39.65ms
+iter 3400: loss 1.2581, time 39.90ms
+step 3500: train loss 1.2481, val loss 1.2485, lr 8.8924e-04
+iter 3500: loss 1.2568, time 146.79ms
+iter 3600: loss 1.2506, time 39.64ms
+iter 3700: loss 1.2521, time 75.44ms
+iter 3800: loss 1.2441, time 39.43ms
+iter 3900: loss 1.2452, time 39.27ms
+step 4000: train loss 1.2475, val loss 1.2478, lr 8.5624e-04
+iter 4000: loss 1.2567, time 144.86ms
+iter 4100: loss 1.2621, time 39.27ms
+iter 4200: loss 1.2455, time 39.64ms
+iter 4300: loss 1.2486, time 76.23ms
+iter 4400: loss 1.2630, time 40.32ms
+step 4500: train loss 1.2479, val loss 1.2480, lr 8.1985e-04
+iter 4500: loss 1.2587, time 149.39ms
+iter 4600: loss 1.2432, time 40.19ms
+iter 4700: loss 1.2421, time 44.17ms
+iter 4800: loss 1.2576, time 83.95ms
+iter 4900: loss 1.2522, time 49.15ms
+step 5000: train loss 1.2472, val loss 1.2487, lr 7.8046e-04
+iter 5000: loss 1.2327, time 169.24ms
+iter 5100: loss 1.2510, time 39.37ms
+iter 5200: loss 1.2444, time 75.48ms
+iter 5300: loss 1.2473, time 39.48ms
+iter 5400: loss 1.2535, time 39.45ms
+step 5500: train loss 1.2467, val loss 1.2472, lr 7.3850e-04
+iter 5500: loss 1.2477, time 145.29ms
+iter 5600: loss 1.2546, time 39.49ms
+iter 5700: loss 1.2542, time 39.34ms
+iter 5800: loss 1.2534, time 75.07ms
+iter 5900: loss 1.2504, time 39.30ms
+step 6000: train loss 1.2462, val loss 1.2487, lr 6.9446e-04
+iter 6000: loss 1.2432, time 149.69ms
+iter 6100: loss 1.2432, time 40.45ms
+iter 6200: loss 1.2515, time 40.48ms
+iter 6300: loss 1.2521, time 76.73ms
+iter 6400: loss 1.2441, time 47.34ms
+step 6500: train loss 1.2462, val loss 1.2475, lr 6.4881e-04
+iter 6500: loss 1.2466, time 194.01ms
+iter 6600: loss 1.2479, time 47.99ms
+iter 6700: loss 1.2451, time 82.16ms
+iter 6800: loss 1.2387, time 47.48ms
+iter 6900: loss 1.2428, time 46.28ms
+step 7000: train loss 1.2461, val loss 1.2481, lr 6.0207e-04
+iter 7000: loss 1.2427, time 168.24ms
+iter 7100: loss 1.2512, time 84.05ms
+iter 7200: loss 1.2426, time 51.22ms
+iter 7300: loss 1.2402, time 51.21ms
+iter 7400: loss 1.2454, time 50.76ms
+step 7500: train loss 1.2461, val loss 1.2472, lr 5.5474e-04
+iter 7500: loss 1.2389, time 189.05ms
+iter 7600: loss 1.2510, time 40.17ms
+iter 7700: loss 1.2485, time 39.90ms
+iter 7800: loss 1.2343, time 40.03ms
+iter 7900: loss 1.2585, time 39.70ms
+step 8000: train loss 1.2462, val loss 1.2493, lr 5.0737e-04
+iter 8000: loss 1.2332, time 146.17ms
+iter 8100: loss 1.2374, time 75.38ms
+iter 8200: loss 1.2486, time 39.60ms
+iter 8300: loss 1.2443, time 39.61ms
+iter 8400: loss 1.2550, time 39.61ms
+step 8500: train loss 1.2452, val loss 1.2476, lr 4.6047e-04
+iter 8500: loss 1.2428, time 146.18ms
+iter 8600: loss 1.2592, time 75.42ms
+iter 8700: loss 1.2466, time 39.65ms
+iter 8800: loss 1.2444, time 39.29ms
+iter 8900: loss 1.2521, time 39.38ms
+step 9000: train loss 1.2450, val loss 1.2479, lr 4.1456e-04
+iter 9000: loss 1.2510, time 144.75ms
+iter 9100: loss 1.2480, time 39.28ms
+iter 9200: loss 1.2391, time 75.71ms
+iter 9300: loss 1.2618, time 39.96ms
+iter 9400: loss 1.2481, time 39.89ms
+step 9500: train loss 1.2443, val loss 1.2482, lr 3.7015e-04
+iter 9500: loss 1.2597, time 148.31ms
+iter 9600: loss 1.2483, time 39.91ms
+iter 9700: loss 1.2463, time 83.79ms
+iter 9800: loss 1.2405, time 47.36ms
+iter 9900: loss 1.2387, time 49.04ms
+step 10000: train loss 1.2451, val loss 1.2484, lr 3.2774e-04
+iter 10000: loss 1.2431, time 162.44ms
+iter 10100: loss 1.2364, time 39.43ms
+iter 10200: loss 1.2489, time 75.42ms
+iter 10300: loss 1.2441, time 39.44ms
+iter 10400: loss 1.2335, time 39.35ms
+step 10500: train loss 1.2431, val loss 1.2494, lr 2.8780e-04
+iter 10500: loss 1.2493, time 146.25ms
+iter 10600: loss 1.2509, time 39.37ms
+iter 10700: loss 1.2506, time 75.18ms
+iter 10800: loss 1.2446, time 39.36ms
+iter 10900: loss 1.2467, time 39.41ms
+step 11000: train loss 1.2429, val loss 1.2486, lr 2.5078e-04
+iter 11000: loss 1.2379, time 148.64ms
+iter 11100: loss 1.2399, time 40.06ms
+iter 11200: loss 1.2416, time 75.78ms
+iter 11300: loss 1.2565, time 40.14ms
+iter 11400: loss 1.2415, time 44.83ms
+step 11500: train loss 1.2420, val loss 1.2494, lr 2.1707e-04
+iter 11500: loss 1.2421, time 195.42ms
+iter 11600: loss 1.2442, time 83.47ms
+iter 11700: loss 1.2393, time 45.51ms
+iter 11800: loss 1.2484, time 48.35ms
+iter 11900: loss 1.2429, time 46.75ms
+step 12000: train loss 1.2416, val loss 1.2499, lr 1.8706e-04
