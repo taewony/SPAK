@@ -94,9 +94,33 @@ def get_batch(split):
     ix_newlines = torch.randint(len(valid_indices), (batch_size,))
     ix = valid_indices[ix_newlines] + 1
     
-    x = torch.stack([torch.from_numpy((data[i:i+block_size]).astype(np.int64)) for i in ix])
-    y = torch.stack([torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64)) for i in ix])
-    x, y = x.to(device), y.to(device)
+    x_stack = []
+    y_stack = []
+    
+    for i in ix:
+        chunk_x = torch.from_numpy((data[i:i+block_size]).astype(np.int64))
+        chunk_y = torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64))
+        
+        target_mask = torch.full_like(chunk_y, -1)
+        eq_indices = (chunk_x == thinking_token_id).nonzero(as_tuple=True)[0]
+        nl_indices = (chunk_x == 0).nonzero(as_tuple=True)[0]
+        
+        sample_starts = torch.cat((torch.tensor([0], device=chunk_x.device), nl_indices + 1))
+        
+        for start in sample_starts:
+            if start >= block_size: break
+            future_eqs = eq_indices[eq_indices >= start]
+            if len(future_eqs) == 0: continue
+            eq_pos = future_eqs[0]
+            future_nls = nl_indices[nl_indices > eq_pos]
+            end_pos = future_nls[0] if len(future_nls) > 0 else torch.tensor(block_size, device=chunk_x.device)
+            target_mask[eq_pos:end_pos] = chunk_y[eq_pos:end_pos]
+            
+        x_stack.append(chunk_x)
+        y_stack.append(target_mask)
+        
+    x = torch.stack(x_stack).to(device)
+    y = torch.stack(y_stack).to(device)
     return x, y
 
 # Vocab size from meta

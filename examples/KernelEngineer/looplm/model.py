@@ -153,19 +153,7 @@ class GPT(nn.Module):
         
         if targets is not None:
             logits = self.lm_head(x)
-            
-            # Efficient Loss Masking
-            mask = torch.ones_like(targets, dtype=torch.float32)
-            if thinking_token_id is not None:
-                for i in range(b):
-                    eq_indices = (idx[i] == thinking_token_id).nonzero(as_tuple=True)[0]
-                    if len(eq_indices) > 0:
-                        first_eq = eq_indices[0].item()
-                        mask[i, :first_eq] = 0.0
-            
-            mask = mask.view(-1)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), reduction='none', ignore_index=-1)
-            loss = (loss * mask).sum() / (mask.sum() + 1e-8)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         else:
             logits = self.lm_head(x[:, [-1], :])
             loss = None

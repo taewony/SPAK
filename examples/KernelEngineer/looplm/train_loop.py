@@ -93,14 +93,50 @@ def get_batch(split):
     newlines = train_newlines if split == 'train' else val_newlines
     
     # Sample random newline indices as starting points
-    # We pick from newlines that have enough room for block_size
     valid_indices = newlines[newlines < len(data) - block_size - 1]
     ix_newlines = torch.randint(len(valid_indices), (batch_size,))
     ix = valid_indices[ix_newlines] + 1 # Start right after \n
     
-    x = torch.stack([torch.from_numpy((data[i:i+block_size]).astype(np.int64)) for i in ix])
-    y = torch.stack([torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64)) for i in ix])
-    x, y = x.to(device), y.to(device)
+    x_stack = []
+    y_stack = []
+    
+    for i in ix:
+        chunk_x = torch.from_numpy((data[i:i+block_size]).astype(np.int64))
+        chunk_y = torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64))
+        
+        # --- Multi-sample Masking Logic ---
+        # Initialize target_mask with -1 (ignore_index)
+        target_mask = torch.full_like(chunk_y, -1)
+        
+        # Find all '=' and '\n' positions in this chunk
+        # thinking_token_id is '=', 0 is '\n'
+        eq_indices = (chunk_x == thinking_token_id).nonzero(as_tuple=True)[0]
+        nl_indices = (chunk_x == 0).nonzero(as_tuple=True)[0]
+        
+        # The start of the first expression in this chunk is index 0 
+        # (since we aligned ix to start right after a \n)
+        sample_starts = torch.cat((torch.tensor([0], device=chunk_x.device), nl_indices + 1))
+        
+        for start in sample_starts:
+            if start >= block_size: break
+            
+            # Find the '=' corresponding to this start
+            future_eqs = eq_indices[eq_indices >= start]
+            if len(future_eqs) == 0: continue
+            eq_pos = future_eqs[0]
+            
+            # Find the '\n' ending this answer
+            future_nls = nl_indices[nl_indices > eq_pos]
+            end_pos = future_nls[0] if len(future_nls) > 0 else torch.tensor(block_size, device=chunk_x.device)
+            
+            # Only the range [eq_pos : end_pos] is the answer part to be trained
+            target_mask[eq_pos:end_pos] = chunk_y[eq_pos:end_pos]
+            
+        x_stack.append(chunk_x)
+        y_stack.append(target_mask)
+        
+    x = torch.stack(x_stack).to(device)
+    y = torch.stack(y_stack).to(device)
     return x, y
 
 # Vocab size from meta

@@ -1,3 +1,117 @@
+`log.log` 파일을 정밀 분석한 결과, **Loss 1.24에서 정체된 결정적인 원인(Critical Bug)**을 발견했습니다.
+
+단도직입적으로 말씀드리면, **"모델이 다음 문제의 질문(Prompt)까지 예측하려고 노력 중"**입니다. 현재의 Loss Masking 로직이 한 배치 내에 들어있는 **두 번째, 세 번째 샘플의 질문(Random Digits)**을 마스킹하지 못하고 있습니다.
+
+---
+
+### 1. 🚨 원인 분석: "Multi-sample Masking Failure"
+
+현재 `train_baseline_12l.py`와 `model.py`의 로직은 다음과 같습니다.
+
+1. **Block Size 64**: 덧셈 수식 하나는 약 15~20 토큰입니다. 즉, 하나의 배치(row) 안에 **약 3~4개의 수식**이 연달아 들어갑니다.
+* 예: `[수식1_질문][수식1_답] \n [수식2_질문][수식2_답] \n [수식3_질문]...`
+
+
+2. **현재 Masking 로직 (`model.py`)**:
+```python
+# model.py
+first_eq = eq_indices[0].item() # 첫 번째 '='만 찾음
+mask[i, :first_eq] = 0.0        # 첫 번째 '=' 이전만 가림
+
+```
+
+
+3. **결과**:
+* `[수식1_질문]`  **Masked (OK)**
+* `[수식1_답]`  Trained (OK)
+* `[수식2_질문]`  **Trained (FAIL!)**  **여기가 문제입니다.**
+* `[수식2_답]`  Trained (OK)
+
+
+
+모델은 무작위로 생성된 **"다음 문제의 숫자들(수식2_질문)"**을 예측하려다 보니, 당연히 맞힐 수가 없습니다. 그 불확실성(Entropy)이 바로 **Loss 1.24**의 정체입니다. (숫자 10개 중 하나를 찍는 확률과 유사)
+
+---
+
+### 2. 🛠️ 해결 솔루션: `get_batch` 레벨에서의 정밀 마스킹
+
+모델 내부(`model.py`)를 고치는 것보다, **Data Loader(`train_baseline_12l.py`)에서 정답지(Y) 자체를 수정**하는 것이 훨씬 확실하고 빠릅니다. `Y`의 질문 구간을 `-1` (ignore_index)로 덮어쓰면 됩니다.
+
+아래 코드를 `train_baseline_12l.py`와 `train_loop.py`의 `get_batch` 함수에 덮어씌우십시오.
+
+```python
+def get_batch(split):
+    data = train_data if split == 'train' else val_data
+    newlines = train_newlines if split == 'train' else val_newlines
+    
+    # 1. Start Indices Sampling
+    valid_indices = newlines[newlines < len(data) - block_size - 1]
+    ix_newlines = torch.randint(len(valid_indices), (batch_size,))
+    ix = valid_indices[ix_newlines] + 1 
+    
+    x_stack = []
+    y_stack = []
+    
+    for i in ix:
+        # 데이터 가져오기
+        chunk_x = torch.from_numpy((data[i:i+block_size]).astype(np.int64))
+        chunk_y = torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64))
+        
+        # ---------------------------------------------------------
+        # [Critical Fix] Advanced Masking for Multi-sample Blocks
+        # 정답지(chunk_y)에서 '질문 구간'을 찾아 -1로 마스킹합니다.
+        # ---------------------------------------------------------
+        # 논리: '=' 뒤부터 '\n'까지가 정답(Train). 나머지는 질문(Ignore).
+        
+        # 1. 모든 위치를 -1 (Ignore)로 초기화
+        target_mask = torch.full_like(chunk_y, -1)
+        
+        # 2. '=' 와 '\n' 위치 찾기
+        eq_indices = (chunk_x == thinking_token_id).nonzero(as_tuple=True)[0]
+        nl_indices = (chunk_x == 0).nonzero(as_tuple=True)[0] # 가정: stoi['\n'] == 0
+        
+        # 3. 각 수식 구간별로 Loop 돌며 정답 구간만 복구
+        # 수식의 시작점: 0 또는 \n 바로 다음
+        sample_starts = torch.cat((torch.tensor([0]), nl_indices + 1))
+        
+        for start in sample_starts:
+            if start >= len(chunk_x): break
+            
+            # 이 수식에 해당하는 '=' 찾기 (start 이후 첫 번째 =)
+            future_eqs = eq_indices[eq_indices >= start]
+            if len(future_eqs) == 0: continue # '='가 잘려서 없으면 스킵
+            
+            eq_pos = future_eqs[0]
+            
+            # 이 수식의 끝 찾기 (eq_pos 이후 첫 번째 \n, 없으면 block 끝)
+            future_nls = nl_indices[nl_indices > eq_pos]
+            end_pos = future_nls[0] if len(future_nls) > 0 else len(chunk_x)
+            
+            # [eq_pos:end_pos] 구간이 정답(Answer) 구간임
+            # chunk_y의 해당 구간을 원본 데이터로 복구
+            target_mask[eq_pos:end_pos] = chunk_y[eq_pos:end_pos]
+            
+        y_stack.append(target_mask)
+        x_stack.append(chunk_x)
+
+    x = torch.stack(x_stack).to(device)
+    y = torch.stack(y_stack).to(device)
+    return x, y
+
+```
+
+---
+
+### 3. 🚀 예상 결과
+
+이 수정을 적용하면:
+
+1. **Multi-sample Noise 제거**: 모델은 이제 오직 "계산 결과"에 대해서만 Loss를 계산합니다. 예측 불가능한 "다음 문제 질문"은 무시(`-1`)됩니다.
+2. **Loss 급락**: 현재 1.24에서 멈춘 Loss가 순식간에 **0.1 미만**으로 떨어질 것입니다.
+3. **Grokking 시작**: Train Loss가 0에 가까워져야 비로소 모델이 "패턴"을 찾기 시작합니다.
+
+
+
 (env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python run_experiments.py
 🚀 Starting 3 Experiments for RoPE & Batching Validation...
 
