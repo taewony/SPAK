@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Exp1_Baseline_RoPE_Fixed",
+        "status": "Success",
+        "duration_sec": 835.36,
+        "out_dir": "experiments/Exp1_Baseline_RoPE_Fixed"
+    },
+    {
+        "name": "Exp2_LoopLM_RoPE_Fixed",
+        "status": "Success",
+        "duration_sec": 1507.11,
+        "out_dir": "experiments/Exp2_LoopLM_RoPE_Fixed"
+    },
+    {
+        "name": "Exp3_LoopLM_Ultimate_Thinking",
+        "status": "Success",
+        "duration_sec": 2962.87,
+        "out_dir": "experiments/Exp3_LoopLM_Ultimate_Thinking"
+    }
+]
