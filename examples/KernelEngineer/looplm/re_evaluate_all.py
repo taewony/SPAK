@@ -37,35 +37,38 @@ def main():
             results[exp['label']] = res
 
     # --- 최종 지능 대조 리포트 생성 ---
-    print("\n" + "="*80)
-    print("📊 FINAL INTELLIGENCE COMPARISON REPORT")
-    print("="*80)
-    print(f"{'Model Architecture':<20} | {'OOD Acc':<10} | {'Avg Steps':<10} | {'Reasoning Type'}")
-    print("-" * 80)
+    report_content = []
+    report_content.append("="*80)
+    report_content.append("📊 FINAL INTELLIGENCE COMPARISON REPORT")
+    report_content.append("="*80)
+    report_content.append(f"{'Model Architecture':<20} | {'OOD Acc':<10} | {'Avg Steps':<10} | {'Reasoning Type'}")
+    report_content.append("-" * 80)
 
     for label, res in results.items():
         acc = res['accuracy'] * 100
         steps = res['avg_steps']
-        # 사고 유형 판별 로직
-        if label.startswith("GPT"):
-            r_type = "Fixed (Static Depth)"
-        else:
-            # 8자리 이상에서 steps가 평균보다 높으면 Adaptive로 간주
-            r_type = "Adaptive (Dynamic Depth)"
-            
-        print(f"{label:<20} | {acc:>8.2f}% | {steps:>10.2f} | {r_type}")
+        r_type = "Fixed (Static Depth)" if label.startswith("GPT") else "Adaptive (Dynamic Depth)"
+        report_content.append(f"{label:<20} | {acc:>8.2f}% | {steps:>10.2f} | {r_type}")
 
-    print("\n📈 Digit-wise Accuracy (Generalization Curve)")
-    print(f"{'Model':<20} | {'1-4d':<8} | {'5-6d':<8} | {'8d':<8} | {'10d':<8} | {'12d':<8}")
-    print("-" * 80)
+    report_content.append("\n📈 Digit-wise Accuracy (Generalization Curve)")
+    report_content.append(f"{'Model':<20} | {'1-4d':<8} | {'5-6d':<8} | {'8d':<8} | {'10d':<8} | {'12d':<8}")
+    report_content.append("-" * 80)
     
     for label, res in results.items():
         b = res['buckets']
         def get_acc(size):
             data = b.get(size, [0, 0, 0, 0])
             return (data[0]/data[1]*100) if data[1] > 0 else 0.0
-            
-        print(f"{label:<20} | {get_acc(1):>7.1f}% | {get_acc(6):>7.1f}% | {get_acc(8):>7.1f}% | {get_acc(10):>7.1f}% | {get_acc(12):>7.1f}%")
+        report_content.append(f"{label:<20} | {get_acc(1):>7.1f}% | {get_acc(6):>7.1f}% | {get_acc(8):>7.1f}% | {get_acc(10):>7.1f}% | {get_acc(12):>7.1f}%")
+
+    # 파일 저장 및 출력
+    final_report = "\n".join(report_content)
+    print("\n" + final_report)
+    
+    report_path = os.path.join(script_dir, "INTELLIGENCE_REPORT.md")
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(final_report)
+    print(f"\n✅ Report saved to: {report_path}")
 
     print("\n💡 Conclusion:")
     if "LoopLM-30 (Deep)" in results:
