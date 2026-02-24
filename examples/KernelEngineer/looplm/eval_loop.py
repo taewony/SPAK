@@ -37,7 +37,7 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     is_loop = 'num_loops' in checkpoint or 'num_loops' in config_dict
     if is_loop:
         n_loops = max_loops if max_loops is not None else checkpoint.get('num_loops', 12)
-        inject_x0 = config_dict.get('inject_x0', True)
+        inject_x0 = config_dict.get('inject_x0', False) # Default to False for RoPE
         model = LoopGPT(gptconf, num_loops=n_loops, inject_x0=inject_x0)
     else:
         model = GPT(gptconf)
@@ -64,7 +64,7 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     
     if num_samples > 0:
         import random
-        random.seed(42)
+        random.seed(42) # Reproducibility
         examples = random.sample(examples, min(num_samples, len(examples)))
 
     correct = 0
@@ -97,9 +97,11 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
         with torch.no_grad():
             for _ in range(len(a) + 2):
                 if is_loop:
-                    logits, _, steps = model(current_x, halt_threshold=0.9, 
-                                              thinking_token_id=thinking_token_id, thinking_threshold=0.99)
-                    steps_taken_val = steps[0, -1].item()
+                    # [CRITICAL FIX] 
+                    # Set thresholds to None to DISABLE dynamic halting.
+                    # This forces the model to utilize all its learned reasoning depth.
+                    logits, _, steps = model(current_x, halt_threshold=None, thinking_threshold=None)
+                    steps_taken_val = n_loops # Full loops used
                 else:
                     logits, _ = model(current_x)
                     steps_taken_val = gptconf.n_layer

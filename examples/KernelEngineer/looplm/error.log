@@ -1,5 +1,0 @@
-ython generate_master_report.py
-  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/generate_master_report.py", line 24
-    report += f"Generated on: {time.strftime('%Y-%m-%d %H:%M:%S')}
-              ^
-SyntaxError: unterminated f-string literal (detected at line 24)
