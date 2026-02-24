@@ -1,186 +1,80 @@
-ython re_evaluate_all.py
-Found 28 experiment folders. Starting re-evaluation...
+ython run_experiments.py
+🚀 Starting 3 Experiments for RoPE & Batching Validation...
 
->>> Re-evaluating: RoPE_Dynamic_Reverse
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/RoPE_Dynamic_Reverse/ckpt.pt...
+============================================================
+▶️  Running [1/3]: Exp1_Baseline_RoPE_Fixed
+    Script: train_baseline_12l.py
+    Output: experiments/Exp1_Baseline_RoPE_Fixed
+============================================================
 
---- Carry-wise Diagnostic Report ---
- 0 Carries |     0.00% (0/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
+[CMD] python train_baseline_12l.py --dataset=addition_reverse --n_layer=12 --n_embd=256 --n_head=4 --max_iters=15000 --batch_size=128 --weight_decay=1e-4 --out_dir=experiments/Exp1_Baseline_RoPE_Fixed
+Overriding: dataset = addition_reverse
+Overriding: n_layer = 12
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: max_iters = 15000
+Overriding: batch_size = 128
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_baseline_12l.py", line 47, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 47, in <module>
+ValueError: Unknown config key: weight_decay
+❌ Experiment Exp1_Baseline_RoPE_Fixed failed with return code 1
 
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     0.00% |     11.29
- 5+ Digits |     0.00% |     10.88
- 6+ Digits |     0.00% |     11.08
- 8+ Digits |     0.00% |     11.40
-10+ Digits |     0.00% |     11.18
-12+ Digits |     0.00% |     11.23
+============================================================
+▶️  Running [2/3]: Exp2_LoopLM_RoPE_Fixed
+    Script: train_loop.py
+    Output: experiments/Exp2_LoopLM_RoPE_Fixed
+============================================================
 
->>> Re-evaluating: R3_Reverse_Efficient
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R3_Reverse_Efficient/ckpt.pt...
+[CMD] python train_loop.py --dataset=addition_reverse --num_loops=12 --n_embd=256 --n_head=4 --inject_x0=False --max_iters=15000 --batch_size=128 --weight_decay=1e-4 --out_dir=experiments/Exp2_LoopLM_RoPE_Fixed
+Overriding: dataset = addition_reverse
+Overriding: num_loops = 12
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: inject_x0 = False
+Overriding: max_iters = 15000
+Overriding: batch_size = 128
+Traceback (most recent call last):
+  File "/home/linux/taewony/SPAK/examples/KernelEngineer/looplm/train_loop.py", line 41, in <module>
+    exec(open(_configurator_path).read())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 47, in <module>
+ValueError: Unknown config key: weight_decay
+❌ Experiment Exp2_LoopLM_RoPE_Fixed failed with return code 1
 
---- Carry-wise Diagnostic Report ---
- 0 Carries |     0.00% (0/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
+============================================================
+▶️  Running [3/3]: Exp3_LoopLM_Ultimate_Thinking
+    Script: train_loop.py
+    Output: experiments/Exp3_LoopLM_Ultimate_Thinking
+============================================================
 
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     0.00% |     14.90
- 5+ Digits |     0.00% |      2.94
- 6+ Digits |     0.00% |      2.44
- 8+ Digits |     0.00% |      1.76
-10+ Digits |     0.00% |      1.34
-12+ Digits |     0.00% |      1.19
-
->>> Re-evaluating: B2_Static_Reverse
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/B2_Static_Reverse/ckpt.pt...
-
---- Carry-wise Diagnostic Report ---
- 0 Carries |     1.83% (3/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
-
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     2.75% |     12.00
- 5+ Digits |     0.00% |     12.00
- 6+ Digits |     0.00% |     12.00
- 8+ Digits |     0.00% |     12.00
-10+ Digits |     0.00% |     12.00
-12+ Digits |     0.00% |     12.00
-
->>> Re-evaluating: R2_Reverse_Grok
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R2_Reverse_Grok/ckpt.pt...
-
---- Carry-wise Diagnostic Report ---
- 0 Carries |     0.00% (0/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
-
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     0.00% |     24.00
- 5+ Digits |     0.00% |     24.00
- 6+ Digits |     0.00% |     24.00
- 8+ Digits |     0.00% |     24.00
-10+ Digits |     0.00% |     24.00
-12+ Digits |     0.00% |     24.00
-
->>> Re-evaluating: B30_Static_Reverse
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/B30_Static_Reverse/ckpt.pt...
-
---- Carry-wise Diagnostic Report ---
- 0 Carries |     0.00% (0/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
-
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     0.00% |     12.00
- 5+ Digits |     0.00% |     12.00
- 6+ Digits |     0.00% |     12.00
- 8+ Digits |     0.00% |     12.00
-10+ Digits |     0.00% |     12.00
-12+ Digits |     0.00% |     12.00
-
->>> Re-evaluating: B30_Dynamic_Reverse
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/B30_Dynamic_Reverse/ckpt.pt...
-
---- Carry-wise Diagnostic Report ---
- 0 Carries |     1.22% (2/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
-
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     1.83% |     11.82
- 5+ Digits |     0.00% |     11.87
- 6+ Digits |     0.00% |     11.87
- 8+ Digits |     0.00% |     11.95
-10+ Digits |     0.00% |     11.98
-12+ Digits |     0.00% |     11.99
-
->>> Re-evaluating: B30_Ultimate_Thinking
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/B30_Ultimate_Thinking/ckpt.pt...
-
---- Carry-wise Diagnostic Report ---
- 0 Carries |     0.61% (1/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
-
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     0.92% |     48.00
- 5+ Digits |     0.00% |     48.00
- 6+ Digits |     0.00% |     48.00
- 8+ Digits |     0.00% |     48.00
-10+ Digits |     0.00% |     48.00
-12+ Digits |     0.00% |     48.00
-
->>> Re-evaluating: R1_Reverse_Baseline
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/R1_Reverse_Baseline/ckpt.pt...
-
---- Carry-wise Diagnostic Report ---
- 0 Carries |     0.61% (1/164)
- 1 Carries |     0.00% (0/250)
- 2 Carries |     0.00% (0/192)
- 3 Carries |     0.00% (0/168)
- 4 Carries |     0.00% (0/105)
- 5 Carries |     0.00% (0/54)
- 6 Carries |     0.00% (0/45)
- 7 Carries |     0.00% (0/16)
- 8 Carries |     0.00% (0/5)
- 9 Carries |     0.00% (0/1)
-
---- OOD Detailed Intelligence Report ---
-1-4 Digits |     0.92% |     16.00
- 5+ Digits |     0.00% |     16.00
- 6+ Digits |     0.00% |     16.00
- 8+ Digits |     0.00% |     13.35
-10+ Digits |     0.00% |     11.67
-12+ Digits |     0.00% |      8.64
+[CMD] python train_loop.py --dataset=addition_reverse --num_loops=30 --n_embd=256 --n_head=4 --inject_x0=False --max_iters=20000 --batch_size=128 --dropout=0.1 --out_dir=experiments/Exp3_LoopLM_Ultimate_Thinking
+Overriding: dataset = addition_reverse
+Overriding: num_loops = 30
+Overriding: n_embd = 256
+Overriding: n_head = 4
+Overriding: inject_x0 = False
+Overriding: max_iters = 20000
+Overriding: batch_size = 128
+Overriding: dropout = 0.1
+Overriding: out_dir = experiments/Exp3_LoopLM_Ultimate_Thinking
+Loading data from: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/data/addition_reverse
+Indexing newlines for aligned batching...
+No previous checkpoint found. Starting from scratch.
+Starting LoopLM Training on addition_reverse...
+Config: 30 loops over 1 layer block
+step 0: train loss 2.5977, val loss 2.5975, lr 0.0000e+00
+iter 0: loss 2.5929, time 20910.61ms
+iter 100: loss 2.0527, time 92.01ms
+iter 200: loss 2.0107, time 127.49ms
+iter 300: loss 1.9648, time 91.22ms
+iter 400: loss 1.9520, time 91.11ms
+step 500: train loss 1.9300, val loss 1.9308, lr 9.9840e-04
+iter 500: loss 1.9010, time 283.04ms
+iter 600: loss 1.8646, time 93.55ms
+iter 700: loss 1.7496, time 106.93ms
+iter 800: loss 1.6708, time 153.11ms
+iter 900: loss 1.4570, time 98.77ms
+step 1000: train loss 1.3824, val loss 1.3817, lr 9.9192e-04
