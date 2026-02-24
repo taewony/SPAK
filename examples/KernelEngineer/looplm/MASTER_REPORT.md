@@ -1,7 +1,7 @@
 # [Master Report] LoopLM vs Standard GPT Intelligence Comparison
 
-Generated on: 2026-02-24 11:27:59
-Source: Aggregated from 16 experiment files
+Generated on: 2026-02-24 13:57:41
+Source: Aggregated from 17 experiment files
 
 ## 1. Top-line Performance (12-digit OOD)
 
