@@ -1,0 +1,8 @@
+python generate_master_report.py
+Found 20 summary files. Aggregating...
+Warning: Could not parse summary_latest.json: 'experiment'
+Warning: Could not parse summary_20260224_095205.json: 'experiment'
+Warning: Could not parse summary_20260224_204551.json: 'experiment'
+Warning: Could not parse summary_phase5_20260224_113201.json: 'experiment'
+Warning: Could not parse summary_20260224_150506.json: 'experiment'
+Master Report generated at: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/MASTER_REPORT.md

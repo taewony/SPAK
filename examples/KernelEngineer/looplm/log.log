@@ -1,4 +1,4 @@
-(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer/looplm$ python re_evaluate_all.py
+python re_evaluate_all.py
 ================================================================================
 🧠 LoopLM Intelligence Generalization & Reasoning Depth Evaluation
 ================================================================================
@@ -7,21 +7,20 @@
 Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp1_Baseline_RoPE_Fixed/ckpt.pt...
 
 --- Carry-wise Diagnostic Report ---
- 0 Carries |     8.57% (3/35)
- 1 Carries |     0.00% (0/47)
- 2 Carries |     0.00% (0/48)
- 3 Carries |     0.00% (0/27)
- 4 Carries |     0.00% (0/19)
- 5 Carries |     0.00% (0/11)
- 6 Carries |     0.00% (0/10)
- 7 Carries |     0.00% (0/1)
+ 0 Carries |    48.65% (18/37)
+ 1 Carries |    28.26% (13/46)
+ 2 Carries |    17.07% (7/41)
+ 3 Carries |    14.29% (4/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
  8 Carries |     0.00% (0/1)
- 9 Carries |     0.00% (0/1)
 
 --- OOD Detailed Intelligence Report ---
-1-4 Digits |     9.09% |     12.00
- 5+ Digits |     0.00% |     12.00
- 6+ Digits |     3.33% |     12.00
+1-4 Digits |   100.00% |     12.00
+ 5+ Digits |   100.00% |     12.00
+ 6+ Digits |    35.48% |     12.00
  8+ Digits |     0.00% |     12.00
 10+ Digits |     0.00% |     12.00
 12+ Digits |     0.00% |     12.00
@@ -30,21 +29,20 @@ Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/exper
 Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp2_LoopLM_RoPE_Fixed/ckpt.pt...
 
 --- Carry-wise Diagnostic Report ---
- 0 Carries |     8.57% (3/35)
- 1 Carries |     0.00% (0/47)
- 2 Carries |     0.00% (0/48)
- 3 Carries |     0.00% (0/27)
- 4 Carries |     0.00% (0/19)
- 5 Carries |     0.00% (0/11)
- 6 Carries |     0.00% (0/10)
- 7 Carries |     0.00% (0/1)
+ 0 Carries |    51.35% (19/37)
+ 1 Carries |    34.78% (16/46)
+ 2 Carries |    26.83% (11/41)
+ 3 Carries |    17.86% (5/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
  8 Carries |     0.00% (0/1)
- 9 Carries |     0.00% (0/1)
 
 --- OOD Detailed Intelligence Report ---
-1-4 Digits |     9.09% |     12.00
- 5+ Digits |     0.00% |     12.00
- 6+ Digits |     3.33% |     12.00
+1-4 Digits |   100.00% |     12.00
+ 5+ Digits |   100.00% |     12.00
+ 6+ Digits |    64.52% |     12.00
  8+ Digits |     0.00% |     12.00
 10+ Digits |     0.00% |     12.00
 12+ Digits |     0.00% |     12.00
@@ -53,22 +51,21 @@ Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/exper
 Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp3_LoopLM_Ultimate_Thinking/ckpt.pt...
 
 --- Carry-wise Diagnostic Report ---
- 0 Carries |     8.57% (3/35)
- 1 Carries |     0.00% (0/47)
- 2 Carries |     0.00% (0/48)
- 3 Carries |     0.00% (0/27)
- 4 Carries |     0.00% (0/19)
- 5 Carries |     0.00% (0/11)
- 6 Carries |     0.00% (0/10)
- 7 Carries |     0.00% (0/1)
+ 0 Carries |    64.86% (24/37)
+ 1 Carries |    41.30% (19/46)
+ 2 Carries |    34.15% (14/41)
+ 3 Carries |    17.86% (5/28)
+ 4 Carries |     5.00% (1/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
  8 Carries |     0.00% (0/1)
- 9 Carries |     0.00% (0/1)
 
 --- OOD Detailed Intelligence Report ---
-1-4 Digits |     9.09% |     30.00
- 5+ Digits |     0.00% |     30.00
- 6+ Digits |     3.33% |     30.00
- 8+ Digits |     0.00% |     30.00
+1-4 Digits |   100.00% |     30.00
+ 5+ Digits |   100.00% |     30.00
+ 6+ Digits |   100.00% |     30.00
+ 8+ Digits |     2.08% |     30.00
 10+ Digits |     0.00% |     30.00
 12+ Digits |     0.00% |     30.00
 
@@ -76,21 +73,20 @@ Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/exper
 Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp4_LoopLM_Narrow_Deep_Time/ckpt.pt...
 
 --- Carry-wise Diagnostic Report ---
- 0 Carries |     8.57% (3/35)
- 1 Carries |     0.00% (0/47)
- 2 Carries |     0.00% (0/48)
- 3 Carries |     0.00% (0/27)
- 4 Carries |     0.00% (0/19)
- 5 Carries |     0.00% (0/11)
- 6 Carries |     0.00% (0/10)
- 7 Carries |     0.00% (0/1)
+ 0 Carries |    54.05% (20/37)
+ 1 Carries |    32.61% (15/46)
+ 2 Carries |    21.95% (9/41)
+ 3 Carries |    17.86% (5/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
  8 Carries |     0.00% (0/1)
- 9 Carries |     0.00% (0/1)
 
 --- OOD Detailed Intelligence Report ---
-1-4 Digits |     9.09% |     24.00
- 5+ Digits |     0.00% |     24.00
- 6+ Digits |     3.33% |     24.00
+1-4 Digits |   100.00% |     24.00
+ 5+ Digits |   100.00% |     24.00
+ 6+ Digits |    58.06% |     24.00
  8+ Digits |     0.00% |     24.00
 10+ Digits |     0.00% |     24.00
 12+ Digits |     0.00% |     24.00
@@ -99,21 +95,20 @@ Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/exper
 Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp5_LoopLM_Forced_Grokking/ckpt.pt...
 
 --- Carry-wise Diagnostic Report ---
- 0 Carries |     8.57% (3/35)
- 1 Carries |     0.00% (0/47)
- 2 Carries |     0.00% (0/48)
- 3 Carries |     0.00% (0/27)
- 4 Carries |     0.00% (0/19)
- 5 Carries |     0.00% (0/11)
- 6 Carries |     0.00% (0/10)
- 7 Carries |     0.00% (0/1)
+ 0 Carries |    48.65% (18/37)
+ 1 Carries |    28.26% (13/46)
+ 2 Carries |    17.07% (7/41)
+ 3 Carries |    14.29% (4/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
  8 Carries |     0.00% (0/1)
- 9 Carries |     0.00% (0/1)
 
 --- OOD Detailed Intelligence Report ---
-1-4 Digits |     9.09% |     12.00
- 5+ Digits |     0.00% |     12.00
- 6+ Digits |     3.33% |     12.00
+1-4 Digits |   100.00% |     12.00
+ 5+ Digits |   100.00% |     12.00
+ 6+ Digits |    35.48% |     12.00
  8+ Digits |     0.00% |     12.00
 10+ Digits |     0.00% |     12.00
 12+ Digits |     0.00% |     12.00
@@ -122,46 +117,95 @@ Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/exper
 Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp6_Baseline_Small/ckpt.pt...
 
 --- Carry-wise Diagnostic Report ---
- 0 Carries |     5.71% (2/35)
- 1 Carries |     0.00% (0/47)
- 2 Carries |     0.00% (0/48)
- 3 Carries |     0.00% (0/27)
- 4 Carries |     0.00% (0/19)
- 5 Carries |     0.00% (0/11)
- 6 Carries |     0.00% (0/10)
- 7 Carries |     0.00% (0/1)
+ 0 Carries |    18.92% (7/37)
+ 1 Carries |     8.70% (4/46)
+ 2 Carries |     2.44% (1/41)
+ 3 Carries |     0.00% (0/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
  8 Carries |     0.00% (0/1)
- 9 Carries |     0.00% (0/1)
 
 --- OOD Detailed Intelligence Report ---
-1-4 Digits |     9.09% |      1.00
+1-4 Digits |    54.55% |      1.00
  5+ Digits |     0.00% |      1.00
  6+ Digits |     0.00% |      1.00
  8+ Digits |     0.00% |      1.00
 10+ Digits |     0.00% |      1.00
 12+ Digits |     0.00% |      1.00
 
+🔍 Analyzing LoopLM-100k (Marathon)...
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp7_Grokking_Marathon/ckpt.pt...
+
+--- Carry-wise Diagnostic Report ---
+ 0 Carries |    51.35% (19/37)
+ 1 Carries |    28.26% (13/46)
+ 2 Carries |    17.07% (7/41)
+ 3 Carries |    14.29% (4/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
+ 8 Carries |     0.00% (0/1)
+
+--- OOD Detailed Intelligence Report ---
+1-4 Digits |   100.00% |     12.00
+ 5+ Digits |   100.00% |     12.00
+ 6+ Digits |    38.71% |     12.00
+ 8+ Digits |     0.00% |     12.00
+10+ Digits |     0.00% |     12.00
+12+ Digits |     0.00% |     12.00
+
+🔍 Analyzing LoopLM-SwiGLU (Advanced)...
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp8_SwiGLU_Dynamic/ckpt.pt...
+
+--- Carry-wise Diagnostic Report ---
+ 0 Carries |    51.35% (19/37)
+ 1 Carries |    30.43% (14/46)
+ 2 Carries |    19.51% (8/41)
+ 3 Carries |    14.29% (4/28)
+ 4 Carries |     0.00% (0/20)
+ 5 Carries |     0.00% (0/17)
+ 6 Carries |     0.00% (0/6)
+ 7 Carries |     0.00% (0/4)
+ 8 Carries |     0.00% (0/1)
+
+--- OOD Detailed Intelligence Report ---
+1-4 Digits |   100.00% |     30.00
+ 5+ Digits |   100.00% |     30.00
+ 6+ Digits |    45.16% |     30.00
+ 8+ Digits |     0.00% |     30.00
+10+ Digits |     0.00% |     30.00
+12+ Digits |     0.00% |     30.00
+
 ================================================================================
 📊 FINAL INTELLIGENCE COMPARISON REPORT
 ================================================================================
 Model Architecture   | OOD Acc    | Avg Steps  | Reasoning Type
 --------------------------------------------------------------------------------
-GPT-12L (Static)     |     1.50% |      12.00 | Fixed (Static Depth)
-LoopLM-12 (Dynamic)  |     1.50% |      12.00 | Adaptive (Dynamic Depth)
-LoopLM-30 (Deep)     |     1.50% |      30.00 | Adaptive (Dynamic Depth)
-LoopLM-128e (Efficient) |     1.50% |      24.00 | Adaptive (Dynamic Depth)
-LoopLM-Grok (High-Reg) |     1.50% |      12.00 | Adaptive (Dynamic Depth)
-GPT-1L (Control)     |     1.00% |       1.00 | Fixed (Static Depth)
+GPT-12L (Static)     |    21.00% |      12.00 | Fixed (Static Depth)
+LoopLM-12 (Dynamic)  |    25.50% |      12.00 | Adaptive (Dynamic Depth)
+LoopLM-30 (Deep)     |    31.50% |      30.00 | Adaptive (Dynamic Depth)
+LoopLM-128e (Efficient) |    24.50% |      24.00 | Adaptive (Dynamic Depth)
+LoopLM-Grok (High-Reg) |    21.00% |      12.00 | Adaptive (Dynamic Depth)
+GPT-1L (Control)     |     6.00% |       1.00 | Fixed (Static Depth)
+LoopLM-100k (Marathon) |    21.50% |      12.00 | Adaptive (Dynamic Depth)
+LoopLM-SwiGLU (Advanced) |    22.50% |      30.00 | Adaptive (Dynamic Depth)
 
 📈 Digit-wise Accuracy (Generalization Curve)
 Model                | 1-4d     | 5-6d     | 8d       | 10d      | 12d
 --------------------------------------------------------------------------------
-GPT-12L (Static)     |     9.1% |     3.3% |     0.0% |     0.0% |     0.0%
-LoopLM-12 (Dynamic)  |     9.1% |     3.3% |     0.0% |     0.0% |     0.0%
-LoopLM-30 (Deep)     |     9.1% |     3.3% |     0.0% |     0.0% |     0.0%
-LoopLM-128e (Efficient) |     9.1% |     3.3% |     0.0% |     0.0% |     0.0%
-LoopLM-Grok (High-Reg) |     9.1% |     3.3% |     0.0% |     0.0% |     0.0%
-GPT-1L (Control)     |     9.1% |     0.0% |     0.0% |     0.0% |     0.0%
+GPT-12L (Static)     |   100.0% |    35.5% |     0.0% |     0.0% |     0.0%
+LoopLM-12 (Dynamic)  |   100.0% |    64.5% |     0.0% |     0.0% |     0.0%
+LoopLM-30 (Deep)     |   100.0% |   100.0% |     2.1% |     0.0% |     0.0%
+LoopLM-128e (Efficient) |   100.0% |    58.1% |     0.0% |     0.0% |     0.0%
+LoopLM-Grok (High-Reg) |   100.0% |    35.5% |     0.0% |     0.0% |     0.0%
+GPT-1L (Control)     |    54.5% |     0.0% |     0.0% |     0.0% |     0.0%
+LoopLM-100k (Marathon) |   100.0% |    38.7% |     0.0% |     0.0% |     0.0%
+LoopLM-SwiGLU (Advanced) |   100.0% |    45.2% |     0.0% |     0.0% |     0.0%
+
+✅ Report saved to: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/INTELLIGENCE_REPORT.md
 
 💡 Conclusion:
--> Models still in Memorization phase. More 'Grokking' iterations required.
+-> LoopLM confirms Algorithmic Generalization! Superior by 10.5% in OOD.

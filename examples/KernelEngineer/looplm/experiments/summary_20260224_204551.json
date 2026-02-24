@@ -1,0 +1,8 @@
+[
+    {
+        "name": "Exp8_SwiGLU_Dynamic",
+        "status": "Success",
+        "duration_sec": 2368.89,
+        "out_dir": "experiments/Exp8_SwiGLU_Dynamic"
+    }
+]
