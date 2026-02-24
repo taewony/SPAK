@@ -1,4 +1,4 @@
-ython run_experiments.py
+python run_experiments.py
 🚀 Starting 3 Experiments for RoPE & Batching Validation...
 
 ============================================================
@@ -78,3 +78,17 @@ iter 700: loss 1.7496, time 106.93ms
 iter 800: loss 1.6708, time 153.11ms
 iter 900: loss 1.4570, time 98.77ms
 step 1000: train loss 1.3824, val loss 1.3817, lr 9.9192e-04
+iter 1000: loss 1.3478, time 280.47ms
+iter 1100: loss 1.3226, time 91.95ms
+iter 1200: loss 1.2866, time 92.33ms
+iter 1300: loss 1.2727, time 128.30ms
+iter 1400: loss 1.2807, time 93.32ms
+step 1500: train loss 1.3342, val loss 1.3349, lr 9.8054e-04
+iter 1500: loss 1.2679, time 323.21ms
+iter 1600: loss 1.2621, time 120.28ms
+iter 1700: loss 1.2608, time 142.18ms
+iter 1800: loss 1.2685, time 105.87ms
+iter 1900: loss 1.2609, time 109.60ms
+step 2000: train loss 1.3332, val loss 1.3332, lr 9.6437e-04
+iter 2000: loss 1.2644, time 334.10ms
+iter 2100: loss 1.2467, time 128.41ms
