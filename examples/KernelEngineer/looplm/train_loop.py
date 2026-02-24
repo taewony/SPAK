@@ -32,6 +32,7 @@ warmup_iters = 100
 lr_decay_iters = 15000
 min_lr = 1e-4
 beta2 = 0.99
+weight_decay = 1e-4
 # -----------------------------------------------------------------------------
 config_keys = [k for k,v in globals().items() if not k.startswith('_') and isinstance(v, (int, float, bool, str))]
 # Robust path resolution for configurator.py
@@ -148,7 +149,7 @@ else:
 model.to(device)
 
 # Optimizer
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, betas=(0.9, beta2), weight_decay=1e-4)
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, betas=(0.9, beta2), weight_decay=weight_decay)
 scaler = torch.amp.GradScaler('cuda', enabled=(dtype == 'float16'))
 
 @torch.no_grad()
