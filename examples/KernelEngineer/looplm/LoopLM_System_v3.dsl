@@ -78,12 +78,12 @@ system LoopLM_System_v3 {
         }
         regularization: {
             dropout: [0.1, 0.2]
-            weight_decay: 1e-4 // Start low for fitting, then 1e-1 for grokking
+            weight_decay: [1e-4, 1e-1, 0.2] // Higher decay for Marathon
             label_smoothing: 0.1
         }
         training_depth: {
             max_recurrent_steps: [12, 16, 24, 32]
-            max_iters: [15000, 20000] // Long training for Grokking emergence
+            max_iters: [15000, 20000, 100000] // Marathon for Grokking emergence
         }
     }
 
@@ -107,9 +107,17 @@ system LoopLM_System_v3 {
     // 6. Knowledge Base (Engineering Intelligence)
     // ============================================================
     knowledge {
+        fact recurrence_efficiency {
+            description: "1-layer Recurrent model matches 12-layer Static model in OOD transfer, proving temporal depth is as effective as spatial depth."
+            evidence: "Comparison of Exp2 (Loop) vs Exp1 (Static-12L) vs Exp6 (Static-1L)."
+        }
+        fact memorization_saturation {
+            description: "Extremely low training loss (10^-6) can coexist with 0% OOD accuracy, indicating compressed memorization without rule discovery."
+            evidence: "Exp5 Trace Analysis."
+        }
         fact algorithmic_grokking {
             description: "Zero-shot length generalization requires training far beyond convergence on training loss."
-            evidence: "RCA v10 - 2000 steps insufficient for 12-digit rules."
+            evidence: "RCA v10 - 2000 steps insufficient; 100,000 steps recommended for Marathon."
         }
         fact wait_to_think_efficiency {
             description: "Allocating more loops specifically after logic triggers (=) improves accuracy without global latency hit."

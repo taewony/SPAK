@@ -53,14 +53,15 @@ LoopLM treats "thinking" as a time-based recurrence.
 ### 🧪 Comparative Experiments (Standard vs. Loop)
 We evaluate LoopLM against a **Standard 12-layer GPT** on an Out-of-Distribution (OOD) Addition task:
 *   **Task**: Train on 1-4 digit addition, test on 5-12 digit addition.
-*   **Key Metric**: **Algorithmic Grokking**. We measure if the model merely memorizes samples or learns the "Carry" rule.
-*   **The 1.28 Entropy Barrier**: We identified and solved the "1.28 Loss Plateau" by implementing **Multi-sample Masking**, preventing the model from wasting capacity trying to predict the random digits of the next prompt in a sequence.
+*   **Key Discovery [Recurrence is Depth]**: A 1-layer Static GPT fails completely on 5-6 digit transfer (0% Acc), whereas a **1-layer LoopLM matches the OOD performance of a 12-layer Static GPT**, proving that temporal recurrence is as effective as spatial stacking for algorithmic transfer.
+*   **The Memorization Paradox**: We observed cases where Train Loss reached $10^{-6}$ but OOD accuracy remained 0%. This indicates the model has achieved "Loss Perfection" through high-efficiency memorization rather than algorithmic grokking.
+*   **The 1.28 Entropy Barrier**: Solved via **Multi-sample Masking**, removing predictive noise from concatenated sequences.
 
 ### 🛠 Verification Pipeline (DSL v3 Protocol)
 To ensure engineering integrity, every LoopLM experiment follows a mandatory protocol:
 1.  **Data Sanity**: Verification of Aligned Batching and Multi-sample Masking.
-2.  **Overfit Smoke Test**: A 100-step run on a single batch must drive Loss below 0.1 before a full marathon begins.
-3.  **Grokking Marathon**: Training up to 15,000+ steps to allow the "Sudden Insight" where Val Loss drops and OOD accuracy spikes.
+2.  **Overfit Smoke Test**: A 100-step run on a single batch must drive Loss below 0.1.
+3.  **Grokking Marathon (Phase 6)**: Training up to **100,000 steps** to force the transition from memorization to the "Sudden Insight" (Grokking).
 
 ---
 

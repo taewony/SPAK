@@ -33,39 +33,19 @@ def main():
 
     # 실험 목록: [이름, 스크립트파일, 인자들]
     experiments = [
-        # 1. 대조군: Standard GPT (12 Layer) + RoPE + Aligned Batching
+        # ... (이전 실험들 생략 가능, Exp7 위주로 구성) ...
         {
-            "name": "Exp1_Baseline_RoPE_Fixed",
-            "script": "train_baseline_12l.py",
-            "args": (
-                "--dataset=addition_reverse "
-                "--n_layer=12 --n_embd=256 --n_head=4 "
-                "--max_iters=15000 --batch_size=128 "
-                "--weight_decay=1e-4" # 초기 수렴 확인용 낮은 규제
-            )
-        },
-        # 2. 실험군: LoopLM (12 Loops) + RoPE + No x0 Injection
-        {
-            "name": "Exp2_LoopLM_RoPE_Fixed",
+            "name": "Exp7_Grokking_Marathon",
             "script": "train_loop.py",
             "args": (
                 "--dataset=addition_reverse "
                 "--num_loops=12 --n_embd=256 --n_head=4 "
-                "--inject_x0=False "  # <--- 핵심: RoPE 충돌 방지
-                "--max_iters=15000 --batch_size=128 "
-                "--weight_decay=1e-4"
-            )
-        },
-        # 3. 심화군: LoopLM (30 Loops) - Deep Thinking for Grokking
-        {
-            "name": "Exp3_LoopLM_Ultimate_Thinking",
-            "script": "train_loop.py",
-            "args": (
-                "--dataset=addition_reverse "
-                "--num_loops=30 --n_embd=256 --n_head=4 "
                 "--inject_x0=False "
-                "--max_iters=20000 --batch_size=128 " # 더 긴 학습
-                "--dropout=0.1"
+                "--max_iters=100000 "
+                "--batch_size=128 "
+                "--learning_rate=5e-4 "
+                "--weight_decay=0.2 "
+                "--dropout=0.2"
             )
         }
     ]
