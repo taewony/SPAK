@@ -1,8 +1,4 @@
-python generate_master_report.py
-Found 20 summary files. Aggregating...
-Warning: Could not parse summary_latest.json: 'experiment'
-Warning: Could not parse summary_20260224_095205.json: 'experiment'
-Warning: Could not parse summary_20260224_204551.json: 'experiment'
-Warning: Could not parse summary_phase5_20260224_113201.json: 'experiment'
-Warning: Could not parse summary_20260224_150506.json: 'experiment'
-Master Report generated at: /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/MASTER_REPORT.md
+Evaluating: LoopLM-12 (Test-Time 24) (max_loops=24)
+Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp2_LoopLM_RoPE_Fixed/ckpt.pt...
+❌ Failed to evaluate LoopLM-12 (Test-Time 24): Error(s) in loading state_dict for LoopGPT:
+        size mismatch for step_embedding.weight: copying a param with shape torch.Size([12, 256]) from checkpoint, the shape in current model is torch.Size([24, 256]).
