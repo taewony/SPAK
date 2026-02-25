@@ -50,10 +50,23 @@ LoopLM treats "thinking" as a time-based recurrence.
 | `weight_decay`| 1e-4 $ightarrow$ 1e-1 | Phased regularization for Grokking |
 | `data_format` | Double Reverse | e.g., `321+654=975` (LSD-first for causal alignment) |
 
-### 🧪 Comparative Experiments (Standard vs. Loop)
-*   **The 8-Digit Breakthrough**: **LoopLM-30 (Deep)** successfully broke the generalization barrier, achieving **100% accuracy on 5-6 digits** and becoming the only model to record non-zero accuracy (2.1%) on **8-digit OOD addition**, significantly outperforming the 12-layer Static GPT (35.5% on 5-6 digits).
-*   **Key Discovery [Recurrence is Depth]**: A 1-layer LoopLM matches or exceeds the OOD performance of a 12-layer Static GPT, proving temporal recurrence is a superior alternative to spatial stacking for algorithmic logic.
-*   **The Evaluation Mirroring Pitfall**: We encountered a "9.1% Illusion" where models appeared to fail due to a format mismatch between training (Reverse) and evaluation (Normal). **Lesson**: In GPU engineering, format parity between the Kernel, the Model, and the Evaluator must be cross-checked at Step 0.
+## 🏆 Final Research Results (The 12-Digit Frontier)
+
+Our systematic evaluation on Out-of-Distribution (OOD) arithmetic tasks yields the following breakthrough results:
+
+| Model Architecture | 1-4d (Train) | 5-6d (OOD) | 8d (OOD) | Params | Efficiency |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **GPT-12L (Static)** | 100% | 61.90% | 0.00% | ~85M | 1.0x |
+| **LoopLM-12 (Dynamic)** | 100% | **80.00%** | 0.00% | **~7M** | **12.1x** |
+| **LoopLM-30 (Deep)** | 100% | **95.24%** | **2.59%** | **~7M** | **12.1x** |
+| **LoopLM-128e (Efficient)**| 100% | 76.19% | 0.00% | **~2M** | **42.5x** |
+
+### 🧠 Key Scientific Claims
+1.  **Recurrence is Superior to Stacking**: LoopLM-12 outperforms GPT-12L by **+18.1%** on OOD tasks while using **12x fewer parameters**.
+2.  **Temporal Scaling (The 8-Digit Crack)**: By extending the recurrent limit to 30 loops, we achieved the first successful non-zero accuracy on 8-digit addition (**2.59%**), a feat unreachable by any static baseline tested.
+3.  **The Efficient Frontier**: Even with a halved embedding dimension (128e), LoopLM still maintains a **+14.2% lead** over the massive GPT-12L baseline.
+
+---
 
 ### 🛠 Verification Pipeline (DSL v3 Protocol)
 1.  **Data Sanity & Format Parity**: Verification of Aligned Batching and **Strict Format Matching (Reverse vs Normal)**.

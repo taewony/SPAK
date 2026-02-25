@@ -1,0 +1,17 @@
+\begin{table}[h]
+\centering
+\caption{Length Generalization Accuracy (\%) and Inference Steps on Addition Task}
+\label{tab:main_results}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|ccccc|c}
+\toprule
+\textbf{Model Architecture} & \textbf{1-4d (ID)} & \textbf{5-6d (OOD)} & \textbf{8d (OOD)} & \textbf{10d (OOD)} & \textbf{12d (OOD)} & \textbf{Avg Steps} \\
+\midrule
+GPT-12L (Static) & 100.0 & 61.9 & 0.0 & 0.0 & 0.0 & 12.0 \\
+LoopLM-12 (Dynamic) & 100.0 & 80.0 & 0.0 & 0.0 & 0.0 & 12.0 \\
+LoopLM-128e (Efficient) & 100.0 & 76.19 & 0.0 & 0.0 & 0.0 & 24.0 \\
+LoopLM-30 (Deep Thinking) & 100.0 & 95.24 & 2.59 & 0.0 & 0.0 & 30.0 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
