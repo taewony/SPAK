@@ -30,5 +30,13 @@
         "accuracy_8d": 2.59,
         "accuracy_10d": 0.0,
         "accuracy_12d": 0.0
+    },
+    "LoopLM-12 (Test-Time 24)": {
+        "avg_steps": 24.0,
+        "accuracy_1_4d": 100.0,
+        "accuracy_5_6d": 78.1,
+        "accuracy_8d": 0.0,
+        "accuracy_10d": 0.0,
+        "accuracy_12d": 0.0
     }
 }
