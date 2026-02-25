@@ -4,79 +4,63 @@ This project demonstrates a systematic approach to GPU kernel engineering and de
 
 ## 🤖 The Dual-Agent Paradigm
 
-In this repository, LLM agents operate in two distinct specialized roles, synchronized through the DSL:
-
-1.  **System Engineer (Architect)**: Responsible for high-level design, DSL definition, and defining the "laws of physics" for the model. They translate mathematical goals into structured constraints and verification protocols.
-2.  **Kernel Engineer (Implementer)**: Responsible for the low-level GPU kernel implementation (using cuTile/CUDA), debugging execution flows, and conducting error-free experiments based on the DSL's specifications.
-
-**The DSL acts as the Single Source of Truth**, enabling seamless "Semantic Communication" between the Architect and the Implementer, ensuring that low-level optimizations align with high-level intelligence goals.
+LLM agents operate in two distinct specialized roles, synchronized through the DSL:
+1.  **System Engineer (Architect)**: Responsible for high-level design, DSL definition, and defining the "laws of physics" for the model.
+2.  **Kernel Engineer (Implementer)**: Responsible for low-level GPU kernel implementation (cuTile/CUDA) and conducting error-free experiments.
 
 ---
-
-## 🚀 Project Portfolio
-
-### 1. MatMul (Matrix Multiplication)
-*   **Focus**: Foundation of GPU performance.
-*   **Optimizations**: Implemented Tiling, Occupancy-based tuning, Swizzling, and Pipelining.
-*   **Outcome**: Achieved near-peak TFLOPS on Blackwell/Ada architectures through systematic search in the DSL-defined tuning space.
-
-### 2. FMHA (Fused Multi-Head Attention)
-*   **Evolution**: Iterated from FMHAv1 (Naive Fusion) to FMHAv4 (TMA-optimized).
-*   **Key Achievement**: Minimized HBM traffic by fusing Softmax and Attention kernels, utilizing shared memory and asynchronous copies.
-
-### 3. nanoGPT
-*   **Focus**: Industry-standard baseline.
-*   **Features**: Implemented Rotary Position Embeddings (RoPE) and Causal Masking, providing a "Gold Standard" for comparing new architectures.
-
----
-
-## 🔄 LoopLM: Recurrent Intelligence (Deep Dive)
-
-**LoopLM** is our flagship research project. Instead of stacking layers spatially (Standard GPT), it repeats a single shared decoder block temporally (Recurrently) to extend "computational depth."
-
-### 🧠 Model Architecture
-LoopLM treats "thinking" as a time-based recurrence. 
-*   **Structure**: 1 Shared Transformer Block $	imes$ $L$ Loops.
-*   **Positional Encoding**: **RoPE (Rotary Position Embedding)** for translation-invariant logic, allowing the model to handle digits at any position.
-*   **Wait-to-Think Mechanism**: The model detects a "reasoning trigger" (e.g., the `=` token) and dynamically adjusts its halting threshold to allocate more computation to the answer segment.
-*   **Anchor Strategy**: `inject_x0=False`. We discovered that re-injecting raw embeddings in every loop disrupts the geometric phase of RoPE, so the state is allowed to evolve purely through recurrence.
-
-### 📊 Meta-Parameters
-| Parameter | Value | Description |
-| :--- | :--- | :--- |
-| `n_embd` | 256 | Embedding dimension (Narrow & Deep philosophy) |
-| `n_head` | 4 | Number of attention heads |
-| `num_loops` | 12 ~ 32 | Maximum recurrent steps (Adaptive) |
-| `weight_decay`| 1e-4 $ightarrow$ 1e-1 | Phased regularization for Grokking |
-| `data_format` | Double Reverse | e.g., `321+654=975` (LSD-first for causal alignment) |
 
 ## 🏆 Final Research Results (The 12-Digit Frontier)
 
 Our systematic evaluation on Out-of-Distribution (OOD) arithmetic tasks yields the following breakthrough results:
 
+### **Comparison Table**
 | Model Architecture | 1-4d (Train) | 5-6d (OOD) | 8d (OOD) | Params | Efficiency |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **GPT-12L (Static)** | 100% | 61.90% | 0.00% | ~85M | 1.0x |
 | **LoopLM-12 (Dynamic)** | 100% | **80.00%** | 0.00% | **~7M** | **12.1x** |
 | **LoopLM-30 (Deep)** | 100% | **95.24%** | **2.59%** | **~7M** | **12.1x** |
 | **LoopLM-128e (Efficient)**| 100% | 76.19% | 0.00% | **~2M** | **42.5x** |
+| **LoopLM-12 (Test-Time 24)**| 100% | 78.10% | 0.00% | **~7M** | **N/A** |
 
-### 🧠 Key Scientific Claims
-1.  **Recurrence is Superior to Stacking**: LoopLM-12 outperforms GPT-12L by **+18.1%** on OOD tasks while using **12x fewer parameters**.
-2.  **Temporal Scaling (The 8-Digit Crack)**: By extending the recurrent limit to 30 loops, we achieved the first successful non-zero accuracy on 8-digit addition (**2.59%**), a feat unreachable by any static baseline tested.
-3.  **The Efficient Frontier**: Even with a halved embedding dimension (128e), LoopLM still maintains a **+14.2% lead** over the massive GPT-12L baseline.
+### **Experimental Case Descriptions**
+- **GPT-12L (Static)**: A standard Transformer model with 12 spatial layers. Used as the primary baseline to represent traditional fixed-depth architectures.
+- **LoopLM-12 (Dynamic)**: A recurrent model using 1 shared layer repeated 12 times. Demonstrates that temporal depth is more efficient than spatial depth.
+- **LoopLM-30 (Deep Thinking)**: A recurrent model trained with a larger recurrent limit (30 loops) to test the boundaries of algorithmic generalization on 8-digit addition.
+- **LoopLM-128e (Efficient)**: An extremely compressed version with only 128 embedding dimensions, proving that recurrent logic requires significantly fewer parameters to outperform static giants.
+- **LoopLM-12 (Test-Time 24)**: A robustness test where a model trained on 12 loops is forced to compute for 24 loops during inference, showcasing "Test-Time Compute" stability.
+
+### **Visual Assets**
+![Generalization Curve](looplm/paper_assets/fig1_generalization_curve.png)
+*Figure 1: Accuracy drop-off as operand length increases. LoopLM variants maintain high performance where static models collapse.*
+
+![Test-Time Compute](looplm/paper_assets/fig2_test_time_compute.png)
+*Figure 2: Impact of increasing inference loops without additional training.*
 
 ---
 
-### 🛠 Verification Pipeline (DSL v3 Protocol)
-1.  **Data Sanity & Format Parity**: Verification of Aligned Batching and **Strict Format Matching (Reverse vs Normal)**.
-2.  **Overfit Smoke Test**: A 100-step run on a single batch must drive Loss below 0.1.
-3.  **Grokking Marathon (Phase 6)**: Training up to **100,000 steps** to reach the 12-digit zero-shot frontier.
+## 🇰🇷 [한글 버전] 최종 연구 성과 및 요약
+
+### **최종 성적표**
+| 모델 아키텍처 | 1-4자리 (학습) | 5-6자리 (OOD) | 8자리 (OOD) | 파라미터 | 효율성 |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **GPT-12L (Static)** | 100% | 61.90% | 0.00% | ~85M | 1.0x |
+| **LoopLM-12 (Dynamic)** | 100% | **80.00%** | 0.00% | **~7M** | **12.1x** |
+| **LoopLM-30 (Deep)** | 100% | **95.24%** | **2.59%** | **~7M** | **12.1x** |
+| **LoopLM-128e (Efficient)**| 100% | 76.19% | 0.00% | **~2M** | **42.5x** |
+| **LoopLM-12 (Test-Time 24)**| 100% | 78.10% | 0.00% | **~7M** | **N/A** |
+
+### **실험 케이스별 상세 설명**
+- **GPT-12L (Static)**: 12개의 공간적 층을 가진 표준 트랜스포머 모델. 전통적인 고정 깊이 아키텍처를 대표하는 주요 대조군입니다.
+- **LoopLM-12 (Dynamic)**: 1개의 공유 층을 12번 반복하는 재귀 모델. 시간적 깊이가 공간적 깊이보다 훨씬 효율적임을 증명합니다.
+- **LoopLM-30 (Deep Thinking)**: 8자리 덧셈의 알고리즘 일반화 한계를 시험하기 위해 30회 루프로 학습된 재귀 모델입니다.
+- **LoopLM-128e (Efficient)**: 엠베딩 차원을 128로 줄인 초압축 버전. 재귀적 논리가 거대 정적 모델을 압도하는 데 매우 적은 파라미터만 필요함을 입증합니다.
+- **LoopLM-12 (Test-Time 24)**: 12루프로 학습된 모델을 추론 시에만 24루프로 확장하여 실행한 강건성 테스트. "추론 시 연산량 확장(Test-Time Compute)"의 안정성을 보여줍니다.
 
 ---
 
 ## 🛠 Tech Stack
 *   **Language**: Python, PyTorch
-*   **Kernel**: CUDA, **cuTile** (SPAK-native GPU abstraction, NVIDIA's Python DSL)
+*   **Kernel**: CUDA, **cuTile** (SPAK-native GPU abstraction)
 *   **Architecture**: Blackwell-ready (RTX 5070)
 *   **Orchestration**: Semiformal DSL + LLM Agents (Gemini PRO, Gemini CLI)
