@@ -38,13 +38,27 @@ def evaluate_ood(ckpt_path, device='cuda', num_samples=100, max_loops=None):
     
     is_loop = 'num_loops' in checkpoint or 'num_loops' in config_dict
     if is_loop:
-        n_loops = max_loops if max_loops is not None else checkpoint.get('num_loops', 12)
-        inject_x0 = config_dict.get('inject_x0', False) # Default to False for RoPE
+        ckpt_loops = checkpoint.get('num_loops', 12)
+        n_loops = max_loops if max_loops is not None else ckpt_loops
+        inject_x0 = config_dict.get('inject_x0', False)
         model = LoopGPT(gptconf, num_loops=n_loops, inject_x0=inject_x0)
+        
+        # [CRITICAL] Handle step_embedding mismatch for Test-Time Compute
+        state_dict = checkpoint['model']
+        ckpt_embed = state_dict['step_embedding.weight']
+        
+        if n_loops > ckpt_loops:
+            print(f"     -> Scaling step_embedding: {ckpt_loops} -> {n_loops} (Repeating last step)")
+            new_embed = torch.zeros((n_loops, gptconf.n_embd), device=ckpt_embed.device, dtype=ckpt_embed.dtype)
+            new_embed[:ckpt_loops] = ckpt_embed
+            # 부족한 뒷부분은 마지막 학습된 임베딩으로 채움
+            new_embed[ckpt_loops:] = ckpt_embed[-1] 
+            state_dict['step_embedding.weight'] = new_embed
     else:
         model = GPT(gptconf)
+        state_dict = checkpoint['model']
     
-    model.load_state_dict(checkpoint['model'], strict=False)
+    model.load_state_dict(state_dict, strict=False)
     model.to(device)
     model.eval()
 
