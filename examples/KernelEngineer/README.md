@@ -14,14 +14,13 @@ LLM agents operate in two distinct specialized roles, synchronized through the D
 
 Our systematic evaluation on Out-of-Distribution (OOD) arithmetic tasks yields the following breakthrough results:
 
+### **Experimental Setup & Zero-Shot Conditions**
+To evaluate logical generalization, we use a curriculum-based training approach:
+*   **Training Distribution**: Primarily 1-4 digit operands, augmented with **30% "Bridge Data" (5-6 digits)** to provide a signal for length scaling.
+*   **Zero-Shot OOD Evaluation**: All performance metrics for 8, 10, and 12-digit addition are obtained in a **strictly zero-shot manner**, as the model never encountered these lengths during training.
+
 ### **Comparison Table**
-| Model Architecture | 1-4d (Train) | 5-6d (OOD) | 8d (OOD) | Params | Efficiency |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **GPT-12L (Static)** | 100% | 61.90% | 0.00% | ~85M | 1.0x |
-| **LoopLM-12 (Dynamic)** | 100% | **80.00%** | 0.00% | **~7M** | **12.1x** |
-| **LoopLM-30 (Deep)** | 100% | **95.24%** | **2.59%** | **~7M** | **12.1x** |
-| **LoopLM-128e (Efficient)**| 100% | 76.19% | 0.00% | **~2M** | **42.5x** |
-| **LoopLM-12 (Test-Time 24)**| 100% | 78.10% | 0.00% | **~7M** | **N/A** |
+... (기존 테이블) ...
 
 ### **Experimental Case Descriptions**
 - **GPT-12L (Static)**: A standard Transformer model with 12 spatial layers. Used as the primary baseline to represent traditional fixed-depth architectures.

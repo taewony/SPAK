@@ -1,0 +1,5 @@
+   # GPT Baseline 평가
+   python looplm/eval_algebra.py looplm/experiments/Exp8_Algebra_GPT/ckpt.pt
+
+   # Loop30 모델 평가
+   python looplm/eval_algebra.py looplm/experiments/Exp8_Algebra_Loop30/ckpt.pt

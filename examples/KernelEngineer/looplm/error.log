@@ -1,4 +1,0 @@
-Evaluating: LoopLM-12 (Test-Time 24) (max_loops=24)
-Evaluating OOD for /home/linux/taewony/SPAK/examples/KernelEngineer/looplm/experiments/Exp2_LoopLM_RoPE_Fixed/ckpt.pt...
-❌ Failed to evaluate LoopLM-12 (Test-Time 24): Error(s) in loading state_dict for LoopGPT:
-        size mismatch for step_embedding.weight: copying a param with shape torch.Size([12, 256]) from checkpoint, the shape in current model is torch.Size([24, 256]).
