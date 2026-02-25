@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPAK: 순환 지능을 위한 점진적 GPU 커널 엔지니어링</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'KoPub Batang', 'Malgun Gothic', 'Times New Roman', serif;
+            line-height: 1.7;
+            color: #2c3e50;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #f4f7f6;
+        }
+        .paper-container {
+            background-color: #ffffff;
+            padding: 60px 80px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 8px;
+        }
+        h1 { text-align: center; font-size: 2.2em; margin-bottom: 15px; color: #1a252f; letter-spacing: -0.5px; }
+        h2 { border-bottom: 2px solid #34495e; margin-top: 50px; padding-bottom: 8px; color: #2c3e50; }
+        h3 { color: #34495e; margin-top: 30px; font-size: 1.3em; }
+        .authors { text-align: center; font-style: italic; margin-bottom: 40px; color: #7f8c8d; }
+        .abstract { 
+            background: #f8f9fa; 
+            padding: 25px 30px; 
+            font-size: 0.95em; 
+            border-left: 5px solid #34495e;
+            margin: 30px 0;
+            line-height: 1.8;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 30px 0; 
+            font-family: 'Pretendard', 'Arial', sans-serif;
+            font-size: 0.95em;
+        }
+        th, td { 
+            border: 1px solid #e0e6ed; 
+            padding: 14px; 
+            text-align: center; 
+        }
+        th { background-color: #f8f9fa; font-weight: 600; color: #2c3e50; }
+        .highlight-row { background-color: #fffde7; font-weight: bold; }
+        .figure { text-align: center; margin: 40px 0; }
+        .figure img { max-width: 100%; height: auto; border: 1px solid #ecf0f1; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .figure-caption { font-style: italic; font-size: 0.9em; margin-top: 12px; color: #7f8c8d; }
+        code { background: #f4f6f7; padding: 3px 6px; font-family: 'Consolas', monospace; border-radius: 3px; font-size: 0.9em; }
+        .formula { text-align: center; margin: 25px 0; font-size: 1.2em; overflow-x: auto; }
+        .insight-box {
+            background-color: #eaf2f8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .insight-box h4 { margin-top: 0; color: #2980b9; margin-bottom: 10px; }
+        ul { padding-left: 25px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="paper-container">
+    <h1>SPAK: 순환 지능을 위한 점진적 GPU 커널 엔지니어링</h1>
+    <div class="authors">Systematic Paradigms for Agent based Kernel engineering</div>
+
+    <div class="abstract">
+        <strong>초록 (Abstract):</strong> 본 보고서는 기초적인 행렬 연산(MatMul)에서 시작하여 순환 언어 모델(Recurrent LM)에 이르기까지, 고성능 GPU 커널의 점진적인 엔지니어링 여정을 상세히 다룹니다. 우리는 공간적 깊이(Spatial Depth) 대신 시간적 순환(Temporal Recurrence)을 활용하여 탁월한 알고리즘적 일반화(Algorithmic Generalization)를 달성하는 <strong>LoopLM</strong> 아키텍처를 소개합니다. 준정형(Semiformal) DSL 기반의 에이전트 협업 패러다임을 통해, 우리는 단일 층(1-layer)의 순환 모델이 12배 적은 파라미터를 사용하고도 미학습(OOD) 산술 과제에서 12층의 정적 트랜스포머를 압도할 수 있음을 증명합니다.
+    </div>
+
+    <h2>1. SPAK 점진적 커널 로드맵</h2>
+    <p>우리의 연구는 하드웨어에 대한 통찰을 바탕으로 각 단계가 다음 단계의 기반이 되는 4개의 명확한 페이즈로 발전했습니다.</p>
+
+    <h3>1.1. MatMul: 하드웨어의 초석</h3>
+    <p>이 단계에서는 가장 기본적인 연산인 \( C = A \times B \)를 최적화했습니다. RTX5070 Blackwell 아키텍처에서 TFLOPS를 극대화하기 위해 <strong>타일링(Tiling)</strong>, <strong>공유 메모리 스위즐링(Shared Memory Swizzling)</strong>, 그리고 <strong>파이프라이닝(Pipelining)</strong> 기법에 집중했습니다.</p>
+    <div class="formula">
+        \[ C_{ij} = \sum_{k=0}^{K-1} A_{ik} \cdot B_{kj} \]
+    </div>
+
+    <h3>1.2. FMHA: 대역폭 한계 돌파를 위한 융합</h3>
+    <p>HBM(High Bandwidth Memory) 병목을 최소화하기 위해 <strong>FMHA(Fused Multi-Head Attention)</strong>를 구현했습니다. Softmax와 Attention 연산을 단일 커널로 융합하여 메모리 바운드 연산의 지연 시간(Latency)을 획기적으로 단축했습니다.</p>
+    <div class="formula">
+        \[ \text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]
+    </div>
+
+    <h3>1.3. nanoGPT: 위치 기하학적 논리의 도입</h3>
+    <p><strong>RoPE(Rotary Position Embeddings)</strong>를 통합하여 모델이 토큰 간의 상대적 거리를 기하학적으로 처리할 수 있게 하였습니다. 이는 산술 연산 과제에서 필수적인 병진 불변성(Translation-invariant) 논리를 구축하는 강력한 기반이 되었습니다.</p>
+    <div class="formula">
+        \[ q'_m = R_{\Theta, m} q_m, \quad k'_n = R_{\Theta, n} k_n \]
+    </div>
+
+    <h3>1.4. LoopLM: 시간적 깊이와 추론 시 연산 확장</h3>
+    <p>최종 단계에서는 공간적인 층(Layer)을 순환 루프(Recurrent Loop)로 대체하는 <strong>LoopLM</strong>을 도입했습니다. 은닉 상태 \( h \)는 가중치가 공유되는 동일한 블록을 \( L \)번 반복하며 진화합니다.</p>
+    <div class="formula">
+        \[ h_{l+1} = \text{Block}(h_l), \quad (\text{단, } inject\_x_0 = \text{False}) \]
+    </div>
+
+    <h2>2. 실험 결과 (Generalization Performance)</h2>
+    <p>다음 표는 12자리 덧셈 OOD(미학습 영역) 과제에서 다양한 아키텍처의 성능을 요약한 것입니다.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>모델 아키텍처</th>
+                <th>1-4자리 (학습)</th>
+                <th>5-6자리 (OOD)</th>
+                <th>8자리 (OOD)</th>
+                <th>파라미터 수</th>
+                <th>가성비 (Efficiency)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GPT-12L (Static)</td>
+                <td>100%</td>
+                <td>61.90%</td>
+                <td>0.00%</td>
+                <td>~85M</td>
+                <td>1.0x</td>
+            </tr>
+            <tr>
+                <td>LoopLM-12 (Dynamic)</td>
+                <td>100%</td>
+                <td>80.00%</td>
+                <td>0.00%</td>
+                <td>~7M</td>
+                <td>12.1x</td>
+            </tr>
+            <tr class="highlight-row">
+                <td>LoopLM-30 (Deep)</td>
+                <td>100%</td>
+                <td>95.24%</td>
+                <td>2.59%</td>
+                <td>~7M</td>
+                <td>12.1x</td>
+            </tr>
+            <tr>
+                <td>LoopLM-128e (Efficient)</td>
+                <td>100%</td>
+                <td>76.19%</td>
+                <td>0.00%</td>
+                <td>~2M</td>
+                <td>42.5x</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="figure">
+        <!-- Local path preserved as requested for local rendering -->
+        <img src="looplm/paper_assets/fig1_generalization_curve.png" alt="">
+        <div class="figure-caption">Figure 1: 자릿수 증가에 따른 정확도 붕괴 비교. 정적 베이스라인(GPT-12L)은 학습 범위를 벗어나면 성능이 급락하는 반면, LoopLM 변형들은 논리적 무결성을 훨씬 더 길게 유지합니다.</div>
+    </div>
+
+    <h2>3. 엔지니어링 난제 및 핵심 통찰 (Insights & Challenges)</h2>
+    <p>본 시스템을 구축하는 과정은 순탄치 않았으며, 수많은 디버깅과 실패 속에서 AI 모델의 수학적 추론에 관한 중대한 통찰을 얻을 수 있었습니다.</p>
+
+    <div class="insight-box">
+        <h4>💡 3.1. 과적합(Overfitting)의 늪과 Grokking의 어려움</h4>
+        <p>초기 실험에서 모델들은 1~4자리 덧셈에 대해 순식간에 Train Loss 0.007(정확도 100%)에 도달했습니다. 하지만 미학습 영역(5~6자리 이상)에서는 정답률이 0%로 붕괴했습니다. 모델이 대수적 규칙(Algorithm)을 깨달은 것이 아니라 거대한 '룩업 테이블(Lookup Table)'처럼 데이터를 통째로 <b>암기(Memorization)</b>해 버렸기 때문입니다. 이를 타파하기 위해 강력한 가중치 감쇠(Weight Decay=0.1~0.2)와 10만 번 이상의 마라톤 훈련을 통해 <b>Grokking(깨달음)</b>을 강제하려 했으나, 암묵적 연산만으로는 복잡한 길이 일반화를 이뤄내는 데 한계가 있었습니다.</p>
+    </div>
+
+    <div class="insight-box">
+        <h4>💡 3.2. 수학이 만든 장난: 9.1%의 착시 (The 9.1% Illusion)</h4>
+        <p>실험 중간, 평가 스크립트의 데이터 포맷 불일치(역방향 학습 모델에 정방향 시험지 제공) 버그가 있었습니다. 놀랍게도 이때 모든 모델이 1~4자리 테스트에서 <b>정확히 9.1%</b>의 정답률을 기록했습니다. 분석 결과, 이 수치는 4자리 덧셈에서 '받아올림(Carry)이 단 한 번도 발생하지 않을 확률'(\(0.55^4 \approx 9.1\%\))과 정확히 일치했습니다. 이는 데이터 파이프라인의 정합성이 모델의 진짜 지능을 평가하는 데 얼마나 치명적인지 보여주는 소름 돋는 사례였습니다.</p>
+    </div>
+
+    <div class="insight-box">
+        <h4>💡 3.3. 상태 표류(State Drift)와 시간적 외삽의 실패</h4>
+        <p>우리는 학습 시 12번의 루프만 경험한 모델에게, 추론(Inference) 시 강제로 24번의 루프를 돌게 하는 <b>'Zero-shot Test-Time Compute'</b>를 시도했습니다. 결과는 예상과 달리 성능 하락(80% &rarr; 78.1%)이었습니다. 이는 학습되지 않은 Step Embedding이 노이즈로 작용하여, 모델의 은닉 상태(Hidden State)가 올바른 정답의 궤적(Attractor)을 벗어나 엉뚱한 공간으로 표류하는 <b>동역학적 불안정성(Dynamical Instability)</b>을 증명합니다.</p>
+    </div>
+
+    <div class="insight-box">
+        <h4>💡 3.4. 궁극적 한계: 암묵적 추론(Implicit Reasoning)의 정보 병목</h4>
+        <p>LoopLM-30은 5~6자리 덧셈을 100% 풀어냈지만, 8자리부터는 다시 2.1%로 한계를 보였습니다. 토큰을 출력하지 않고 보이지 않는 단일 벡터(Hidden State) 안에서만 받아올림을 연쇄적으로 누적하는 <b>암묵적 추론</b>은 결국 용량의 병목(Capacity Bottleneck)에 부딪힙니다. 이는 향후 모델이 중간 계산 과정을 직접 토큰으로 전개하는 <b>스크래치패드(Scratchpad / Chain-of-Thought)</b> 기반의 명시적 추론으로 나아가야 할 강력한 동기가 됩니다.</p>
+    </div>
+
+    <h2>4. 결론</h2>
+    <p>기초 GPU 커널 최적화에서 시작해 LoopLM 아키텍처 도입에 이르는 일련의 과정을 통해, 우리는 <strong>"지능은 공간(Layer)을 쌓는 것보다 시간(Loop)을 두고 반복할 때 더 효율적으로 확장된다"</strong>는 것을 증명했습니다. 비록 암묵적 추론의 한계점도 명확히 확인하였으나, 본 연구의 SPAK 패러다임은 하드웨어 최적화(MatMul/FMHA)와 추론 아키텍처의 혁신이 완벽하게 결합될 수 있음을 보여주는 성공적인 청사진입니다.</p>
+
+</div>
+
+</body>
+</html>

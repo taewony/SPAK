@@ -109,29 +109,32 @@ def get_batch(split):
         # Initialize target_mask with -1 (ignore_index)
         target_mask = torch.full_like(chunk_y, -1)
         
-        # Find all '=' and '\n' positions in this chunk
-        # thinking_token_id is '=', 0 is '\n'
-        eq_indices = (chunk_x == thinking_token_id).nonzero(as_tuple=True)[0]
+        # Find all answer triggers ('=' and '?') and newline positions in this chunk
+        # '=' is thinking_token_id, '?' is stoi.get('?', None), 0 is '\n'
+        q_mark_id = stoi.get('?', None)
+        trigger_mask = (chunk_x == thinking_token_id)
+        if q_mark_id is not None:
+            trigger_mask = trigger_mask | (chunk_x == q_mark_id)
+            
+        trigger_indices = trigger_mask.nonzero(as_tuple=True)[0]
         nl_indices = (chunk_x == 0).nonzero(as_tuple=True)[0]
         
-        # The start of the first expression in this chunk is index 0 
-        # (since we aligned ix to start right after a \n)
         sample_starts = torch.cat((torch.tensor([0], device=chunk_x.device), nl_indices + 1))
         
         for start in sample_starts:
             if start >= block_size: break
             
-            # Find the '=' corresponding to this start
-            future_eqs = eq_indices[eq_indices >= start]
-            if len(future_eqs) == 0: continue
-            eq_pos = future_eqs[0]
+            # Find the first trigger (= or ?) corresponding to this start
+            future_triggers = trigger_indices[trigger_indices >= start]
+            if len(future_triggers) == 0: continue
+            trigger_pos = future_triggers[0]
             
             # Find the '\n' ending this answer
-            future_nls = nl_indices[nl_indices > eq_pos]
+            future_nls = nl_indices[nl_indices > trigger_pos]
             end_pos = future_nls[0] if len(future_nls) > 0 else torch.tensor(block_size, device=chunk_x.device)
             
-            # Only the range [eq_pos : end_pos] is the answer part to be trained
-            target_mask[eq_pos:end_pos] = chunk_y[eq_pos:end_pos]
+            # Only the range [trigger_pos : end_pos] is the answer part to be trained
+            target_mask[trigger_pos:end_pos] = chunk_y[trigger_pos:end_pos]
             
         x_stack.append(chunk_x)
         y_stack.append(target_mask)

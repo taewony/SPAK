@@ -102,19 +102,24 @@ def get_batch(split):
         chunk_y = torch.from_numpy((data[i+1:i+1+block_size]).astype(np.int64))
         
         target_mask = torch.full_like(chunk_y, -1)
-        eq_indices = (chunk_x == thinking_token_id).nonzero(as_tuple=True)[0]
+        q_mark_id = stoi.get('?', None)
+        trigger_mask = (chunk_x == thinking_token_id)
+        if q_mark_id is not None:
+            trigger_mask = trigger_mask | (chunk_x == q_mark_id)
+            
+        trigger_indices = trigger_mask.nonzero(as_tuple=True)[0]
         nl_indices = (chunk_x == 0).nonzero(as_tuple=True)[0]
         
         sample_starts = torch.cat((torch.tensor([0], device=chunk_x.device), nl_indices + 1))
         
         for start in sample_starts:
             if start >= block_size: break
-            future_eqs = eq_indices[eq_indices >= start]
-            if len(future_eqs) == 0: continue
-            eq_pos = future_eqs[0]
-            future_nls = nl_indices[nl_indices > eq_pos]
+            future_triggers = trigger_indices[trigger_indices >= start]
+            if len(future_triggers) == 0: continue
+            trigger_pos = future_triggers[0]
+            future_nls = nl_indices[nl_indices > trigger_pos]
             end_pos = future_nls[0] if len(future_nls) > 0 else torch.tensor(block_size, device=chunk_x.device)
-            target_mask[eq_pos:end_pos] = chunk_y[eq_pos:end_pos]
+            target_mask[trigger_pos:end_pos] = chunk_y[trigger_pos:end_pos]
             
         x_stack.append(chunk_x)
         y_stack.append(target_mask)
