@@ -25,7 +25,7 @@ def main():
             "args": (
                 "--dataset=algebra_reverse "
                 "--n_layer=12 --n_embd=256 --n_head=4 "
-                "--max_iters=50000 --batch_size=128 "
+                "--max_iters=10000 --batch_size=128 "
                 "--weight_decay=1e-3 --dropout=0.0"
             )
         },
