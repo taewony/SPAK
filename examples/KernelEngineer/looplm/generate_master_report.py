@@ -21,9 +21,12 @@ def generate_report():
             with open(path, "r") as f:
                 data = json.load(f)
                 for res in data:
-                    name = res['experiment']
+                    # 'experiment' 또는 'name' 키 중 있는 것을 사용
+                    name = res.get('experiment') or res.get('name')
+                    if not name: continue
+                    
                     acc = res['ood_metrics']['accuracy'] if res.get('ood_metrics') else -1
-                    if name not in all_results or acc > (all_results[name]['ood_metrics']['accuracy'] if all_results[name].get('ood_metrics') else -1):
+                    if name not in all_results or acc > (all_results[name]['ood_metrics'].get('accuracy', -1) if all_results[name].get('ood_metrics') else -1):
                         all_results[name] = res
         except Exception as e:
             print(f"Warning: Could not parse {filename}: {e}")
@@ -44,7 +47,7 @@ def generate_report():
     
     for name in sorted_names:
         res = all_results[name]
-        conf = res['config']
+        conf = res.get('config', 'N/A') # config가 없으면 N/A 표시
         metrics = res.get('ood_metrics')
         if metrics:
             acc_val = metrics['accuracy']*100
