@@ -1,0 +1,20 @@
+python looplm/eval_algebra.py looplm/experiments/Exp8_Algebra_GPT/ckpt.pt
+Evaluating Algebra V2 for looplm/experiments/Exp8_Algebra_GPT/ckpt.pt...
+
+============================================================
+📊 Algebra V2 OOD Intelligence Report
+============================================================
+[N] Accuracy:  31.17% (24/77)
+[A] Accuracy:  18.64% (11/59)
+[B] Accuracy:  32.81% (21/64)
+============================================================
+(env) linux@localhost:~/taewony/SPAK/examples/KernelEngineer$ python looplm/eval_algebra.py looplm/experiments/Exp8_Algebra_Loop30/ckpt.pt
+Evaluating Algebra V2 for looplm/experiments/Exp8_Algebra_Loop30/ckpt.pt...
+
+============================================================
+📊 Algebra V2 OOD Intelligence Report
+============================================================
+[N] Accuracy:  31.17% (24/77)
+[A] Accuracy:  18.64% (11/59)
+[B] Accuracy:  34.38% (22/64)
+============================================================
