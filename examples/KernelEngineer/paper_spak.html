@@ -1,110 +1,206 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPAK: 순환 지능을 위한 점진적 GPU 커널 엔지니어링</title>
+    <title>SPAK: Progressive GPU Kernel Engineering for Recurrent Intelligence</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --paper-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e6ed;
+        }
         body {
-            font-family: 'KoPub Batang', 'Malgun Gothic', 'Times New Roman', serif;
+            font-family: 'Times New Roman', Times, 'KoPub Batang', 'Malgun Gothic', serif;
             line-height: 1.7;
-            color: #2c3e50;
-            max-width: 950px;
+            color: var(--text-color);
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 40px;
-            background-color: #f4f7f6;
+            padding: 40px 20px;
+            background-color: var(--bg-color);
         }
         .paper-container {
-            background-color: #ffffff;
-            padding: 60px 80px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            background-color: var(--paper-bg);
+            padding: 70px 80px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
             border-radius: 8px;
         }
-        h1 { text-align: center; font-size: 2.2em; margin-bottom: 15px; color: #1a252f; letter-spacing: -0.5px; }
-        h2 { border-bottom: 2px solid #34495e; margin-top: 50px; padding-bottom: 8px; color: #2c3e50; }
-        h3 { color: #34495e; margin-top: 30px; font-size: 1.3em; }
-        .authors { text-align: center; font-style: italic; margin-bottom: 40px; color: #7f8c8d; }
+        h1 { text-align: center; font-size: 2.4em; margin-bottom: 10px; color: var(--primary-color); letter-spacing: -0.5px; }
+        h2 { border-bottom: 2px solid var(--secondary-color); margin-top: 50px; padding-bottom: 8px; color: var(--primary-color); font-size: 1.5em; }
+        h3 { color: var(--secondary-color); margin-top: 30px; font-size: 1.25em; }
+        h4 { text-align: center; color: #7f8c8d; margin-top: 5px; font-weight: normal; font-style: italic; font-size: 1.1em; }
+        .authors { text-align: center; font-variant: small-caps; margin-bottom: 40px; font-size: 1.15em; font-weight: bold; color: var(--secondary-color); }
+        
         .abstract { 
-            background: #f8f9fa; 
-            padding: 25px 30px; 
+            background: #fdfdfd; 
+            padding: 25px 35px; 
             font-size: 0.95em; 
-            border-left: 5px solid #34495e;
+            border-left: 4px solid var(--secondary-color);
             margin: 30px 0;
-            line-height: 1.8;
+            text-align: justify;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
+        
         table { 
             width: 100%; 
             border-collapse: collapse; 
-            margin: 30px 0; 
-            font-family: 'Pretendard', 'Arial', sans-serif;
+            margin: 35px 0; 
+            font-family: 'Arial', sans-serif;
             font-size: 0.95em;
         }
-        th, td { 
-            border: 1px solid #e0e6ed; 
-            padding: 14px; 
-            text-align: center; 
-        }
-        th { background-color: #f8f9fa; font-weight: 600; color: #2c3e50; }
+        th, td { border: 1px solid var(--border-color); padding: 14px; text-align: center; }
+        th { background-color: #f8f9fa; font-weight: bold; color: var(--primary-color); }
         .highlight-row { background-color: #fffde7; font-weight: bold; }
-        .figure { text-align: center; margin: 40px 0; }
-        .figure img { max-width: 100%; height: auto; border: 1px solid #ecf0f1; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .figure-caption { font-style: italic; font-size: 0.9em; margin-top: 12px; color: #7f8c8d; }
-        code { background: #f4f6f7; padding: 3px 6px; font-family: 'Consolas', monospace; border-radius: 3px; font-size: 0.9em; }
+        
+        .figure { text-align: center; margin: 45px 0; }
+        .figure img { max-width: 90%; height: auto; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-radius: 4px; }
+        .figure-caption { font-style: italic; font-size: 0.9em; margin-top: 15px; padding: 0 40px; color: #555; line-height: 1.5; }
+        
+        code { background: #f4f6f7; padding: 3px 6px; font-family: 'Consolas', 'Courier New', monospace; border-radius: 3px; font-size: 0.9em; color: #c0392b; }
         .formula { text-align: center; margin: 25px 0; font-size: 1.2em; overflow-x: auto; }
-        .insight-box {
-            background-color: #eaf2f8;
-            border-left: 4px solid #3498db;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 0 4px 4px 0;
+        
+        .case-description { background: #fcfcfc; padding: 25px; border-left: 4px solid var(--primary-color); margin: 25px 0; font-size: 0.95em; border-radius: 0 4px 4px 0; }
+        .insight-box { background-color: #eaf2f8; border-left: 4px solid var(--accent-color); padding: 20px 25px; margin: 25px 0; border-radius: 0 4px 4px 0; }
+        .insight-box h4 { text-align: left; margin-top: 0; color: #2980b9; margin-bottom: 12px; font-weight: bold; font-style: normal; }
+        
+        .appendix-code { background: #272822; color: #f8f8f2; padding: 25px; overflow-x: auto; border-radius: 5px; font-family: 'Consolas', monospace; font-size: 0.85em; line-height: 1.5; margin-top: 20px; }
+        
+        .divider { margin: 60px 0; border: 0; border-top: 2px dashed #bdc3c7; }
+        
+        @media (max-width: 768px) {
+            .paper-container { padding: 30px; }
+            .figure img { max-width: 100%; }
         }
-        .insight-box h4 { margin-top: 0; color: #2980b9; margin-bottom: 10px; }
-        ul { padding-left: 25px; }
-        li { margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="paper-container">
-    <h1>SPAK: 순환 지능을 위한 점진적 GPU 커널 엔지니어링</h1>
-    <div class="authors">Systematic Paradigms for Agent based Kernel engineering</div>
+    <h1>Progressive Evolution of GPU Kernels from MatMul to Recurrent Intelligence</h1>
+    <h4>SPAK: Systematic Paradigms for Agent based Kernel engineering</h4>
+    <div class="authors">The SPAK Research & Engineering Team</div>
 
     <div class="abstract">
-        <strong>초록 (Abstract):</strong> 본 보고서는 기초적인 행렬 연산(MatMul)에서 시작하여 순환 언어 모델(Recurrent LM)에 이르기까지, 고성능 GPU 커널의 점진적인 엔지니어링 여정을 상세히 다룹니다. 우리는 공간적 깊이(Spatial Depth) 대신 시간적 순환(Temporal Recurrence)을 활용하여 탁월한 알고리즘적 일반화(Algorithmic Generalization)를 달성하는 <strong>LoopLM</strong> 아키텍처를 소개합니다. 준정형(Semiformal) DSL 기반의 에이전트 협업 패러다임을 통해, 우리는 단일 층(1-layer)의 순환 모델이 12배 적은 파라미터를 사용하고도 미학습(OOD) 산술 과제에서 12층의 정적 트랜스포머를 압도할 수 있음을 증명합니다.
+        <strong>Abstract:</strong> This report details the progressive engineering journey of high-performance GPU kernels, starting from fundamental matrix operations to recurrent language models. We developed the <strong>LoopLM</strong> architecture, which utilizes temporal recurrence instead of spatial depth to achieve superior algorithmic generalization. Using a Semiformal DSL-based dual-agent paradigm, we demonstrate that a 1-layer recurrent model can outperform a 12-layer static transformer in out-of-distribution arithmetic tasks while using 12x fewer parameters. Furthermore, we identify the ultimate limits of implicit reasoning capacity through catastrophic interference in algebraic equations, paving the way for Hardware-Software Co-designed explicit reasoning engines.
     </div>
 
-    <h2>1. SPAK 점진적 커널 로드맵</h2>
-    <p>우리의 연구는 하드웨어에 대한 통찰을 바탕으로 각 단계가 다음 단계의 기반이 되는 4개의 명확한 페이즈로 발전했습니다.</p>
-
-    <h3>1.1. MatMul: 하드웨어의 초석</h3>
-    <p>이 단계에서는 가장 기본적인 연산인 \( C = A \times B \)를 최적화했습니다. RTX5070 Blackwell 아키텍처에서 TFLOPS를 극대화하기 위해 <strong>타일링(Tiling)</strong>, <strong>공유 메모리 스위즐링(Shared Memory Swizzling)</strong>, 그리고 <strong>파이프라이닝(Pipelining)</strong> 기법에 집중했습니다.</p>
-    <div class="formula">
-        \[ C_{ij} = \sum_{k=0}^{K-1} A_{ik} \cdot B_{kj} \]
+    <h2>1. The SPAK Methodology: The Dual-Agent Paradigm</h2>
+    <p>This project demonstrates a systematic approach to GPU kernel engineering and deep learning architecture design using <strong>Semiformal DSL (Domain Specific Language)</strong> as the core medium for semantic communication between AI agents.</p>
+    
+    <div class="case-description">
+        <h3>🤖 The Dual-Agent Paradigm</h3>
+        <p>LLM agents operate in two distinct specialized roles, synchronized through the DSL:</p>
+        <ul>
+            <li><strong>System Engineer (Architect):</strong> Responsible for high-level design, DSL definition, and defining the "laws of physics" for the model. They bridge the gap between abstract mathematical goals and structural constraints.</li>
+            <li><strong>Kernel Engineer (Implementer):</strong> Responsible for low-level GPU kernel implementation using cuTile and conducting rigorous experiments to validate the Architect's design.</li>
+        </ul>
     </div>
 
-    <h3>1.2. FMHA: 대역폭 한계 돌파를 위한 융합</h3>
-    <p>HBM(High Bandwidth Memory) 병목을 최소화하기 위해 <strong>FMHA(Fused Multi-Head Attention)</strong>를 구현했습니다. Softmax와 Attention 연산을 단일 커널로 융합하여 메모리 바운드 연산의 지연 시간(Latency)을 획기적으로 단축했습니다.</p>
+    <h2>2. The SPAK Progressive Kernel Roadmap</h2>
+    <p>Our research evolved through four distinct phases, each building upon hardware insights. All kernels were implemented using the <strong>NVIDIA cuTile Python DSL</strong>, with optimizations guided by the <strong>TileGym reference code</strong>.</p>
+
+    <h3>2.1. MatMul: The Hardware Foundation</h3>
+    <p>Optimized basic operation \( C = A \times B \) focusing on <strong>Tiling</strong>, <strong>Shared Memory Swizzling</strong>, and <strong>Pipelining</strong> on RTX5070 Blackwell architectures.</p>
+
+    <h3>2.2. FMHA: Fusing for Bandwidth</h3>
+    <p>Minimized HBM traffic by fusing Softmax and Attention into a single kernel, effectively reducing the memory-wall bottleneck.</p>
     <div class="formula">
         \[ \text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \]
     </div>
 
-    <h3>1.3. nanoGPT: 위치 기하학적 논리의 도입</h3>
-    <p><strong>RoPE(Rotary Position Embeddings)</strong>를 통합하여 모델이 토큰 간의 상대적 거리를 기하학적으로 처리할 수 있게 하였습니다. 이는 산술 연산 과제에서 필수적인 병진 불변성(Translation-invariant) 논리를 구축하는 강력한 기반이 되었습니다.</p>
+    <h3>2.3. nanoGPT & LoopLM: Positional Geometric Logic & Temporal Depth</h3>
+    <p>Integrated <strong>Rotary Position Embeddings (RoPE)</strong> for translation-invariant logic, and replaced spatial layers with a recurrent loop where state \( h \) evolves \( L \) times through a shared block:</p>
     <div class="formula">
-        \[ q'_m = R_{\Theta, m} q_m, \quad k'_n = R_{\Theta, n} k_n \]
+        \[ h_{l+1} = \text{Block}(h_l), \quad (\text{where } inject\_x_0 = \text{False}) \]
     </div>
 
-    <h3>1.4. LoopLM: 시간적 깊이와 추론 시 연산 확장</h3>
-    <p>최종 단계에서는 공간적인 층(Layer)을 순환 루프(Recurrent Loop)로 대체하는 <strong>LoopLM</strong>을 도입했습니다. 은닉 상태 \( h \)는 가중치가 공유되는 동일한 블록을 \( L \)번 반복하며 진화합니다.</p>
-    <div class="formula">
-        \[ h_{l+1} = \text{Block}(h_l), \quad (\text{단, } inject\_x_0 = \text{False}) \]
+    <h2>3. LoopLM Experimental Analysis</h2>
+    
+    <h3>3.1. Experimental Results</h3>
+    <p>The following results compare spatial depth against temporal recurrence on Out-of-Distribution (OOD) arithmetic tasks (trained on 1-4 digits, evaluated zero-shot on 5+ digits):</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Model Architecture</th>
+                <th>1-4d (Train)</th>
+                <th>5-6d (OOD)</th>
+                <th>8d (OOD)</th>
+                <th>Params</th>
+                <th>Efficiency</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>GPT-12L (Static)</td><td>100%</td><td>61.90%</td><td>0.00%</td><td>~85M</td><td>1.0x</td></tr>
+            <tr><td>LoopLM-12 (Dynamic)</td><td>100%</td><td>80.00%</td><td>0.00%</td><td>~7M</td><td>12.1x</td></tr>
+            <tr class="highlight-row"><td>LoopLM-30 (Deep Thinking)</td><td>100%</td><td>95.24%</td><td>2.59%</td><td>~7M</td><td>12.1x</td></tr>
+            <tr><td>LoopLM-128e (Efficient)</td><td>100%</td><td>76.19%</td><td>0.00%</td><td>~2M</td><td>42.5x</td></tr>
+            <tr><td>LoopLM-12 (Test-Time 24)</td><td>100%</td><td>78.10%</td><td>0.00%</td><td>~7M</td><td>N/A</td></tr>
+        </tbody>
+    </table>
+
+    <div class="figure">
+        <img src="looplm/paper_assets/fig1_generalization_curve.png" alt="">
+        <div class="figure-caption"><strong>Figure 1: Generalization Curve.</strong> Illustrates accuracy decay as operand length increases. LoopLM-30 maintains the highest logical integrity, reaching the 8-digit frontier where static baselines completely collapse.</div>
     </div>
 
-    <h2>2. 실험 결과 (Generalization Performance)</h2>
-    <p>다음 표는 12자리 덧셈 OOD(미학습 영역) 과제에서 다양한 아키텍처의 성능을 요약한 것입니다.</p>
+    <h3>3.2. Key Discoveries and Scientific Claims</h3>
+    
+    <div class="insight-box">
+        <h4>💡 Claim 1: Recurrence is Depth</h4>
+        <p>We proved that temporal recurrence provides superior logical capacity than spatial stacking. LoopLM-12 achieved an 18.1% absolute gain over GPT-12L in OOD tasks while utilizing 12x fewer parameters. By sharing weights across time steps, the model internalizes the algorithm (e.g., Carry propagation) rather than memorizing surface patterns.</p>
+    </div>
 
+    <div class="insight-box">
+        <h4>💡 Claim 2: The Limits of Inference-Only Test-Time Compute</h4>
+        <p>We attempted a zero-shot Test-Time Compute experiment by forcing a 12-loop trained model to run for 24 loops during inference. The accuracy slightly dropped (80.0% &rarr; 78.1%). This highlights the <strong>Dynamical Instability (State Drift)</strong> in recurrent implicit reasoning; unlearned step embeddings act as noise, causing the hidden state to drift away from the correct attractor point.</p>
+    </div>
+
+    <div class="insight-box">
+        <h4>💡 Claim 3: The Capacity Bottleneck and Catastrophic Interference</h4>
+        <p>To test the ultimate limits of the 256-dimensional hidden state, we introduced <strong>Algebraic Equations</strong> (e.g., <code>X+B=C</code>, requiring subtraction). When forced to learn both forward (Addition) and backward (Subtraction) logic simultaneously, both GPT-12L and LoopLM-30 experienced <strong>Catastrophic Interference</strong>, plummeting their previously perfect base addition accuracy down to ~31%. This proves that implicit reasoning has a hard capacity limit when storing multiple mathematical algorithms inside a single vector.</p>
+    </div>
+
+    <h2>4. Future Work: The Transition to Explicit Reasoning (CoT)</h2>
+    <p>The catastrophic interference observed in Phase 8 serves as the definitive scientific justification for transitioning from Implicit Reasoning (Hidden States) to <strong>Explicit Reasoning (Scratchpad / Chain-of-Thought)</strong>. Instead of compressing the entire algorithmic state into a finite vector, the next generation of SPAK models will offload memory by generating intermediate calculation tokens (e.g., <code>[1+4=5c0...]</code>).</p>
+    <p>While Explicit Reasoning inherently increases computational latency due to autoregressive token generation, our custom <strong>FMHA kernels and 1-Layer LoopLM architecture</strong> provide the perfect hardware-software co-designed environment to mitigate this memory-bandwidth bottleneck, promising a highly efficient Turing-complete math agent.</p>
+
+    <h2>5. Conclusion</h2>
+    <p>The journey from MatMul to LoopLM demonstrates that GPU kernel engineering is no longer just a matter of low-level optimization, but a <strong>systematic alignment between hardware constraints and architectural intelligence</strong>. By utilizing Semiformal DSLs, we successfully proved the efficiency of temporal depth. The limitations we encountered have illuminated the precise path forward, establishing a robust framework for building the next generation of hardware-aware reasoning engines.</p>
+
+    <hr class="divider">
+
+    <h1>[한글 버전] 재귀형 지능을 위한 GPU 커널의 점진적 진화</h1>
+    <div class="authors">SPAK (Systematic Paradigms for AI Kernels) 연구팀</div>
+
+    <div class="abstract">
+        <strong>초록:</strong> 본 보고서는 기본적인 행렬 연산(MatMul)에서 시작하여 재귀형 언어 모델(LoopLM)에 이르기까지 고성능 GPU 커널의 점진적인 엔지니어링 여정을 다룹니다. 우리는 공간적 깊이(Layer) 대신 시간적 반복(Loop)을 활용하여 탁월한 알고리즘 일반화를 달성했습니다. 준정형 DSL 기반의 듀얼 에이전트 패러다임을 통해, 1개 층의 재귀 모델이 12배 적은 파라미터를 사용하고도 12층의 정적 트랜스포머를 압도할 수 있음을 증명했습니다. 나아가, 대수학 방정식 실험을 통해 암묵적 추론(Implicit Reasoning)의 한계를 규명하고 차세대 하드웨어 인지형 명시적 추론(Explicit Reasoning) 엔진으로 나아갈 방향을 제시합니다.
+    </div>
+
+    <h2>1. SPAK 방법론: 듀얼 에이전트 패러다임</h2>
+    <p>본 프로젝트는 AI 에이전트 간의 의미론적 통신을 위한 핵심 매개체로서 <strong>준정형 DSL (Domain Specific Language)</strong>을 사용하여 GPU 커널 엔지니어링 및 딥러닝 아키텍처 설계에 체계적으로 접근합니다.</p>
+    
+    <div class="case-description">
+        <h3>🤖 듀얼 에이전트 패러다임</h3>
+        <ul>
+            <li><strong>시스템 엔지니어 (Architect):</strong> 고수준 설계 및 물리 법칙 정의. 추상적 목표를 구조적 제약 조건으로 변환.</li>
+            <li><strong>커널 엔지니어 (Implementer):</strong> cuTile을 사용한 저수준 GPU 커널 구현 및 가설 검증 실험 수행.</li>
+        </ul>
+    </div>
+
+    <h2>2. SPAK 점진적 커널 로드맵</h2>
+    <p>MatMul(Tiling/Swizzling), FMHA(Kernel Fusion), nanoGPT(RoPE Geometric Logic)를 거쳐 LoopLM(Temporal Depth)으로 진화했습니다. 모든 커널은 <strong>NVIDIA cuTile Python DSL</strong>을 사용하여 구현되었습니다.</p>
+
+    <h2>3. LoopLM 실험 분석 및 핵심 통찰</h2>
+    
+    <h3>3.1. 실험 결과 요약</h3>
+    <p>1~4자리 덧셈으로 학습된 모델들이 미학습 영역(5자리 이상)에서 보여준 OOD 일반화 성능입니다.</p>
     <table>
         <thead>
             <tr>
@@ -112,79 +208,80 @@
                 <th>1-4자리 (학습)</th>
                 <th>5-6자리 (OOD)</th>
                 <th>8자리 (OOD)</th>
-                <th>파라미터 수</th>
-                <th>가성비 (Efficiency)</th>
+                <th>파라미터</th>
+                <th>효율성</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>GPT-12L (Static)</td>
-                <td>100%</td>
-                <td>61.90%</td>
-                <td>0.00%</td>
-                <td>~85M</td>
-                <td>1.0x</td>
-            </tr>
-            <tr>
-                <td>LoopLM-12 (Dynamic)</td>
-                <td>100%</td>
-                <td>80.00%</td>
-                <td>0.00%</td>
-                <td>~7M</td>
-                <td>12.1x</td>
-            </tr>
-            <tr class="highlight-row">
-                <td>LoopLM-30 (Deep)</td>
-                <td>100%</td>
-                <td>95.24%</td>
-                <td>2.59%</td>
-                <td>~7M</td>
-                <td>12.1x</td>
-            </tr>
-            <tr>
-                <td>LoopLM-128e (Efficient)</td>
-                <td>100%</td>
-                <td>76.19%</td>
-                <td>0.00%</td>
-                <td>~2M</td>
-                <td>42.5x</td>
-            </tr>
+            <tr><td>GPT-12L (Static)</td><td>100%</td><td>61.90%</td><td>0.00%</td><td>~85M</td><td>1.0x</td></tr>
+            <tr><td>LoopLM-12 (Dynamic)</td><td>100%</td><td>80.00%</td><td>0.00%</td><td>~7M</td><td>12.1x</td></tr>
+            <tr class="highlight-row"><td>LoopLM-30 (Deep Thinking)</td><td>100%</td><td>95.24%</td><td>2.59%</td><td>~7M</td><td>12.1x</td></tr>
+            <tr><td>LoopLM-128e (Efficient)</td><td>100%</td><td>76.19%</td><td>0.00%</td><td>~2M</td><td>42.5x</td></tr>
         </tbody>
     </table>
 
     <div class="figure">
-        <!-- Local path preserved as requested for local rendering -->
         <img src="looplm/paper_assets/fig1_generalization_curve.png" alt="">
-        <div class="figure-caption">Figure 1: 자릿수 증가에 따른 정확도 붕괴 비교. 정적 베이스라인(GPT-12L)은 학습 범위를 벗어나면 성능이 급락하는 반면, LoopLM 변형들은 논리적 무결성을 훨씬 더 길게 유지합니다.</div>
+        <div class="figure-caption"><strong>그림 1: 일반화 곡선.</strong> 입력 자릿수 증가에 따른 정확도 하락. 공간을 쌓은 GPT-12L이 조기 붕괴하는 반면, 시간을 활용한 LoopLM 변체들은 훌륭한 논리적 일관성을 유지합니다.</div>
     </div>
 
-    <h2>3. 엔지니어링 난제 및 핵심 통찰 (Insights & Challenges)</h2>
-    <p>본 시스템을 구축하는 과정은 순탄치 않았으며, 수많은 디버깅과 실패 속에서 AI 모델의 수학적 추론에 관한 중대한 통찰을 얻을 수 있었습니다.</p>
-
+    <h3>3.2. 엔지니어링 난제 및 핵심 통찰 (Insights)</h3>
+    
     <div class="insight-box">
-        <h4>💡 3.1. 과적합(Overfitting)의 늪과 Grokking의 어려움</h4>
-        <p>초기 실험에서 모델들은 1~4자리 덧셈에 대해 순식간에 Train Loss 0.007(정확도 100%)에 도달했습니다. 하지만 미학습 영역(5~6자리 이상)에서는 정답률이 0%로 붕괴했습니다. 모델이 대수적 규칙(Algorithm)을 깨달은 것이 아니라 거대한 '룩업 테이블(Lookup Table)'처럼 데이터를 통째로 <b>암기(Memorization)</b>해 버렸기 때문입니다. 이를 타파하기 위해 강력한 가중치 감쇠(Weight Decay=0.1~0.2)와 10만 번 이상의 마라톤 훈련을 통해 <b>Grokking(깨달음)</b>을 강제하려 했으나, 암묵적 연산만으로는 복잡한 길이 일반화를 이뤄내는 데 한계가 있었습니다.</p>
-    </div>
-
-    <div class="insight-box">
-        <h4>💡 3.2. 수학이 만든 장난: 9.1%의 착시 (The 9.1% Illusion)</h4>
-        <p>실험 중간, 평가 스크립트의 데이터 포맷 불일치(역방향 학습 모델에 정방향 시험지 제공) 버그가 있었습니다. 놀랍게도 이때 모든 모델이 1~4자리 테스트에서 <b>정확히 9.1%</b>의 정답률을 기록했습니다. 분석 결과, 이 수치는 4자리 덧셈에서 '받아올림(Carry)이 단 한 번도 발생하지 않을 확률'(\(0.55^4 \approx 9.1\%\))과 정확히 일치했습니다. 이는 데이터 파이프라인의 정합성이 모델의 진짜 지능을 평가하는 데 얼마나 치명적인지 보여주는 소름 돋는 사례였습니다.</p>
+        <h4>💡 1. 재귀가 곧 깊이다 (Recurrence is Depth)</h4>
+        <p>시간적 반복(Loop)은 동일한 가중치를 공유하므로, 모델이 표면적 패턴을 암기하지 않고 '받아올림(Carry)'이라는 진짜 대수적 알고리즘을 체화하게 만듭니다. 그 결과 파라미터를 1/12로 줄이고도 OOD 정확도를 18%p 이상 상승시켰습니다.</p>
     </div>
 
     <div class="insight-box">
-        <h4>💡 3.3. 상태 표류(State Drift)와 시간적 외삽의 실패</h4>
-        <p>우리는 학습 시 12번의 루프만 경험한 모델에게, 추론(Inference) 시 강제로 24번의 루프를 돌게 하는 <b>'Zero-shot Test-Time Compute'</b>를 시도했습니다. 결과는 예상과 달리 성능 하락(80% &rarr; 78.1%)이었습니다. 이는 학습되지 않은 Step Embedding이 노이즈로 작용하여, 모델의 은닉 상태(Hidden State)가 올바른 정답의 궤적(Attractor)을 벗어나 엉뚱한 공간으로 표류하는 <b>동역학적 불안정성(Dynamical Instability)</b>을 증명합니다.</p>
+        <h4>💡 2. 상태 표류 (State Drift)와 추론 확장(Test-Time Compute)의 한계</h4>
+        <p>12루프로 학습된 모델을 추론 시에만 24루프로 강제 확장한 결과, 성능은 상승하지 않고 오히려 하락(80% &rarr; 78.1%)했습니다. 이는 학습되지 않은 루프 구간에서 발생하는 노이즈가 모델의 은닉 상태(Hidden State)를 정답 궤적에서 이탈시키는 <strong>동역학적 불안정성</strong>을 증명합니다.</p>
     </div>
 
     <div class="insight-box">
-        <h4>💡 3.4. 궁극적 한계: 암묵적 추론(Implicit Reasoning)의 정보 병목</h4>
-        <p>LoopLM-30은 5~6자리 덧셈을 100% 풀어냈지만, 8자리부터는 다시 2.1%로 한계를 보였습니다. 토큰을 출력하지 않고 보이지 않는 단일 벡터(Hidden State) 안에서만 받아올림을 연쇄적으로 누적하는 <b>암묵적 추론</b>은 결국 용량의 병목(Capacity Bottleneck)에 부딪힙니다. 이는 향후 모델이 중간 계산 과정을 직접 토큰으로 전개하는 <b>스크래치패드(Scratchpad / Chain-of-Thought)</b> 기반의 명시적 추론으로 나아가야 할 강력한 동기가 됩니다.</p>
+        <h4>💡 3. 용량의 병목과 파국적 간섭 (Catastrophic Interference)</h4>
+        <p>은닉 상태(256차원)의 물리적 한계를 시험하기 위해, 덧셈과 뺄셈(역연산)을 모두 유추해야 하는 대수학 방정식(<code>X+B=C</code>) 데이터를 투입했습니다. 그 결과 12층 GPT와 30루프 LoopLM 모두 100%였던 기본 덧셈 능력이 31%로 붕괴하는 <strong>파국적 간섭</strong>이 발생했습니다. 이는 단일 벡터 안에 복수의 알고리즘 상태를 구겨 넣는 '암묵적 추론'의 근본적 한계를 시사합니다.</p>
     </div>
 
-    <h2>4. 결론</h2>
-    <p>기초 GPU 커널 최적화에서 시작해 LoopLM 아키텍처 도입에 이르는 일련의 과정을 통해, 우리는 <strong>"지능은 공간(Layer)을 쌓는 것보다 시간(Loop)을 두고 반복할 때 더 효율적으로 확장된다"</strong>는 것을 증명했습니다. 비록 암묵적 추론의 한계점도 명확히 확인하였으나, 본 연구의 SPAK 패러다임은 하드웨어 최적화(MatMul/FMHA)와 추론 아키텍처의 혁신이 완벽하게 결합될 수 있음을 보여주는 성공적인 청사진입니다.</p>
+    <h2>4. 향후 과제: 명시적 추론(Scratchpad)으로의 전환</h2>
+    <p>방정식 실험에서 확인된 '파국적 간섭'은 모델에게 <strong>명시적 추론(Explicit Reasoning / Chain-of-Thought)</strong>을 허용해야 할 완벽한 과학적 명분입니다. 중간 계산 과정을 직접 토큰으로 전개하는 Scratchpad 방식을 도입하여 정보 병목을 해소할 계획입니다.</p>
+    <p>이때 발생하는 심각한 토큰 생성 지연(Latency) 현상은 우리가 밑바닥부터 구축한 <strong>1-Layer LoopLM 구조와 FMHA 커널</strong>을 통해 극복할 수 있으며, 이는 가장 효율적인 하드웨어-소프트웨어 공동 설계(Co-design) 수학 에이전트의 탄생을 예고합니다.</p>
 
+    <h2>5. 결론</h2>
+    <p>MatMul에서 LoopLM에 이르는 여정은 GPU 커널 엔지니어링이 단순히 저수준 최적화의 문제가 아니라, <strong>하드웨어 제약 조건과 아키텍처적 지능 사이의 체계적인 정렬</strong>임을 보여줍니다. 본 연구의 SPAK 패러다임은 한계점마저도 다음 혁신을 위한 나침반으로 삼아, 차세대 하드웨어 인지형 추론 엔진을 위한 견고한 프레임워크를 제공합니다.</p>
+
+    <hr class="divider">
+    
+    <h2>Appendix: Semiformal DSL (LoopLM_System_v3.dsl)</h2>
+    <pre class="appendix-code">
+---
+title: "LoopLM System v3 – Algorithmic Generalization & Systematic Engineering"
+source: "SPAK Phase 3-4 Research + Blackwell Optimization"
+extraction-date: 2026-02-26
+tags: [LoopLM, Grokking, Wait-to-Think, OOD, Systematic_Experimentation, Blackwell_V2]
+status: "active"
+---
+
+system LoopLM_System_v3 {
+
+  objective Algorithmic_Emergence {
+      target: "Achieve >70% Accuracy on 12-digit Addition (Zero-shot)"
+      mechanism: "Transition from Memorization to Algorithmic Logic (Grokking)"
+      hardware: "RTX 5070 (Blackwell) Persistent Optimization"
+  }
+
+  knowledge {
+      fact algorithmic_grokking_emergence {
+          description: "LoopLM-30 (Deep) achieved 100% on bridge data and 2.6% on 8-digit OOD."
+          evidence: "Phase 5 re-evaluation after Format Parity Fix."
+      }
+      fact catastrophic_interference_in_algebra {
+          description: "Introducing bidirectional logic (X+B=C) caused base addition accuracy to collapse to 31%."
+          evidence: "Phase 8 Algebra experiments (Both GPT-12L and LoopLM-30 collapsed equally)."
+          conclusion: "Implicit reasoning capacity is strictly bounded. Must transition to Explicit Scratchpad/CoT."
+      }
+  }
+}
+    </pre>
 </div>
-
 </body>
 </html>
